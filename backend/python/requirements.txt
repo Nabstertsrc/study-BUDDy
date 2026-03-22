@@ -1,0 +1,8 @@
+openai
+google-generativeai
+pydantic
+PyMuPDF
+python-dotenv
+flask
+flask-cors
+telethon
