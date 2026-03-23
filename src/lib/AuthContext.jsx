@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const AuthContext = createContext(null);
 
@@ -10,51 +11,27 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-    // Check current session
-    const checkSession = async () => {
-      try {
-        setIsLoadingAuth(true);
-        const { data: { session }, error } = await supabase.auth.getSession();
-
-        if (error) throw error;
-
-        if (session) {
-          setUser(session.user);
-          setIsAuthenticated(true);
-        } else {
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      } catch (err) {
-        console.error('Session check failed:', err);
-        setAuthError(err);
-      } finally {
-        setIsLoadingAuth(false);
-      }
-    };
-
-    checkSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        setUser(session.user);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
         setIsAuthenticated(true);
       } else {
         setUser(null);
         setIsAuthenticated(false);
       }
       setIsLoadingAuth(false);
+    }, (error) => {
+      console.error('Auth state change error:', error);
+      setAuthError(error);
+      setIsLoadingAuth(false);
     });
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
+      await signOut(auth);
       setUser(null);
       setIsAuthenticated(false);
     } catch (err) {
@@ -89,4 +66,3 @@ export const useAuth = () => {
 };
 
 export default AuthContext;
-

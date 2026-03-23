@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { auth } from '../lib/firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,12 +20,7 @@ export default function Signup() {
         setLoading(true)
 
         try {
-            const { error } = await supabase.auth.signUp({
-                email,
-                password,
-            })
-
-            if (error) throw error
+            await createUserWithEmailAndPassword(auth, email, password)
 
             toast.success('Account created! You can now login.')
             navigate('/login')

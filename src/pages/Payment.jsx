@@ -96,14 +96,35 @@ export default function PaymentPage() {
     localStorage.setItem('last_selected_tier', tier.id);
   };
 
+  const handlePaymentVerification = () => {
+    // Temporary workaround for local testing without a server webhook
+    setTimeout(() => {
+      if (window.confirm("Payment Verification: Have you completed your payment? (This is an honor-system check for testing)")) {
+        localApi.wallet.addCredits(selectedTier.credits, {
+          amount: selectedTier.price,
+          currency: 'USD',
+          note: `Purchase of ${selectedTier.name}`
+        }).then(newBalance => {
+          setBalance(newBalance);
+          setFreeCredits(localApi.wallet.getFreeCreditsRemaining());
+          setPurchasedCredits(localApi.wallet.getPurchasedBalance());
+          setPaymentStatus('success');
+          toast.success(`🎉 ${selectedTier.credits} credits added to your wallet!`);
+        });
+      }
+    }, 2000);
+  };
+
   const openPayPal = () => {
     window.open(selectedTier.paypalUrl, '_blank');
     toast.info("Opening PayPal... Please complete the payment and return.");
+    handlePaymentVerification();
   };
 
   const openYoco = () => {
     window.open(selectedTier.yocoUrl, '_blank');
     toast.info("Opening Secure Card Checkout... Please complete the payment and return.");
+    handlePaymentVerification();
   };
 
   if (paymentStatus === 'success') {

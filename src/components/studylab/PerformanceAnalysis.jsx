@@ -313,7 +313,7 @@ Provide deep analysis including:
                     <h4 className="font-bold text-lg text-slate-900">Identified Gaps</h4>
                   </div>
                   <div className="space-y-4">
-                    {analysis.skill_gaps?.map((gap, idx) => (
+                    {(Array.isArray(analysis.skill_gaps) ? analysis.skill_gaps : []).map((gap, idx) => (
                       <div key={idx} className="bg-slate-50 rounded-xl p-4 border border-slate-200">
                         <div className="flex items-start justify-between mb-2">
                           <h5 className="font-semibold text-slate-900">{gap.skill}</h5>
@@ -333,7 +333,7 @@ Provide deep analysis including:
                     <h4 className="font-bold text-lg text-slate-900">Strengths</h4>
                   </div>
                   <div className="space-y-3">
-                    {analysis.strengths?.map((item, idx) => (
+                    {(Array.isArray(analysis.strengths) ? analysis.strengths : []).map((item, idx) => (
                       <div key={idx} className="bg-green-50 rounded-xl p-4 border border-green-200">
                         <h5 className="font-semibold text-green-900 mb-1">{item.strength}</h5>
                         <p className="text-sm text-green-700">{item.leverage_strategy}</p>
@@ -354,7 +354,7 @@ Provide deep analysis including:
                     <h4 className="font-bold text-xl">Targeted Learning Modules 🎯</h4>
                   </div>
                   <div className="grid gap-4">
-                    {analysis.micro_learning_modules?.map((module, idx) => (
+                    {(Array.isArray(analysis.micro_learning_modules) ? analysis.micro_learning_modules : []).map((module, idx) => (
                       <div key={idx} className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20 hover:bg-white/15 transition-colors">
                         <div className="flex items-center justify-between mb-3">
                           <h5 className="font-bold text-white">{module.title}</h5>
@@ -365,7 +365,7 @@ Provide deep analysis including:
                         </div>
                         <p className="text-sm text-slate-300 mb-3">{module.description}</p>
                         <div className="flex flex-wrap gap-2">
-                          {module.activities?.map((activity, aIdx) => (
+                          {(Array.isArray(module.activities) ? module.activities : []).map((activity, aIdx) => (
                             <Badge key={aIdx} variant="outline" className="text-[10px] py-0 border-white/30 text-white/70">
                               {activity}
                             </Badge>
@@ -390,7 +390,7 @@ Provide deep analysis including:
                       <p className="text-sm font-medium text-blue-900">{analysis.efficiency_insights?.productivity_pattern}</p>
                     </div>
                     <ul className="space-y-2">
-                      {analysis.efficiency_insights?.optimization_tips?.map((tip, idx) => (
+                      {(Array.isArray(analysis.efficiency_insights?.optimization_tips) ? analysis.efficiency_insights.optimization_tips : []).map((tip, idx) => (
                         <li key={idx} className="text-sm text-slate-600 flex items-start gap-2">
                           <Lightbulb className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
                           <span>{tip}</span>
@@ -406,7 +406,7 @@ Provide deep analysis including:
                     <h4 className="font-bold text-lg text-slate-900">Priority Roadmap 🚀</h4>
                   </div>
                   <div className="space-y-3">
-                    {analysis.next_steps?.map((step, idx) => (
+                    {(Array.isArray(analysis.next_steps) ? analysis.next_steps : []).map((step, idx) => (
                       <div key={idx} className="flex gap-4 p-4 bg-white border border-indigo-100 rounded-xl shadow-sm">
                         <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold flex-shrink-0">
                           {idx + 1}

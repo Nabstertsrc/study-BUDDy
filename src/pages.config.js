@@ -10,6 +10,7 @@ import Welcome from './pages/Welcome';
 import PrescribedBooks from './pages/PrescribedBooks';
 import AutoOrganizer from './pages/AutoOrganizer';
 import MonitoringDashboard from './pages/MonitoringDashboard';
+import HowItWorks from './pages/HowItWorks';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +27,7 @@ export const PAGES = {
     "PrescribedBooks": PrescribedBooks,
     "AutoOrganizer": AutoOrganizer,
     "Monitoring": MonitoringDashboard,
+    "HowItWorks": HowItWorks,
 }
 
 export const pagesConfig = {
