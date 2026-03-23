@@ -15,7 +15,8 @@ import {
   ShieldCheck,
   Library,
   GraduationCap,
-  ClipboardList
+  ClipboardList,
+  Users
 } from "lucide-react";
 import { localApi } from "@/api/localApi";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,7 @@ const navigation = [
   { name: "Learning", icon: GraduationCap, page: "LearningPath" },
   { name: "Books", icon: Library, page: "PrescribedBooks" },
   { name: "Assignments", icon: ClipboardList, page: "Assignments" },
+  { name: "Community", icon: Users, page: "CommunityHub" },
 ];
 
 export default function Layout({ children, currentPageName }) {

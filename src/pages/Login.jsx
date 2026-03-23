@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import FloatingIcons from '@/components/auth/FloatingIcons'
+import logo from '@/assets/logo.png'
 
 export default function Login() {
     const [loading, setLoading] = useState(false)
@@ -34,50 +35,55 @@ export default function Login() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 relative overflow-hidden">
             <FloatingIcons />
-            <Card className="w-full max-w-md z-10 shadow-xl border-slate-200/60 bg-white/90 backdrop-blur-sm">
-                <CardHeader>
-                    <CardTitle>Login to AI Study Buddy</CardTitle>
-                    <CardDescription>Enter your credentials to access your workspace</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleLogin} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <Button className="w-full" type="submit" disabled={loading}>
-                            {loading ? 'Logging in...' : 'Login'}
-                        </Button>
-                        <div className="text-center text-sm text-slate-500">
-                            Don't have an account?{' '}
-                            <button
-                                type="button"
-                                onClick={() => navigate('/signup')}
-                                className="text-primary hover:underline"
-                            >
-                                Sign up
-                            </button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+            <div className="z-10 w-full max-w-md flex flex-col items-center">
+                <div className="w-24 h-24 mb-6 bg-white p-3 rounded-3xl shadow-xl shadow-blue-500/10 border border-slate-100 flex items-center justify-center">
+                    <img src={logo} alt="Study Buddy Logo" className="w-full h-full object-contain" />
+                </div>
+                <Card className="w-full shadow-2xl border-slate-200/60 bg-white/95 backdrop-blur-xl">
+                    <CardHeader className="text-center pb-2">
+                        <CardTitle className="text-2xl font-black">Welcome Back</CardTitle>
+                        <CardDescription>Enter your details to access your workspace</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleLogin} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="m@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password">Password</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <Button className="w-full" type="submit" disabled={loading}>
+                                {loading ? 'Logging in...' : 'Login'}
+                            </Button>
+                            <div className="text-center text-sm text-slate-500">
+                                Don't have an account?{' '}
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/Signup')}
+                                    className="text-primary hover:underline"
+                                >
+                                    Sign up
+                                </button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     )
 }

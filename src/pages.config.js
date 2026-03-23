@@ -11,6 +11,9 @@ import PrescribedBooks from './pages/PrescribedBooks';
 import AutoOrganizer from './pages/AutoOrganizer';
 import MonitoringDashboard from './pages/MonitoringDashboard';
 import HowItWorks from './pages/HowItWorks';
+import CommunityHub from './pages/CommunityHub';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +31,9 @@ export const PAGES = {
     "AutoOrganizer": AutoOrganizer,
     "Monitoring": MonitoringDashboard,
     "HowItWorks": HowItWorks,
+    "CommunityHub": CommunityHub,
+    "Login": Login,
+    "Signup": Signup,
 }
 
 export const pagesConfig = {

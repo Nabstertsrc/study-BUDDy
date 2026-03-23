@@ -8,7 +8,7 @@ import PageNotFound from './lib/PageNotFound';
 import { getUpcomingAssignments } from './lib/db';
 import NavigationTracker from './lib/NavigationTracker';
 import StudyUsageTracker from './lib/StudyUsageTracker';
-import { AuthProvider } from '@/lib/AuthContext';
+import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { NotificationProvider } from '@/lib/NotificationContext';
 
 
@@ -20,25 +20,54 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout ?
   <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
 
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoadingAuth } = useAuth();
+
+  if (isLoadingAuth) {
+    return <div className="h-screen w-screen flex items-center justify-center bg-slate-50"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div></div>;
+  }
+
+  if (!isAuthenticated) {
+    window.location.href = '/Login';
+    return null;
+  }
+
+  return children;
+};
+
 const AppRoutes = () => {
+  // Public routes that don't need auth
+  const publicRoutes = ['Login', 'Signup', 'Welcome', 'HowItWorks'];
+
   return (
     <Routes>
       <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
+        <ProtectedRoute>
+          <LayoutWrapper currentPageName={mainPageKey}>
+            <MainPage />
+          </LayoutWrapper>
+        </ProtectedRoute>
       } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
-            </LayoutWrapper>
-          }
-        />
-      ))}
+      {Object.entries(Pages).map(([path, Page]) => {
+        const isPublic = publicRoutes.includes(path);
+
+        // Hide Layout for purely auth screens
+        const noLayout = path === 'Login' || path === 'Signup';
+
+        const Element = noLayout ? <Page /> : (
+          <LayoutWrapper currentPageName={path}>
+            <Page />
+          </LayoutWrapper>
+        );
+
+        return (
+          <Route
+            key={path}
+            path={`/${path}`}
+            element={isPublic ? Element : <ProtectedRoute>{Element}</ProtectedRoute>}
+          />
+        );
+      })}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

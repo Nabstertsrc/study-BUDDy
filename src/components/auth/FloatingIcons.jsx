@@ -1,10 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Book, GraduationCap, Calculator, Microscope, Edit3 } from 'lucide-react';
+import Lottie from 'lottie-react';
 
 const FloatingIcons = () => {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const [lotties, setLotties] = useState({});
 
+    // Fetch robust Lottie files for Education symbols
     useEffect(() => {
+        const fetchLotties = async () => {
+            const urls = {
+                books: 'https://assets5.lottiefiles.com/packages/lf20_1a8xwmb3.json',        // Books/Grad cap
+                microscope: 'https://assets1.lottiefiles.com/private_files/lf30_p3pqps.json',  // Education/tools
+                physics: 'https://assets6.lottiefiles.com/packages/lf20_t2baxk5x.json',        // Atom/Science
+                pencil: 'https://assets3.lottiefiles.com/packages/lf20_4kji20y9.json',        // Pencil
+                chemistry: 'https://assets2.lottiefiles.com/private_files/lf30_ghysqui3.json' // Flask
+            };
+
+            const data = {};
+            for (const [key, url] of Object.entries(urls)) {
+                try {
+                    const res = await fetch(url);
+                    data[key] = await res.json();
+                } catch (e) {
+                    // Ignore fetching errors
+                }
+            }
+            setLotties(data);
+        };
+        fetchLotties();
+
         const handleMouseMove = (e) => {
             setMousePos({
                 x: (e.clientX / window.innerWidth) * 2 - 1,
@@ -16,32 +40,36 @@ const FloatingIcons = () => {
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
 
-    const icons = [
-        { Icon: Book, color: 'text-blue-200', size: 48, top: '10%', left: '10%', speed: 1 },
-        { Icon: GraduationCap, color: 'text-violet-200', size: 60, top: '20%', right: '15%', speed: -1.5 },
-        { Icon: Calculator, color: 'text-indigo-200', size: 40, bottom: '20%', left: '15%', speed: 1.2 },
-        { Icon: Microscope, color: 'text-sky-200', size: 55, bottom: '10%', right: '10%', speed: -1 },
-        { Icon: Edit3, color: 'text-slate-200', size: 35, top: '50%', left: '50%', speed: 2 }
+    const items = [
+        { key: 'books', size: 180, top: '5%', left: '8%', speed: 1.2 },
+        { key: 'physics', size: 240, top: '15%', right: '8%', speed: -1.5 },
+        { key: 'pencil', size: 150, bottom: '25%', left: '10%', speed: 0.8 },
+        { key: 'microscope', size: 160, bottom: '15%', right: '12%', speed: -1.1 },
+        { key: 'chemistry', size: 190, top: '45%', left: '48%', speed: 1.4 }
     ];
 
     return (
-        <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-            {icons.map((item, index) => (
+        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-blue-50/50">
+            {items.map((item, index) => (
                 <div
                     key={index}
-                    className={`absolute transition-transform duration-100 ease-out opacity-40 ${item.color}`}
+                    className="absolute transition-transform duration-300 ease-out opacity-40 mix-blend-multiply"
                     style={{
                         top: item.top,
                         left: item.left,
                         right: item.right,
                         bottom: item.bottom,
-                        transform: `translate(${mousePos.x * 20 * item.speed}px, ${mousePos.y * 20 * item.speed}px)`
+                        width: item.size,
+                        height: item.size,
+                        transform: `translate(${mousePos.x * 30 * item.speed}px, ${mousePos.y * 30 * item.speed}px)`
                     }}
                 >
-                    <item.Icon size={item.size} />
+                    {lotties[item.key] && (
+                        <Lottie animationData={lotties[item.key]} loop={true} style={{ width: '100%', height: '100%' }} />
+                    )}
                 </div>
             ))}
-            <div className="absolute inset-0 bg-slate-50/50 backdrop-blur-[1px]" />
+            <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]" />
         </div>
     );
 };

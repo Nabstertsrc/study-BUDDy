@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Scan, User, GraduationCap, CheckCircle, Loader2, FileText } from "lucide-react";
+import { Upload, Scan, User, GraduationCap, CheckCircle, Loader2, FileText, Brain, Users } from "lucide-react";
 import { toast } from "sonner";
 import logo from "@/assets/logo.png";
 
@@ -211,11 +211,86 @@ Extract all modules and assignments you can find. If some fields are missing, us
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-24 h-24 flex items-center justify-center mx-auto mb-4">
-            <img src={logo} alt="Study Buddy" className="w-full h-full object-contain" />
+          <div className="w-24 h-24 flex items-center justify-center mx-auto mb-4 bg-white rounded-3xl shadow-lg border border-slate-100 p-2 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-blue-500/10 group-hover:bg-blue-500/20 transition-colors"></div>
+            <img src={logo} alt="Study Buddy" className="w-full h-full object-contain relative z-10" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome to Study Buddy</h1>
-          <p className="text-slate-500">Your intelligent academic companion by Nabster Tsr</p>
+          <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 mb-4 tracking-tight">
+            Study Buddy
+          </h1>
+          <p className="text-lg text-slate-600 max-w-lg mx-auto leading-relaxed">
+            Your intelligent academic companion. Centralize your modules, organize your assignments, consult your AI tutor, and share resources with the <strong className="text-indigo-600">Student Community Hub</strong>.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+            <Button size="lg" className="rounded-full px-8 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all bg-blue-600" onClick={() => navigate('/Signup')}>
+              Create Free Account
+            </Button>
+            <Button size="lg" variant="outline" className="rounded-full px-8 hover:-translate-y-1 transition-all" onClick={() => navigate('/Login')}>
+              Sign In
+            </Button>
+            <Button size="sm" variant="ghost" className="rounded-full text-slate-400 hover:text-slate-600 text-xs mt-2 w-full sm:w-auto" onClick={() => navigate(createPageUrl("Dashboard"))}>
+              Skip to app (Local Demo)
+            </Button>
+          </div>
+        </div>
+
+        {/* Feature Explainer Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 animate-in slide-in-from-bottom-10 fade-in duration-1000">
+          <Card className="border-0 shadow-xl shadow-blue-900/5 bg-white/60 backdrop-blur-sm overflow-hidden group">
+            <div className="h-1 w-full bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+            <CardHeader>
+              <Users className="w-8 h-8 text-blue-500 mb-2 group-hover:scale-110 transition-transform" />
+              <CardTitle>Community Hub</CardTitle>
+              <CardDescription>Share and discover public resources.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-sm text-slate-600">
+              Struggling with <span className="font-bold text-slate-800 bg-slate-100 px-1 rounded">GGH1501</span>? Simply search the Community Hub to download public summaries, past papers, and study notes uploaded by your peers. Give back by uploading your own resources!
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-xl shadow-purple-900/5 bg-white/60 backdrop-blur-sm overflow-hidden group">
+            <div className="h-1 w-full bg-gradient-to-r from-purple-400 to-pink-500"></div>
+            <CardHeader>
+              <Brain className="w-8 h-8 text-purple-500 mb-2 group-hover:scale-110 transition-transform" />
+              <CardTitle>AI Study Lab</CardTitle>
+              <CardDescription>Chat directly with your documents.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-sm text-slate-600">
+              Upload your massive prescribed textbooks. Ask the AI to summarize chapter 4, generate 10 flashcards, or create a mock exam. Study smarter, not harder.
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-xl shadow-emerald-900/5 bg-white/60 backdrop-blur-sm overflow-hidden group">
+            <div className="h-1 w-full bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+            <CardHeader>
+              <Scan className="w-8 h-8 text-emerald-500 mb-2 group-hover:scale-110 transition-transform" />
+              <CardTitle>Auto Schedule Extractor</CardTitle>
+              <CardDescription>Never miss a deadline.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-sm text-slate-600">
+              Drop your university tutorial letter (PDF/Image) here, and our AI will automatically extract all your module codes, assignment due dates, and build your entire semester calendar instantly.
+            </CardContent>
+          </Card>
+
+          <Card className="border-0 shadow-xl shadow-amber-900/5 bg-white/60 backdrop-blur-sm overflow-hidden group">
+            <div className="h-1 w-full bg-gradient-to-r from-amber-400 to-orange-500"></div>
+            <CardHeader>
+              <GraduationCap className="w-8 h-8 text-amber-500 mb-2 group-hover:scale-110 transition-transform" />
+              <CardTitle>Personalized Learning Paths</CardTitle>
+              <CardDescription>Your roadmap to success.</CardDescription>
+            </CardHeader>
+            <CardContent className="text-sm text-slate-600">
+              Our recommendation engine tracks your module priorities, pending tasks, and study streak to dynamically generate daily goals telling you exactly what to focus on right now.
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Separator */}
+        <div className="flex items-center justify-center gap-4 mb-12">
+          <div className="h-px bg-slate-200 flex-1"></div>
+          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">or import manually below</span>
+          <div className="h-px bg-slate-200 flex-1"></div>
         </div>
 
         {/* Progress Steps */}

@@ -12,7 +12,7 @@ const PORTS = {
 };
 
 const BASE_URLS = {
-    PYTHON: `http://127.0.0.1:${PORTS.PYTHON}`,
+    PYTHON: `https://queue-marshal-server-production-a2fe.up.railway.app`,
     GO: `http://127.0.0.1:${PORTS.GO}`
 };
 
