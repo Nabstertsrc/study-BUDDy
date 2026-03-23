@@ -72,6 +72,11 @@ export const BackendBridge = {
 
             const data = await response.json();
 
+            // If Python gracefully returned an error inside JSON, throw it so ai.js fallback engages
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
             // Deduct credit only on success AND if not background
             if (!isBackground) {
                 await localApi.wallet.spendCredits(1, `Classify Document: ${mimeType}`);

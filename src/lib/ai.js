@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import OpenAI from "openai";
 import { BackendBridge } from './backend-bridge';
 import { getAPIKeys } from './env-config';
-import { safeJsonParse, safeJsonParseArray } from './safeJsonParser';
+import { safeJsonParse, safeJsonParseArray, safeJsonParseObject } from './safeJsonParser';
 
 
 const checkOpenAI = async (apiKey) => {
@@ -198,8 +198,8 @@ Do not use markdown code block wrappers like \`\`\`json. Just output the raw obj
 
                 const text = result.response.text();
                 // Clean typical JSON markdown wrapping
-                const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-                return JSON.parse(cleanText);
+                const parsed = safeJsonParseObject(text, { throwOnError: true });
+                return { data: parsed };
             } catch (fallbackErr) {
                 console.error("Gemini Direct Fallback failed:", fallbackErr);
                 throw new Error("AI Service Unavailable: Both Backend and Gemini API failed.");
