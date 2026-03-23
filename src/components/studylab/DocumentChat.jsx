@@ -635,13 +635,12 @@ ${historyContext}
 STUDENT'S QUESTION: "${q}"
 
 INSTRUCTIONS:
-1. Prioritize answering based on the document content provided above to ensure accuracy.
-2. If the document does not contain the answer, seamlessly use your expansive AI knowledge to answer the question, but gently note that you are drawing from general knowledge beyond the document.
-3. Be an active study buddy: provide extra context and rich explanations related to the course subject to help the student learn holistically.
-4. Use clear formatting with headers, bullet points, and emphasis where appropriate.
-5. Be incredibly encouraging, natural, and supportive in tone.
-6. Suggest highly relevant follow-up questions the student could ask to dive deeper into the overarching subject.
-7. Output purely in elegant markdown formatting.`;
+1. EXTREMELY IMPORTANT: You must base your answer STRICTLY on the DOCUMENT CONTENT provided above.
+2. If the student's question is fundamentally unrelated to the document content, DO NOT answer the question fully. Instead, politely inform them that the document doesn't cover this topic. Then, briefly provide a high-level overview of what "deep dives" or external concepts they would need to research to understand their question.
+3. Be an active study buddy: provide context within the bounds of the document to help the student learn holistically.
+4. Use clear formatting with headers, bullet points, and emphasis where appropriate. 
+5. Suggest highly relevant follow-up questions the student could ask to dive deeper into the overarching subject.
+6. Output purely in elegant markdown formatting.`;
 
             // Use resilient AI caller (backend -> direct Gemini fallback)
             const response = await callAI(

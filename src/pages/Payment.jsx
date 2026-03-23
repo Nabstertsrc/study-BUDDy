@@ -8,6 +8,16 @@ import { toast } from "sonner";
 
 const PRICING_TIERS = [
   {
+    id: "test",
+    name: "Micro Test",
+    price: 1,
+    credits: 10,
+    description: "Quick $1 test to try the platform",
+    popular: false,
+    paypalUrl: "https://www.paypal.com/ncp/payment/BSLN4YNSY3WH2", // Reuse starter URL for now or dummy
+    yocoUrl: "https://pay.yoco.com/r/7XPopK", // Reuse starter URL for now or dummy
+  },
+  {
     id: "basic",
     name: "Starter Bundle",
     price: 5,
