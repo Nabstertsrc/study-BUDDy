@@ -9,11 +9,13 @@ import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import FloatingIcons from '@/components/auth/FloatingIcons'
 import logo from '@/assets/logo.png'
+import { base44 } from '@/api/base44Client'
 
 export default function Signup() {
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [fullName, setFullName] = useState('')
     const navigate = useNavigate()
 
     const handleSignup = async (e) => {
@@ -22,6 +24,9 @@ export default function Signup() {
 
         try {
             await createUserWithEmailAndPassword(auth, email, password)
+
+            // Specifically sync this initial profile back to Firestore natively so Windows and Web instances persist it!
+            await base44.auth.updateProfile({ email, full_name: fullName })
 
             toast.success('Account created! You can now login.')
             navigate('/Login')
@@ -46,6 +51,17 @@ export default function Signup() {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSignup} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="fullName">Full Name</Label>
+                                <Input
+                                    id="fullName"
+                                    type="text"
+                                    placeholder="John Doe"
+                                    value={fullName}
+                                    onChange={(e) => setFullName(e.target.value)}
+                                    required
+                                />
+                            </div>
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email</Label>
                                 <Input

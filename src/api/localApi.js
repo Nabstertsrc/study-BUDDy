@@ -205,13 +205,52 @@ export const localApi = {
     },
     auth: {
         me: async () => {
+            const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
+            const { doc, getDoc, setDoc } = await import('firebase/firestore');
+
+            const fbUser = firebaseAuth.currentUser;
+            if (fbUser) {
+                // Fetch from Firestore
+                const userDocRef = doc(firestoreDB, 'users', fbUser.uid);
+                try {
+                    const snap = await getDoc(userDocRef);
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        localStorage.setItem('user_profile', JSON.stringify({ id: fbUser.uid, ...data }));
+                        return { id: fbUser.uid, ...data };
+                    } else {
+                        // Initialize Firestore profile if it doesn't exist
+                        const newProfile = { email: fbUser.email, full_name: fbUser.displayName || '' };
+                        await setDoc(userDocRef, newProfile);
+                        return { id: fbUser.uid, ...newProfile };
+                    }
+                } catch (e) {
+                    console.error("Firestore error in me():", e);
+                }
+            }
+
+            // Fallback to local storage
             const saved = localStorage.getItem('user_profile');
             if (saved) return safeJsonParse(saved, { fallback: null });
             return { id: 'user_123', full_name: 'Study Buddy', email: 'student@studybuddy.ai' };
         },
         updateProfile: async (data) => {
+            const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
+            const { doc, setDoc } = await import('firebase/firestore');
+
             const current = await localApi.auth.me();
             const updated = { ...current, ...data };
+
+            const fbUser = firebaseAuth.currentUser;
+            if (fbUser) {
+                try {
+                    const userDocRef = doc(firestoreDB, 'users', fbUser.uid);
+                    await setDoc(userDocRef, { full_name: updated.full_name, email: updated.email }, { merge: true });
+                } catch (e) {
+                    console.error("Firestore error in updateProfile:", e);
+                }
+            }
+
             localStorage.setItem('user_profile', JSON.stringify(updated));
             return updated;
         },
@@ -219,6 +258,13 @@ export const localApi = {
             localStorage.removeItem('user_profile');
             localStorage.removeItem('gemini_key');
             localStorage.removeItem('deepseek_key');
+
+            import('../lib/firebase').then(({ auth: firebaseAuth }) => {
+                import('firebase/auth').then(({ signOut }) => {
+                    signOut(firebaseAuth).catch(err => console.error(err));
+                });
+            });
+
             window.location.reload();
         },
     },
