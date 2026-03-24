@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+import { localApi } from '@/api/localApi';
 
 /**
  * PDF Processing Utilities
@@ -78,7 +78,7 @@ export async function extractTextFromPDF(file) {
         // Ultimate Fallback to Gemini OCR natively if local parse fails
         try {
             const base64 = await fileToBase64(file);
-            const response = await base44.integrations.Core.InvokeLLM({
+            const response = await localApi.integrations.Core.InvokeLLM({
                 prompt: `Extract ALL text from this PDF document. Return ONLY the extracted text content.`,
                 systemPrompt: "You are an OCR assistant. Extract text accurately from documents.",
                 image: base64
@@ -87,6 +87,43 @@ export async function extractTextFromPDF(file) {
         } catch (geminiError) {
             throw new Error("Failed to extract text from PDF locally and via AI.");
         }
+    }
+}
+
+/**
+ * Extract text locally using PDF.js from a URL
+ * @param {string} url - PDF file URL
+ * @returns {Promise<string>} Extracted text content
+ */
+export async function extractTextFromPDFUrl(url) {
+    try {
+        const pdfjsLib = window['pdfjs-dist/build/pdf'] || await new Promise((resolve, reject) => {
+            if (window['pdfjs-dist/build/pdf']) return resolve(window['pdfjs-dist/build/pdf']);
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            script.onload = () => {
+                const pdfjs = window['pdfjs-dist/build/pdf'];
+                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                resolve(pdfjs);
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+
+        const pdf = await pdfjsLib.getDocument(url).promise;
+        let fullText = '';
+        const maxPages = Math.min(pdf.numPages, 50);
+        for (let i = 1; i <= maxPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            const pageText = content.items.map(item => item.str).join(' ');
+            fullText += pageText + '\n\n';
+        }
+
+        return fullText.trim();
+    } catch (error) {
+        console.error('URL PDF extraction failed:', error);
+        return "";
     }
 }
 

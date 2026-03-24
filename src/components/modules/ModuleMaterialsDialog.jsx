@@ -137,7 +137,18 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
   const generateQuiz = async (material) => {
     setGeneratingQuiz(material.id);
     try {
-      const context = material.content && material.content.length > 50 ? material.content : `Topic: ${material.title}. (Content is brief, generate general questions based on this topic)`;
+      let contentToUse = material.content;
+      if (!contentToUse && material.file_url && material.type === 'pdf') {
+        const { extractTextFromPDFUrl } = await import('@/lib/pdfProcessor');
+        contentToUse = await extractTextFromPDFUrl(material.file_url);
+      }
+
+      if (contentToUse) {
+        const { processForQuiz } = await import('@/lib/pdfProcessor');
+        contentToUse = processForQuiz(contentToUse);
+      }
+
+      const context = contentToUse && contentToUse.length > 50 ? contentToUse : `Topic: ${material.title}. (Content is brief, generate general questions based on this topic)`;
 
       const quizData = await localApi.integrations.Core.InvokeLLM({
         prompt: `You are a quiz generator.
@@ -202,8 +213,23 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
   const generateSummary = async (material) => {
     setGeneratingSummary(material.id);
     try {
+      let contentToUse = material.content;
+      if (!contentToUse && material.file_url && material.type === 'pdf') {
+        const { extractTextFromPDFUrl } = await import('@/lib/pdfProcessor');
+        contentToUse = await extractTextFromPDFUrl(material.file_url);
+      }
+
+      if (contentToUse) {
+        const { processForSummary } = await import('@/lib/pdfProcessor');
+        contentToUse = processForSummary(contentToUse);
+      }
+
+      if (!contentToUse || contentToUse.length < 50) {
+        throw new Error("Document content is too brief or empty to summarize.");
+      }
+
       const summary = await localApi.integrations.Core.InvokeLLM({
-        prompt: `Create a concise summary of this content, highlighting the key concepts and important points: "${material.content}"`,
+        prompt: `Create a concise summary of this content, highlighting the key concepts and important points: "${contentToUse}"`,
       });
 
       await localApi.entities.StudyMaterial.update(material.id, {
