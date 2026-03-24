@@ -2,6 +2,30 @@ import { db, getStudyStats, ensureDbOpen } from "../lib/db";
 import { safeJsonParse } from "../lib/safeJsonParser";
 import { supabase } from "../lib/supabase";
 
+const syncToFirestore = async (tableName, action, id, data = null) => {
+    try {
+        const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
+        const { doc, setDoc, deleteDoc } = await import('firebase/firestore');
+
+        const user = firebaseAuth.currentUser;
+        if (!user) return; // Only sync if user is logged in
+
+        // Save the entity properties into the user's specific collection
+        const docRef = doc(firestoreDB, 'users', user.uid, tableName, id.toString());
+
+        if (action === 'delete') {
+            await deleteDoc(docRef);
+        } else {
+            // Filter out undefined values from data as Firestore rejects them
+            const cleanData = {};
+            if (data) Object.entries(data).forEach(([k, v]) => { if (v !== undefined) cleanData[k] = v; });
+            await setDoc(docRef, cleanData, { merge: true });
+        }
+    } catch (e) {
+        console.error(`[Firestore Sync] Failed to sync ${tableName} (${action}):`, e);
+    }
+};
+
 const createEntity = (tableName) => ({
     list: async (orderBy = null, limit = null) => {
         await ensureDbOpen();
@@ -41,16 +65,25 @@ const createEntity = (tableName) => ({
         await ensureDbOpen();
         const item = { ...data, created_date: data.created_date || new Date().toISOString() };
         const id = await db.table(tableName).add(item);
-        return { ...item, id };
+        const finalItem = { ...item, id };
+        // Sync to Firestore in the background
+        syncToFirestore(tableName, 'create', id, finalItem);
+        return finalItem;
     },
     update: async (id, data) => {
         await ensureDbOpen();
         await db.table(tableName).update(id, data);
-        return await db.table(tableName).get(id);
+        const finalItem = await db.table(tableName).get(id);
+        // Sync to Firestore in the background
+        syncToFirestore(tableName, 'update', id, finalItem);
+        return finalItem;
     },
     delete: async (id) => {
         await ensureDbOpen();
-        return await db.table(tableName).delete(id);
+        const result = await db.table(tableName).delete(id);
+        // Sync to Firestore in the background
+        syncToFirestore(tableName, 'delete', id);
+        return result;
     },
     get: async (id) => {
         await ensureDbOpen();
