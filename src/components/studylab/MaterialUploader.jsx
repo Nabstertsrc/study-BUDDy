@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { base44 } from "@/api/base44Client";
+import { localApi } from "@/api/localApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Upload,
@@ -42,7 +42,7 @@ export default function MaterialUploader({ modules, onSuccess }) {
   const queryClient = useQueryClient();
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.StudyMaterial.create(data),
+    mutationFn: (data) => localApi.entities.StudyMaterial.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["materials"] });
       setFile(null);
@@ -113,7 +113,7 @@ export default function MaterialUploader({ modules, onSuccess }) {
       const modulesList = modules.map(m => `${m.code}: ${m.title}${m.description ? ' - ' + m.description : ''}`).join('\n');
       const moduleCodes = modules.map(m => m.code).join(', ');
 
-      const result = await base44.integrations.Core.InvokeLLM({
+      const result = await localApi.integrations.Core.InvokeLLM({
         prompt: `SCAN this document excerpt carefully and find the module/course code.
 
 **WHERE TO LOOK:**
@@ -158,10 +158,13 @@ INSTRUCTIONS:
 
 
 
-  const scanForPrescribedBooks = async (fileUrl) => {
+  const scanForPrescribedBooks = async (textContext) => {
+    if (!textContext || textContext.length < 50) return;
+
     setScanningBooks(true);
     try {
-      const response = await base44.integrations.Core.InvokeLLM({
+      const excerpt = textContext.length > 15000 ? textContext.substring(0, 15000) : textContext;
+      const response = await localApi.integrations.Core.InvokeLLM({
         prompt: `Analyze this document and extract ALL prescribed/recommended books, textbooks, or reference materials mentioned.
 
 Look for sections like:
@@ -176,8 +179,11 @@ For EACH book found, extract:
 - Author(s)
 - Edition (if mentioned)
 
-Return a list of books.`,
-        file_urls: [fileUrl],
+Return a list of books.
+      
+--- DOCUMENT EXCERPT ---
+${excerpt}
+----------------------`,
         isBackground: true,
         response_json_schema: {
           type: "object",
@@ -210,7 +216,7 @@ Return a list of books.`,
           result.books.map(async (book) => {
             const searchQuery = `${book.title} ${book.author} ${book.edition || ''} pdf free download`;
 
-            const webResponse = await base44.integrations.Core.InvokeLLM({
+            const webResponse = await localApi.integrations.Core.InvokeLLM({
               prompt: `Find free online resources (PDFs, ebooks, or web content) for this book:
 Title: ${book.title}
 Author: ${book.author}
@@ -262,7 +268,7 @@ Return the BEST 2-3 direct URLs to access this content.`,
 
         // Save books to database
         for (const book of booksWithUrls) {
-          await base44.entities.PrescribedBook.create({
+          await localApi.entities.PrescribedBook.create({
             title: book.title,
             author: book.author,
             edition: book.edition || '',
@@ -289,7 +295,7 @@ Return the BEST 2-3 direct URLs to access this content.`,
     let extractedContent = "";
 
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      const { file_url } = await localApi.integrations.Core.UploadFile({ file });
 
       // OCR Processing if it's a PDF
       if (isPDF(file)) {
@@ -312,7 +318,9 @@ Return the BEST 2-3 direct URLs to access this content.`,
       });
 
       // Scan for prescribed books after upload
-      await scanForPrescribedBooks(file_url);
+      if (extractedContent) {
+        await scanForPrescribedBooks(extractedContent);
+      }
     } catch (uploadError) {
       console.error("Upload failed:", uploadError);
       toast.error("Failed to upload material");

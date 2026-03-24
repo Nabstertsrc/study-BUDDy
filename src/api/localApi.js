@@ -414,16 +414,15 @@ export const localApi = {
                         const downloadUrl = await getDownloadURL(snapshot.ref);
                         return { file_url: downloadUrl };
                     } catch (firebaseErr) {
-                        console.warn("Firebase Storage upload failed, falling back to base64 Data URL:", firebaseErr);
-                        // Fallback to Data URL if Firebase is missing/unconfigured
-                        const reader = new FileReader();
-                        return new Promise((resolve, reject) => {
-                            reader.onload = () => {
-                                resolve({ file_url: reader.result });
-                            };
-                            reader.onerror = reject;
-                            reader.readAsDataURL(file);
-                        });
+                        console.error("Firebase Storage upload failed:", firebaseErr);
+
+                        // Critical fail-safe: Large background base64 strings crash Firestore Sync
+                        // and AI Payload HTTP headers. We must force the user to fix their Cloud rules!
+                        if (firebaseErr.code === 'storage/unauthorized') {
+                            throw new Error("Cloud Storage rules are blocking your upload. Please update your Firebase Storage Rules to allow read/write for authenticated users.");
+                        } else {
+                            throw new Error(`Cloud storage upload failed: ${firebaseErr.message}`);
+                        }
                     }
                 }
             },
