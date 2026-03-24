@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { localApi } from "@/api/localApi";
+import { db as firestoreDB, auth } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp, query, getDocs, where, deleteDoc } from "firebase/firestore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +19,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Upload, FileText, Loader2, Trash2, Sparkles, BookOpen, Globe } from "lucide-react";
+import { Upload, FileText, Loader2, Trash2, Sparkles, BookOpen, Globe, Share2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -29,17 +31,18 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
   const [dragActive, setDragActive] = useState(false);
   const [generatingQuiz, setGeneratingQuiz] = useState(null);
   const [generatingSummary, setGeneratingSummary] = useState(null);
+  const [sharingMaterial, setSharingMaterial] = useState(null);
 
   const queryClient = useQueryClient();
 
   const { data: materials, isLoading } = useQuery({
     queryKey: ["materials", module?.id],
-    queryFn: () => base44.entities.StudyMaterial.filter({ module_id: module.id }),
+    queryFn: () => localApi.entities.StudyMaterial.filter({ module_id: module.id }),
     enabled: !!module?.id && isOpen,
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.StudyMaterial.delete(id),
+    mutationFn: (id) => localApi.entities.StudyMaterial.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["materials", module.id] });
       toast.success("Material deleted");
@@ -95,7 +98,7 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
 
     setUploading(true);
     try {
-      const uploadResult = await base44.integrations.Core.UploadFile({ file });
+      const uploadResult = await localApi.integrations.Core.UploadFile({ file });
 
       if (!uploadResult?.file_url) {
         throw new Error("File upload failed - no URL returned");
@@ -103,21 +106,20 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
 
       let extractedContent = "";
       try {
-        extractedContent = await base44.integrations.Core.InvokeLLM({
-          prompt: "Extract all text content from this document. Return only the text, nothing else.",
-          file_urls: [uploadResult.file_url],
-        });
+        const { extractTextFromPDF } = await import('@/lib/pdfProcessor');
+        extractedContent = await extractTextFromPDF(file);
       } catch (extractError) {
         console.warn("Content extraction skipped:", extractError);
       }
 
-      await base44.entities.StudyMaterial.create({
+      await localApi.entities.StudyMaterial.create({
         title: title,
         module_id: module.id,
         type: file.type?.includes("pdf") ? "pdf" : "notes",
         file_url: uploadResult.file_url,
         content: extractedContent || "",
         is_processed: false,
+        is_public: false
       });
 
       queryClient.invalidateQueries({ queryKey: ["materials", module.id] });
@@ -137,7 +139,7 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
     try {
       const context = material.content && material.content.length > 50 ? material.content : `Topic: ${material.title}. (Content is brief, generate general questions based on this topic)`;
 
-      const quizData = await base44.integrations.Core.InvokeLLM({
+      const quizData = await localApi.integrations.Core.InvokeLLM({
         prompt: `You are a quiz generator.
         
         Generate 5 multiple choice questions based strictly on this context:
@@ -177,11 +179,13 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
         }
       });
 
-      await base44.entities.Quiz.create({
+      const parsedQuiz = typeof quizData === 'string' ? JSON.parse(quizData) : quizData;
+
+      await localApi.entities.Quiz.create({
         title: `Quiz: ${material.title}`,
         module_id: module.id,
         material_id: material.id,
-        questions: quizData.questions,
+        questions: parsedQuiz.questions,
         difficulty: "medium",
         attempts: 0,
       });
@@ -198,11 +202,11 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
   const generateSummary = async (material) => {
     setGeneratingSummary(material.id);
     try {
-      const summary = await base44.integrations.Core.InvokeLLM({
+      const summary = await localApi.integrations.Core.InvokeLLM({
         prompt: `Create a concise summary of this content, highlighting the key concepts and important points: "${material.content}"`,
       });
 
-      await base44.entities.StudyMaterial.update(material.id, {
+      await localApi.entities.StudyMaterial.update(material.id, {
         summary: summary,
         is_processed: true,
       });
@@ -213,6 +217,57 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
       toast.error("Failed to generate summary");
     } finally {
       setGeneratingSummary(null);
+    }
+  };
+
+  const togglePublicStatus = async (material) => {
+    if (!auth.currentUser) {
+      toast.error("You must be logged in to share materials. Please sign in via Settings.");
+      return;
+    }
+
+    setSharingMaterial(material.id);
+    try {
+      const willBePublic = !material.is_public;
+
+      if (willBePublic) {
+        // Pushing to Firestore public_materials collection
+        const docData = {
+          title: material.title,
+          courseCode: module.code.toUpperCase(),
+          description: material.summary || "No description provided.",
+          fileUrl: material.file_url,
+          fileName: material.title + '.pdf',
+          uploadedBy: auth.currentUser.email || "Study Buddy User",
+          createdAt: serverTimestamp(),
+          type: material.type || "Public Resource",
+          materialId: material.id
+        };
+        await addDoc(collection(firestoreDB, "public_materials"), docData);
+        toast.success("Shared successfully with the community!");
+      } else {
+        // Unshare logic (find the doc and delete)
+        const q = query(
+          collection(firestoreDB, "public_materials"),
+          where("uploadedBy", "==", auth.currentUser.email),
+          where("materialId", "==", material.id)
+        );
+        const docs = await getDocs(q);
+        docs.forEach(async (docSnap) => {
+          await deleteDoc(docSnap.ref);
+        });
+        toast.success("Material is now private.");
+      }
+
+      await localApi.entities.StudyMaterial.update(material.id, {
+        is_public: willBePublic
+      });
+      queryClient.invalidateQueries({ queryKey: ["materials", module.id] });
+    } catch (error) {
+      console.error("Share error:", error);
+      toast.error("Failed to change sharing status.");
+    } finally {
+      setSharingMaterial(null);
     }
   };
 
@@ -262,6 +317,24 @@ export default function ModuleMaterialsDialog({ module, isOpen, onClose }) {
                             Processed
                           </Badge>
                         )}
+                        <Badge
+                          variant="outline"
+                          className={cn(
+                            "text-xs cursor-pointer transition-colors shadow-sm",
+                            material.is_public
+                              ? "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100"
+                              : "bg-white text-slate-500 hover:bg-slate-50 border-slate-200"
+                          )}
+                          onClick={() => togglePublicStatus(material)}
+                        >
+                          {sharingMaterial === material.id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : material.is_public ? (
+                            <><Globe className="w-3 h-3 mr-1 inline" /> Shared Globally</>
+                          ) : (
+                            <><Share2 className="w-3 h-3 mr-1 inline" /> Share to Community</>
+                          )}
+                        </Badge>
                       </div>
                     </div>
                     <Button

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Loader2, Upload, Search, Download, Users, FileText, Tag, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { base44 } from "@/api/base44Client";
+import { localApi } from "@/api/localApi";
 
 export default function CommunityHub() {
     const [materials, setMaterials] = useState([]);
@@ -57,7 +57,7 @@ export default function CommunityHub() {
         setUploading(true);
         try {
             // Use existing base44 file upload to get URL
-            const { file_url } = await base44.integrations.Core.UploadFile({ file });
+            const { file_url } = await localApi.integrations.Core.UploadFile({ file });
 
             const docData = {
                 title,
@@ -239,17 +239,31 @@ export default function CommunityHub() {
                                                         Download
                                                     </a>
                                                 </Button>
-                                                <Button variant="default" className="flex-1 bg-slate-900 hover:bg-slate-800 text-white" onClick={() => {
-                                                    toast.success("Added to your personal library!");
-                                                    base44.entities.StudyMaterial.create({
-                                                        title: `[Community] ${material.courseCode}: ${material.title}`,
-                                                        file_url: material.fileUrl,
-                                                        file_type: 'pdf',
-                                                        tags: [material.courseCode, 'community'],
-                                                        status: 'processing'
-                                                    }).catch(err => {
+                                                <Button variant="default" className="flex-1 bg-slate-900 hover:bg-slate-800 text-white" onClick={async () => {
+                                                    try {
+                                                        const existingMods = await localApi.entities.Module.filter({ code: material.courseCode });
+                                                        let mId = existingMods.length > 0 ? existingMods[0].id : null;
+                                                        if (!mId) {
+                                                            const newMod = await localApi.entities.Module.create({
+                                                                code: material.courseCode,
+                                                                title: `Community: ${material.courseCode}`,
+                                                                progress: 0
+                                                            });
+                                                            mId = newMod.id;
+                                                        }
+
+                                                        await localApi.entities.StudyMaterial.create({
+                                                            title: `[Community] ${material.courseCode}: ${material.title}`,
+                                                            file_url: material.fileUrl,
+                                                            type: 'pdf',
+                                                            module_id: mId,
+                                                            content: material.description || 'Downloaded from community',
+                                                            is_processed: false
+                                                        });
+                                                        toast.success("Added to your personal library!");
+                                                    } catch (err) {
                                                         toast.error("Failed to add to library.");
-                                                    });
+                                                    }
                                                 }}>
                                                     Use in Lab <ArrowRight className="w-3 h-3 ml-2" />
                                                 </Button>
