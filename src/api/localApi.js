@@ -304,23 +304,31 @@ export const localApi = {
     integrations: {
         Core: {
             UploadFile: async ({ file }) => {
-                const reader = new FileReader();
-                return new Promise((resolve, reject) => {
-                    reader.onload = async () => {
-                        const buffer = reader.result;
-                        const electron = window['electron'];
-                        if (!electron) {
-                            reject(new Error("Electron bridge not found."));
-                            return;
-                        }
-                        const filePath = await electron.saveFile({ name: file.name, content: buffer });
-                        // Convert to our custom protocol for renderer access
-                        const protocolPath = `study-file://${filePath}`;
-                        resolve({ file_url: protocolPath });
-                    };
-                    reader.onerror = reject;
-                    reader.readAsArrayBuffer(file);
-                });
+                const electron = window['electron'];
+                if (electron) {
+                    const reader = new FileReader();
+                    return new Promise((resolve, reject) => {
+                        reader.onload = async () => {
+                            const buffer = reader.result;
+                            const filePath = await electron.saveFile({ name: file.name, content: buffer });
+                            // Convert to our custom protocol for renderer access
+                            const protocolPath = `study-file://${filePath}`;
+                            resolve({ file_url: protocolPath });
+                        };
+                        reader.onerror = reject;
+                        reader.readAsArrayBuffer(file);
+                    });
+                } else {
+                    // Web Fallback: Store the file as a Data URL for IndexedDB persistence
+                    const reader = new FileReader();
+                    return new Promise((resolve, reject) => {
+                        reader.onload = () => {
+                            resolve({ file_url: reader.result });
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+                }
             },
             InvokeLLM: async ({ prompt, systemPrompt = "", ...options }) => {
                 try {
