@@ -92,6 +92,50 @@ const createEntity = (tableName) => ({
 });
 
 export const localApi = {
+    sync: {
+        pullFromFirestore: async () => {
+            try {
+                const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
+                const { collection, getDocs } = await import('firebase/firestore');
+
+                const user = firebaseAuth.currentUser;
+                // Avoid parallel sync cycles on reload
+                if (!user || window['__FS_SYNC_RUNNING']) return;
+                window['__FS_SYNC_RUNNING'] = true;
+
+                await ensureDbOpen();
+                console.log(`[Firestore Sync] Pulling down data for ${user.uid}...`);
+
+                const tablesToSync = [
+                    'modules', 'assignments', 'materials', 'quizzes', 'notes',
+                    'studySessions', 'learningActivities', 'skillGaps', 'essays',
+                    'learningGoals', 'prescribedBooks', 'transactions'
+                ];
+
+                for (const tableName of tablesToSync) {
+                    try {
+                        const colRef = collection(firestoreDB, 'users', user.uid, tableName);
+                        const snap = await getDocs(colRef);
+                        if (!snap.empty) {
+                            const items = snap.docs.map(doc => {
+                                const data = doc.data();
+                                const idNum = Number(doc.id);
+                                return { ...data, id: isNaN(idNum) ? doc.id : idNum };
+                            });
+                            await db.table(tableName).bulkPut(items);
+                        }
+                    } catch (tableErr) {
+                        console.error(`[Firestore Sync] Failed to pull table ${tableName}:`, tableErr);
+                    }
+                }
+                console.log(`[Firestore Sync] Pull complete!`);
+                window['__FS_SYNC_RUNNING'] = false;
+            } catch (err) {
+                console.error("[Firestore Sync] Critical failure:", err);
+                window['__FS_SYNC_RUNNING'] = false;
+            }
+        }
+    },
     entities: {
         Module: createEntity('modules'),
         Assignment: createEntity('assignments'),
@@ -243,6 +287,9 @@ export const localApi = {
 
             const fbUser = firebaseAuth.currentUser;
             if (fbUser) {
+                // Background Sync: Hydrate local IndexedDB from Firestore
+                setTimeout(() => localApi.sync.pullFromFirestore().catch(console.error), 2000);
+
                 // Fetch from Firestore
                 const userDocRef = doc(firestoreDB, 'users', fbUser.uid);
                 try {
