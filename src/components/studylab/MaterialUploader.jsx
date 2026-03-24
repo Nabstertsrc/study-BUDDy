@@ -99,28 +99,27 @@ export default function MaterialUploader({ modules, onSuccess }) {
 
     setAnalyzingModule(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file: fileToAnalyze });
+      const { extractTextFromPDF } = await import('@/lib/pdfProcessor');
+      let textContent = '';
+      try {
+        textContent = await extractTextFromPDF(fileToAnalyze);
+      } catch (e) {
+        console.warn("Could not extract text for module detection");
+        return;
+      }
+
+      const excerpt = textContent.length > 5000 ? textContent.substring(0, 5000) : textContent;
 
       const modulesList = modules.map(m => `${m.code}: ${m.title}${m.description ? ' - ' + m.description : ''}`).join('\n');
       const moduleCodes = modules.map(m => m.code).join(', ');
 
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `SCAN this document carefully and find the module/course code.
+        prompt: `SCAN this document excerpt carefully and find the module/course code.
 
-**WHERE TO LOOK (check ALL of these):**
+**WHERE TO LOOK:**
 1. Top of the first page - header area
 2. Title or heading sections
-3. Footer with course information
-4. Any section labeled "Module", "Course", "Subject", "Code"
-5. Study guide headers
-6. Watermarks or stamps
-7. Inside the document title/filename references
-
-**PATTERNS TO MATCH:**
-- Format like: CS301, BIO101, MATH201, ENG102
-- May appear as: "Module: CS301" or "Course Code: CS301" or just "CS301"
-- Sometimes written as "CS 301" (with space)
-- Can be in parentheses or brackets
+3. Any section labeled "Module", "Course", "Code"
 
 **Available Module Codes:**
 ${moduleCodes}
@@ -128,15 +127,16 @@ ${moduleCodes}
 **Full Module List:**
 ${modulesList}
 
-INSTRUCTIONS:
-1. Read the ENTIRE first page carefully
-2. Look for ANY of the module codes listed above
-3. Check variations with/without spaces
-4. Return ONLY the matching code in this exact format: just the code like "CS301"
-5. If NO match found, return exactly: "NONE"
+**Document Excerpt:**
+---
+${excerpt}
+---
 
-DO NOT explain, DO NOT add extra text. Return ONLY the code or "NONE".`,
-        file_urls: [file_url],
+INSTRUCTIONS:
+1. Look for ANY of the module codes listed above inside the document excerpt.
+2. Return ONLY the matching code in this exact format: just the code like "CS301"
+3. If NO match found, return exactly: "NONE"
+4. DO NOT explain, DO NOT add extra text.`,
         isBackground: true
       });
 

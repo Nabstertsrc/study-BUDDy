@@ -38,7 +38,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ProfessionalAIContent } from "@/components/ui/ProfessionalAIContent";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { isPDF } from "@/lib/pdfProcessor";
+import { isPDF, extractTextFromPDF } from "@/lib/pdfProcessor";
 import AILoadingState from "@/components/ui/AILoadingState";
 
 // Track backend availability so we don't waste time retrying a dead server
@@ -112,59 +112,7 @@ const callAI = async (prompt, systemPrompt = "") => {
     return await callGeminiDirect(prompt, systemPrompt);
 };
 
-/**
- * Extract text from a PDF — uses Gemini Vision with inline base64 data.
- */
-const extractPDFWithGemini = async (base64Data) => {
-    const backendUp = await isBackendAvailable();
-    if (backendUp) {
-        try {
-            return await base44.integrations.Core.InvokeLLM({
-                prompt: "Extract ALL text content from this PDF document. Return ONLY the raw extracted text, preserving the structure and paragraph formatting. Do not add any commentary, headers, or explanations. Just the pure document text.",
-                systemPrompt: "You are an OCR and text extraction assistant. Extract text accurately and completely.",
-                file_urls: [`data:application/pdf;base64,${base64Data}`]
-            });
-        } catch (err) {
-            if (err.message && err.message.includes("credits")) {
-                throw err;
-            }
-            console.warn("DocumentChat: Backend PDF extraction failed, using direct Gemini:", err.message);
-            _backendDown = true;
-        }
-    }
-
-    try {
-        await localApi.wallet.spendCredits(1, "Document Processing");
-    } catch (e) {
-        throw new Error("You have run out of credits! Please upgrade or top up your balance.");
-    }
-
-    // Direct Gemini API with inline PDF data
-    const keys = getAPIKeys();
-    if (!keys.gemini) {
-        throw new Error("No AI service available. Please configure your Gemini API key in Settings.");
-    }
-
-    try {
-        const genAI = new GoogleGenerativeAI(keys.gemini);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-        const result = await model.generateContent([
-            "Extract ALL text content from this PDF document. Return ONLY the raw extracted text, preserving the structure and paragraph formatting. Do not add any commentary, headers, or explanations. Just the pure document text.",
-            {
-                inlineData: {
-                    mimeType: "application/pdf",
-                    data: base64Data
-                }
-            }
-        ]);
-        return result.response.text();
-    } catch (err) {
-        console.warn("[Wallet] Refunding 1 credit due to Gemini PDF processing failure...");
-        await localApi.wallet.addCredits(1, { amount: 0, currency: 'USD', note: 'Refund for failed document processing' });
-        throw err;
-    }
-};
+// Legacy extractPDFWithGemini replaced by local extractTextFromPDF to prevent AI payload crashing
 
 const SUGGESTED_QUESTIONS = [
     "Summarize the key points of this document",
@@ -498,20 +446,9 @@ export default function DocumentChat({ materials = [] }) {
 
         try {
             // Read file content
-            if (selectedFile.type === "application/pdf") {
-                // Convert to base64
-                const base64 = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(selectedFile);
-                    reader.onload = () => {
-                        const dataUrl = /** @type {string} */ (reader.result);
-                        resolve(dataUrl.split(',')[1]);
-                    };
-                    reader.onerror = reject;
-                });
-
-                // Use resilient PDF extraction (backend -> direct Gemini fallback)
-                const extractedText = await extractPDFWithGemini(base64);
+            if (selectedFile.type === "application/pdf" || isPDF({ file_url: selectedFile.name })) {
+                // Use robust local PDF.js extraction instead of sending massive payload over network
+                const extractedText = await extractTextFromPDF(selectedFile);
 
                 setDocumentContent(extractedText);
                 toast.success("Document processed successfully!", {

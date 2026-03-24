@@ -34,26 +34,59 @@ export async function downloadPDF(material, filename = null) {
 }
 
 /**
- * Extract text from PDF using Gemini Vision API
+ * Extract text locally using PDF.js to avoid AI payload API limits
  * @param {File} file - PDF file object
  * @returns {Promise<string>} Extracted text content
  */
 export async function extractTextFromPDF(file) {
     try {
-        // Convert PDF to base64
-        const base64 = await fileToBase64(file);
+        if (file.type === 'text/plain' || file.type === 'text/markdown') {
+            return await file.text();
+        }
 
-        // Use Gemini Vision to OCR the PDF
-        const response = await base44.integrations.Core.InvokeLLM({
-            prompt: `Extract ALL text from this PDF document. Return ONLY the extracted text content, preserving paragraph structure and formatting as much as possible. Do not add any commentary or explanations.`,
-            systemPrompt: "You are an OCR assistant. Extract text accurately from documents.",
-            image: base64
+        // Load PDF.js from CDN dynamically to avoid build-step worker issues
+        const pdfjsLib = window['pdfjs-dist/build/pdf'] || await new Promise((resolve, reject) => {
+            if (window['pdfjs-dist/build/pdf']) return resolve(window['pdfjs-dist/build/pdf']);
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            script.onload = () => {
+                const pdfjs = window['pdfjs-dist/build/pdf'];
+                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                resolve(pdfjs);
+            };
+            script.onerror = reject;
+            document.head.appendChild(script);
         });
 
-        return response;
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = '';
+
+        // Extract text from up to 50 pages to prevent memory issues
+        const maxPages = Math.min(pdf.numPages, 50);
+        for (let i = 1; i <= maxPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            const pageText = content.items.map(item => item.str).join(' ');
+            fullText += pageText + '\n\n';
+        }
+
+        return fullText.trim();
     } catch (error) {
-        console.error('Error extracting text from PDF:', error);
-        throw error;
+        console.error('Local PDF extraction failed:', error);
+
+        // Ultimate Fallback to Gemini OCR natively if local parse fails
+        try {
+            const base64 = await fileToBase64(file);
+            const response = await base44.integrations.Core.InvokeLLM({
+                prompt: `Extract ALL text from this PDF document. Return ONLY the extracted text content.`,
+                systemPrompt: "You are an OCR assistant. Extract text accurately from documents.",
+                image: base64
+            });
+            return response;
+        } catch (geminiError) {
+            throw new Error("Failed to extract text from PDF locally and via AI.");
+        }
     }
 }
 

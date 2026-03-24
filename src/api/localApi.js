@@ -473,25 +473,29 @@ export const localApi = {
                     throw new Error("You have run out of credits! Please upgrade or top up your balance to analyze files.");
                 }
 
-                const { studyBuddyAI } = await import('../lib/ai');
-                const reader = new FileReader();
-                const base64 = await new Promise((resolve, reject) => {
-                    reader.onload = () => {
-                        const res = reader.result;
-                        if (typeof res === 'string') {
-                            resolve(res.split(',')[1]);
-                        } else {
-                            reject(new Error("Failed to read file as base64 string"));
-                        }
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
-
                 let result;
                 try {
-                    result = await studyBuddyAI.classifyAndExtract(base64, file.type);
-                    if (result?.error) throw new Error(result.error);
+                    const { extractTextFromPDF } = await import('../lib/pdfProcessor');
+                    const fileText = await extractTextFromPDF(file);
+
+                    const { generateWithGemini, studyBuddyAI } = await import('../lib/ai');
+                    const prompt = `Analyze this document content and extract its properties.
+    Return ONLY valid JSON matching this schema:
+    {
+      "title": "Document Title",
+      "code": "Module code (e.g. INF3708, COS3711) if present",
+      "module_codes_found": ["Array of any other module codes found"],
+      "description": "3 sentence summary of content",
+      "assignments_found": [{ "title": "string", "due_date": "YYYY-MM-DD", "description": "string", "code": "module code" }],
+      "prescribed_books": [{ "title": "string", "author": "string", "edition": "string" }]
+    }
+    DOCUMENT CONTENT: 
+    ${fileText.length > 25000 ? fileText.substring(0, 25000) + '...' : fileText}`;
+
+                    const response = await generateWithGemini(prompt, "You are a smart Data Parser. Output RAW JSON strictly matching schema.");
+                    const { safeJsonParseObject } = await import('../lib/safeJsonParser');
+                    result = { data: safeJsonParseObject(response, { throwOnError: true }) };
+
                     if (!result?.data) throw new Error("AI failed to extract structured data from this file.");
                 } catch (err) {
                     console.warn("[Wallet] Refunding 1 credit due to Auto-Organizer failure...");
@@ -613,6 +617,7 @@ export const localApi = {
                         // Find resources for this book automatically
                         let resources = [];
                         try {
+                            const { studyBuddyAI } = await import('../lib/ai');
                             resources = await studyBuddyAI.findResources(`Prescribed book: ${book.title} by ${book.author}`, { isBackground: true });
                         } catch (e) {
                             console.warn("Failed to find resources for book:", book.title);
