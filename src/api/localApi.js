@@ -319,15 +319,32 @@ export const localApi = {
                         reader.readAsArrayBuffer(file);
                     });
                 } else {
-                    // Web Fallback: Store the file as a Data URL for IndexedDB persistence
-                    const reader = new FileReader();
-                    return new Promise((resolve, reject) => {
-                        reader.onload = () => {
-                            resolve({ file_url: reader.result });
-                        };
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                    });
+                    // Web Fallback: Upload to Firebase Storage
+                    try {
+                        const { storage, auth } = await import('../lib/firebase');
+                        const { ref, uploadBytes, getDownloadURL } = await import('firebase/storage');
+
+                        const user = auth.currentUser;
+                        const userId = user ? user.uid : 'anonymous_uploads';
+                        const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+                        const uniqueName = `${Date.now()}_${safeName}`;
+                        const storageRef = ref(storage, `uploads/${userId}/${uniqueName}`);
+
+                        const snapshot = await uploadBytes(storageRef, file);
+                        const downloadUrl = await getDownloadURL(snapshot.ref);
+                        return { file_url: downloadUrl };
+                    } catch (firebaseErr) {
+                        console.warn("Firebase Storage upload failed, falling back to base64 Data URL:", firebaseErr);
+                        // Fallback to Data URL if Firebase is missing/unconfigured
+                        const reader = new FileReader();
+                        return new Promise((resolve, reject) => {
+                            reader.onload = () => {
+                                resolve({ file_url: reader.result });
+                            };
+                            reader.onerror = reject;
+                            reader.readAsDataURL(file);
+                        });
+                    }
                 }
             },
             InvokeLLM: async ({ prompt, systemPrompt = "", ...options }) => {
