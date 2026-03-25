@@ -215,7 +215,7 @@ Do not use markdown code block wrappers like \`\`\`json. Just output the raw obj
         try {
             return await BackendBridge.searchResources(query);
         } catch (err) {
-            console.warn("Local Go Backend unavailable, falling back to Gemini...", err);
+            console.warn(`Local Go Backend unavailable, falling back to Gemini for query: "${query}"...`);
 
             // Fallback to original Gemini implementation
             const prompt = `Find 5-7 high-quality, free educational resources (PDFs, study guides, YouTube playlists, interactive tools) for: "${query}".

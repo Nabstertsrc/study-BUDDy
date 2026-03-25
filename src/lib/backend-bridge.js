@@ -112,7 +112,8 @@ export const BackendBridge = {
 
             return await response.json();
         } catch (error) {
-            console.error("BackendBridge: Search failed:", error);
+            // Suppressing console.error to avoid alarming red stack traces during intentional Gemini fallback 
+            // when the local Go engine is known not to be running. Browser fetch failures are automatically logged anyway.
             throw error; // Propagate to caller for fallback handling
         }
     },
