@@ -55,13 +55,14 @@ export const BackendBridge = {
             const balance = await localApi.wallet.getBalance();
             if (!isBackground && balance < 1) throw new Error("INSUFFICIENT_CREDITS");
 
+            const keys = getAPIKeys();
             const response = await fetch(`${BASE_URLS.PYTHON}/classify`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     fileBase64,
                     mimeType,
-                    keys: getAPIKeys()
+                    ...(Object.values(keys).some(k => k !== null) ? { keys } : {})
                 })
             });
 
@@ -136,13 +137,14 @@ export const BackendBridge = {
                 finalPrompt += `\n\nIMPORTANT: You must return ONLY valid JSON exactly matching this schema:\n${JSON.stringify(options.response_json_schema, null, 2)}`;
             }
 
+            const keys = getAPIKeys();
             const response = await fetch(`${BASE_URLS.PYTHON}/generate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     prompt: finalPrompt,
                     systemPrompt,
-                    keys: getAPIKeys(),
+                    ...(Object.values(keys).some(k => k !== null) ? { keys } : {}),
                     ...options
                 })
             });

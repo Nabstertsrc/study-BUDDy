@@ -6,10 +6,10 @@
 
 // Keys are injected at build time by Vite's define
 const ENV_KEYS = {
-    gemini: import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GOOGLE_API_KEY,
-    deepseek: import.meta.env.VITE_DEEPSEEK_API_KEY,
-    openai: import.meta.env.VITE_OPENAI_API_KEY,
-    xai: import.meta.env.VITE_XAI_API_KEY,
+    gemini: null,
+    deepseek: null,
+    openai: null,
+    xai: null,
     supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
     supabaseKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 }

@@ -16,8 +16,8 @@ const syncToFirestore = async (tableName, action, id, data = null) => {
         if (action === 'delete') {
             await deleteDoc(docRef);
         } else {
-            // Filter out undefined values from data as Firestore rejects them
-            const cleanData = {};
+            // Filter out undefined values and explicitly include userId for root-level rule compatibility
+            const cleanData = { userId: user.uid };
             if (data) Object.entries(data).forEach(([k, v]) => { if (v !== undefined) cleanData[k] = v; });
             await setDoc(docRef, cleanData, { merge: true });
         }
@@ -191,7 +191,30 @@ export const localApi = {
             await localApi.wallet.checkAndResetMonthlyCredits();
             let balance = parseInt(localStorage.getItem('credit_balance') || '0', 10);
 
-            // Supabase Sync (Web only)
+            // Firestore Sync (Primary Source of Truth)
+            try {
+                const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
+                const { doc, getDoc } = await import('firebase/firestore');
+
+                const user = firebaseAuth.currentUser;
+                if (user) {
+                    const userDocRef = doc(firestoreDB, 'users', user.uid);
+                    const snap = await getDoc(userDocRef);
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        // If Cloud has a different balance, it wins (handles multi-device and refresh)
+                        if (data.credit_balance !== undefined && data.credit_balance !== balance) {
+                            console.log(`[Wallet] Syncing local balance (${balance}) with cloud (${data.credit_balance})`);
+                            balance = data.credit_balance;
+                            localStorage.setItem('credit_balance', String(balance));
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("[Wallet] Firestore balance sync failed:", e);
+            }
+
+            // Supabase Sync (Web Legacy Fallback)
             try {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
@@ -207,10 +230,26 @@ export const localApi = {
                     }
                 }
             } catch (e) {
-                console.warn("[Wallet] Supabase sync failed:", e);
+                // console.warn("[Wallet] Supabase sync failed:", e);
             }
 
             return Math.max(0, balance);
+        },
+
+        updateRemoteBalance: async (newBalance) => {
+            try {
+                const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
+                const { doc, setDoc } = await import('firebase/firestore');
+
+                const user = firebaseAuth.currentUser;
+                if (!user) return;
+
+                const userDocRef = doc(firestoreDB, 'users', user.uid);
+                await setDoc(userDocRef, { credit_balance: newBalance }, { merge: true });
+                console.log(`[Wallet] Remote balance updated to ${newBalance} in Firestore`);
+            } catch (e) {
+                console.error("[Wallet] Failed to sync balance to Firestore:", e);
+            }
         },
 
         getFreeCreditsRemaining: () => {
@@ -231,6 +270,9 @@ export const localApi = {
 
             localStorage.setItem('credit_balance', String(newTotal));
             localStorage.setItem('purchased_credit_balance', String(newPurchased));
+
+            // Sync to Cloud
+            await localApi.wallet.updateRemoteBalance(newTotal);
 
             await localApi.entities.Transaction.create({
                 ...transactionData,
@@ -266,6 +308,9 @@ export const localApi = {
             localStorage.setItem('free_credits_this_month', String(newFree));
             localStorage.setItem('purchased_credit_balance', String(newPurchased));
             localStorage.setItem('credit_balance', String(newTotal));
+
+            // Sync to Cloud
+            await localApi.wallet.updateRemoteBalance(newTotal);
 
             await localApi.entities.Transaction.create({
                 amount: 0,
@@ -633,10 +678,20 @@ export const localApi = {
                     }
                 }
 
+                // 4. Upload file to Cloud Storage so it's not lost on refresh
+                let fileUrl = null;
+                try {
+                    const uploadResult = await localApi.integrations.Core.UploadFile({ file });
+                    fileUrl = uploadResult.file_url;
+                } catch (uploadErr) {
+                    console.warn("[Auto-Organizer] Cloud Storage upload failed. Material will be local-only.", uploadErr);
+                }
+
                 await localApi.entities.StudyMaterial.create({
                     title: data.title || file.name,
                     module_id: modId,
                     type: file.type.includes('pdf') ? 'pdf' : 'image',
+                    file_url: fileUrl,
                     content: data.description || 'Imported Document',
                     is_processed: true,
                     tags: ["primary-source"]

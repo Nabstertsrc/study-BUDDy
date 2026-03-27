@@ -51,22 +51,8 @@ export const generateWithGemini = async (prompt, systemPrompt = "", options = {}
     try {
         return await BackendBridge.generateText(prompt, systemPrompt, options);
     } catch (err) {
-        console.warn("Python backend failed for Gemini prompt, falling back to JS SDK...", err);
-
-        const geminiKey = getAPIKeys().gemini || import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GOOGLE_API_KEY;
-        if (!geminiKey) throw new Error("AI Service Unavailable: Setup Gemini API key for fallback.");
-
-        const genAI = new GoogleGenerativeAI(geminiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const combinedPrompt = systemPrompt ? `${systemPrompt}\n\nUser: ${prompt}` : prompt;
-
-        try {
-            const result = await model.generateContent(combinedPrompt);
-            return result.response.text();
-        } catch (fallbackErr) {
-            console.error("Gemini Direct Fallback failed:", fallbackErr);
-            throw new Error("AI Service Unavailable: Both Backend and Gemini API failed.");
-        }
+        console.error("Python backend failed for Gemini prompt:", err);
+        throw new Error(`AI Service Unavailable: The backend failed to generate a response. ${err.message}`);
     }
 };
 
@@ -163,47 +149,12 @@ export const studyBuddyAI = {
     async classifyAndExtract(fileBase64, mimeType, options = {}) {
         console.log("AI classifyAndExtract: Routed via BackendBridge");
 
-        // Try Local Python Backend first
+        // Use Local Python Backend exclusively (Secrets are held on Railway)
         try {
             return await BackendBridge.classifyDocument(fileBase64, mimeType, options.isBackground || false);
         } catch (err) {
-            console.warn("Local Python Backend unavailable, falling back to pure JS/API calls...", err);
-
-            // Fallback to direct Gemini API call
-            const geminiKey = getAPIKeys().gemini || import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GOOGLE_API_KEY;
-            if (!geminiKey) throw new Error("AI Service Unavailable: Setup Gemini API key for fallback.");
-
-            const genAI = new GoogleGenerativeAI(geminiKey);
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-            const prompt = `Analyze this document and extract its properties.
-Return ONLY valid JSON matching this schema:
-{
-  "title": "Document Title",
-  "subject": "Academic Subject (e.g. Math, History)",
-  "category": "Document Category (e.g. Assignment, Notes, Past Paper)",
-  "type": "File Type description",
-  "difficulty": "Beginner/Intermediate/Advanced",
-  "summary": "A brief 2 sentence summary of the contents"
-}
-Do not use markdown code block wrappers like \`\`\`json. Just output the raw object.`;
-
-            try {
-                // Ensure base64 padding is removed if it has data url scheme
-                const base64Clean = fileBase64.includes(',') ? fileBase64.split(',')[1] : fileBase64;
-
-                const result = await model.generateContent([
-                    prompt,
-                    { inlineData: { data: base64Clean, mimeType } }
-                ]);
-
-                const text = result.response.text();
-                // Clean typical JSON markdown wrapping
-                const parsed = safeJsonParseObject(text, { throwOnError: true });
-                return { data: parsed };
-            } catch (fallbackErr) {
-                console.error("Gemini Direct Fallback failed:", fallbackErr);
-                throw new Error("AI Service Unavailable: Both Backend and Gemini API failed.");
-            }
+            console.error("Python Backend Failure during classification:", err);
+            throw new Error(`Classification Failed: The cloud analysis service is currently unavailable. Please try again later.`);
         }
     },
 

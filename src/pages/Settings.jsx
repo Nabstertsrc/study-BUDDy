@@ -46,6 +46,8 @@ export default function Settings() {
     deepseek: localStorage.getItem('deepseek_key') || "",
   });
 
+  const [backendReady, setBackendReady] = useState(false);
+
   // Load profile data when user is fetched
   useEffect(() => {
     if (user) {
@@ -62,6 +64,16 @@ export default function Settings() {
       const { getNotificationSettings } = await import('@/lib/db');
       const settings = await getNotificationSettings();
       setNotificationSettings(settings);
+
+      // Check Railway availability
+      try {
+        const { BackendBridge } = await import('@/lib/backend-bridge');
+        const ready = await BackendBridge.isPythonReady();
+        setBackendReady(ready);
+      } catch (e) {
+        setBackendReady(false);
+      }
+
       setLoading(false);
     };
     loadSettings();
@@ -167,24 +179,23 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <div className="space-y-2">
+              <div className="p-4 rounded-xl bg-violet-50 border border-violet-100 mb-4">
                 <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2">
-                    <Key className="w-4 h-4 text-slate-400" />
-                    Gemini API Key (Google AI)
-                  </Label>
-                  {(import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.VITE_GOOGLE_API_KEY) && (
-                    <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase">ENV Active</span>
+                  <div className="flex items-center gap-3">
+                    <div className={cn("w-3 h-3 rounded-full animate-pulse", backendReady ? "bg-green-500" : "bg-red-400")} />
+                    <div>
+                      <h4 className="font-bold text-sm text-violet-900">Railway AI Cloud</h4>
+                      <p className="text-[10px] text-violet-600 font-medium">
+                        {backendReady ? "Connected & Active (Zero-Key Mode)" : "Cloud Backend Offline"}
+                      </p>
+                    </div>
+                  </div>
+                  {backendReady && (
+                    <span className="text-[10px] bg-violet-100 text-violet-700 font-bold px-2 py-0.5 rounded-full">SECURE</span>
                   )}
                 </div>
-                <Input
-                  type="password"
-                  placeholder="Paste your Gemini AI key here..."
-                  value={aiKeys.gemini}
-                  onChange={(e) => setAiKeys({ ...aiKeys, gemini: e.target.value })}
-                />
-                <p className="text-[10px] text-slate-500 italic">
-                  * Best for scanning PDFs, images of notes, and multimodal tasks.
+                <p className="mt-2 text-[10px] text-slate-500 italic">
+                  * All AI processing is currently securely routed through your Railway backend. Keys are never stored on this device.
                 </p>
               </div>
 
@@ -192,21 +203,30 @@ export default function Settings() {
                 <div className="flex items-center justify-between">
                   <Label className="flex items-center gap-2">
                     <Key className="w-4 h-4 text-slate-400" />
-                    DeepSeek API Key
+                    Gemini API Key (Local Override)
                   </Label>
-                  {import.meta.env.VITE_DEEPSEEK_API_KEY && (
-                    <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold uppercase">ENV Active</span>
-                  )}
                 </div>
                 <Input
                   type="password"
-                  placeholder="Paste your DeepSeek key here..."
+                  placeholder="Only if you want to use your own local key..."
+                  value={aiKeys.gemini}
+                  onChange={(e) => setAiKeys({ ...aiKeys, gemini: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="flex items-center gap-2">
+                    <Key className="w-4 h-4 text-slate-400" />
+                    DeepSeek API Key (Local Override)
+                  </Label>
+                </div>
+                <Input
+                  type="password"
+                  placeholder="Only if you want to use your own local key..."
                   value={aiKeys.deepseek}
                   onChange={(e) => setAiKeys({ ...aiKeys, deepseek: e.target.value })}
                 />
-                <p className="text-[10px] text-slate-500 italic">
-                  * High-speed fallback for general chat and study assistance.
-                </p>
               </div>
             </div>
 

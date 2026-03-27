@@ -306,8 +306,8 @@ export default function DocumentChat({ materials = [] }) {
 
         setIsSpeaking(true);
 
-        const azureKey = import.meta.env.VITE_AZURE_SPEECH_KEY;
-        const azureRegion = import.meta.env.VITE_AZURE_SPEECH_REGION;
+        const azureKey = null;
+        const azureRegion = null;
 
         // Try Azure TTS if key is present
         if (azureKey && azureRegion) {
