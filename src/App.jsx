@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { getUpcomingAssignments } from './lib/db';
 import NavigationTracker from './lib/NavigationTracker';
@@ -28,8 +28,8 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    window.location.href = '/Login';
-    return null;
+    // FIXED: Use relative path for router-ready navigation on child domains (gh-pages)
+    return <Navigate to="/Login" replace />;
   }
 
   return children;
@@ -81,7 +81,7 @@ function App() {
     <QueryClientProvider client={queryClientInstance}>
       <AuthProvider>
         <NotificationProvider>
-          <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <Router basename={import.meta.env.BASE_URL} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <NavigationTracker />
             <StudyUsageTracker />
             <AppRoutes />

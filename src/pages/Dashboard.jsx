@@ -49,6 +49,9 @@ export default function Dashboard() {
   const [balance, setBalance] = useState(0);
   const { checkForNotifications } = useNotifications();
 
+  const namingPref = localStorage.getItem('naming_pref') || 'Modules';
+  const singleTerm = namingPref === 'Subjects' ? 'Subject' : 'Module';
+
   useEffect(() => {
     getAIStatus().then(setAiStatus);
     localApi.wallet.getBalance().then(setBalance);
@@ -276,10 +279,11 @@ export default function Dashboard() {
               trendUp={true}
             />
             <StatsCard
-              title="Enrolled Modules"
+              title={`Enrolled ${namingPref}`}
               value={modules?.length || 0}
               icon={BookOpen}
               gradient={null}
+              className="dark-motion-card text-white hover:animate-dark-glow transition-all"
               subtitle="Active courses"
               trend={null}
               trendUp={false}
@@ -344,11 +348,11 @@ export default function Dashboard() {
         {/* Progress Tracker (Full Width) */}
         <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000">
           <div className="flex items-center gap-3 mb-6 px-2">
-            <div className="p-2 rounded-xl bg-blue-50">
-              <BookOpen className="w-5 h-5 text-blue-600" />
+            <div className="p-2 rounded-xl bg-slate-900 shadow-xl shadow-indigo-900/10">
+              <BookOpen className="w-5 h-5 text-indigo-400" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 tracking-tight">Module Progress</h3>
+              <h3 className="font-bold text-slate-900 tracking-tight">{singleTerm} Progress</h3>
               <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Academic Tracking</p>
             </div>
           </div>

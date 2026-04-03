@@ -25,46 +25,69 @@ import {
 } from "@/components/ui/table";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import { useAuth } from "@/lib/AuthContext";
+import { Navigate } from "react-router-dom";
+import { Users } from "lucide-react";
 
 export default function MonitoringDashboard() {
+    const { isAdmin } = useAuth();
     const [logs, setLogs] = useState([]);
+    const [registeredUsers, setRegisteredUsers] = useState([]);
+    const [featureStats, setFeatureStats] = useState([]);
     const [loading, setLoading] = useState(true);
     const [systemStatus, setSystemStatus] = useState("online");
     const [stats, setStats] = useState({
         totalInteractions: 0,
         uniquePages: 0,
         aiCalls: 0,
-        uptime: "99.9%"
+        totalUsers: 0
     });
 
     const refreshLogs = async () => {
         setLoading(true);
         try {
+            const { db: firestoreDB } = await import('@/lib/firebase');
+            const { collection, getDocs, limit, orderBy: fsOrderBy, query } = await import('firebase/firestore');
+
+            // 1. Fetch Users
+            const usersRef = collection(firestoreDB, 'admin', 'registry', 'users');
+            const usersSnap = await getDocs(query(usersRef, limit(20)));
+            const usersList = [];
+            usersSnap.forEach(doc => usersList.push({ id: doc.id, ...doc.data() }));
+            setRegisteredUsers(usersList);
+
+            // 2. Fetch Feature Analytics
+            const featuresRef = collection(firestoreDB, 'admin', 'analytics', 'features');
+            const featuresSnap = await getDocs(featuresRef);
+            const featuresList = [];
+            featuresSnap.forEach(doc => featuresList.push({ id: doc.id, ...doc.data() }));
+            setFeatureStats(featuresList.sort((a, b) => (b.count || 0) - (a.count || 0)));
+
+            // 3. Current User Logs (Local fallback)
             const allActivities = await base44.entities.LearningActivity.list('-created_date', 50);
             setLogs(allActivities);
 
-            // Calculate stats
-            const aiCallsCount = allActivities.filter(l => l.activity_type?.includes('ai') || l.activity_type?.includes('generation')).length;
-            const uniquePages = new Set(allActivities.filter(l => l.activity_type === 'page_render').map(l => l.topic)).size;
-
             setStats({
                 totalInteractions: allActivities.length,
-                uniquePages: uniquePages,
-                aiCalls: aiCallsCount,
-                uptime: "Active"
+                uniquePages: new Set(allActivities.map(l => l.topic)).size,
+                aiCalls: allActivities.filter(l => l.activity_type?.includes('ai')).length,
+                totalUsers: usersList.length
             });
         } catch (err) {
-            console.error("Failed to load audit logs:", err);
+            console.error("Failed to load admin metrics:", err);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
+        if (!isAdmin) return;
         refreshLogs();
-        const interval = setInterval(refreshLogs, 10000);
+        const interval = setInterval(refreshLogs, 20000);
         return () => clearInterval(interval);
-    }, []);
+    }, [isAdmin]);
+
+    if (!isAdmin) return <Navigate to="/Dashboard" />;
 
     const getInteractionIcon = (type) => {
         switch (type) {
@@ -149,13 +172,78 @@ export default function MonitoringDashboard() {
                 <Card className="border-2 bg-slate-900 text-white shadow-xl shadow-indigo-900/10 rounded-[2rem] overflow-hidden">
                     <CardContent className="p-8">
                         <div className="flex items-center justify-between mb-4">
-                            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
-                                <UserCheck className="w-6 h-6" />
+                            <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                                <Users className="w-6 h-6" />
                             </div>
-                            <span className="text-[10px] font-black text-slate-400 uppercase">Latency</span>
+                            <span className="text-[10px] font-black text-slate-400 uppercase">Registry</span>
                         </div>
-                        <h4 className="text-3xl font-black text-white">{stats.uptime}</h4>
-                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">System State</p>
+                        <h4 className="text-3xl font-black text-white">{stats.totalUsers}</h4>
+                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">Total Registered</p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Registered Users Table */}
+                <Card className="border-2 border-slate-900 shadow-2xl rounded-[2.5rem] overflow-hidden bg-slate-900 text-white">
+                    <CardHeader className="p-8 border-b border-slate-800">
+                        <CardTitle className="text-xl font-black flex items-center gap-2">
+                            <UserCheck className="w-5 h-5 text-indigo-400" />
+                            User Directory
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        <div className="max-h-[400px] overflow-y-auto">
+                            <table className="w-full text-sm">
+                                <thead className="bg-slate-800/50 sticky top-0">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left font-black uppercase text-[10px] text-slate-500">Email</th>
+                                        <th className="px-6 py-3 text-left font-black uppercase text-[10px] text-slate-500">Role</th>
+                                        <th className="px-6 py-3 text-right font-black uppercase text-[10px] text-slate-500">Active</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {registeredUsers.map(u => (
+                                        <tr key={u.uid} className="border-b border-slate-800 hover:bg-slate-800/20 transition-colors">
+                                            <td className="px-6 py-4 font-bold truncate max-w-[150px]">{u.email}</td>
+                                            <td className="px-6 py-4">
+                                                <Badge className="bg-indigo-600/20 text-indigo-400 border-none">{u.role || 'Scholar'}</Badge>
+                                            </td>
+                                            <td className="px-6 py-4 text-right text-[10px] text-slate-500 font-mono">
+                                                {u.last_seen ? format(new Date(u.last_seen), "MMM dd") : '-'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Feature Usage Stats */}
+                <Card className="border-2 border-slate-100 shadow-xl rounded-[2.5rem] overflow-hidden bg-white">
+                    <CardHeader className="p-8 border-b border-slate-50">
+                        <CardTitle className="text-xl font-black flex items-center gap-2">
+                            <Zap className="w-5 h-5 text-amber-500" />
+                            Feature Popularity
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-8 space-y-4">
+                        {featureStats.map(f => (
+                            <div key={f.id} className="space-y-1">
+                                <div className="flex items-center justify-between text-xs font-black uppercase tracking-tight">
+                                    <span>{f.id.replace(/_/g, ' ')}</span>
+                                    <span className="text-indigo-600">{f.count} calls</span>
+                                </div>
+                                <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${Math.min(100, (f.count / (stats.totalInteractions || 1)) * 100)}%` }}
+                                        className="h-full bg-indigo-600"
+                                    />
+                                </div>
+                            </div>
+                        ))}
                     </CardContent>
                 </Card>
             </div>

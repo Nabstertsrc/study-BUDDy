@@ -191,27 +191,30 @@ export const localApi = {
             await localApi.wallet.checkAndResetMonthlyCredits();
             let balance = parseInt(localStorage.getItem('credit_balance') || '0', 10);
 
-            // Firestore Sync (Primary Source of Truth)
-            try {
-                const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
-                const { doc, getDoc } = await import('firebase/firestore');
+            // Firestore Sync (Primary Source of Truth) — skip when offline
+            if (typeof navigator !== 'undefined' && navigator.onLine) {
+                try {
+                    const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
+                    const { doc, getDoc } = await import('firebase/firestore');
 
-                const user = firebaseAuth.currentUser;
-                if (user) {
-                    const userDocRef = doc(firestoreDB, 'users', user.uid);
-                    const snap = await getDoc(userDocRef);
-                    if (snap.exists()) {
-                        const data = snap.data();
-                        // If Cloud has a different balance, it wins (handles multi-device and refresh)
-                        if (data.credit_balance !== undefined && data.credit_balance !== balance) {
-                            console.log(`[Wallet] Syncing local balance (${balance}) with cloud (${data.credit_balance})`);
-                            balance = data.credit_balance;
-                            localStorage.setItem('credit_balance', String(balance));
+                    const user = firebaseAuth.currentUser;
+                    if (user) {
+                        const userDocRef = doc(firestoreDB, 'users', user.uid);
+                        const snap = await getDoc(userDocRef);
+                        if (snap.exists()) {
+                            const data = snap.data();
+                            if (data.credit_balance !== undefined && data.credit_balance !== balance) {
+                                console.log(`[Wallet] Syncing local balance (${balance}) with cloud (${data.credit_balance})`);
+                                balance = data.credit_balance;
+                                localStorage.setItem('credit_balance', String(balance));
+                            }
                         }
                     }
+                } catch (e) {
+                    if (e.code !== 'unavailable' && !e.message?.includes('offline')) {
+                        console.warn("[Wallet] Firestore balance sync failed:", e);
+                    }
                 }
-            } catch (e) {
-                console.warn("[Wallet] Firestore balance sync failed:", e);
             }
 
             // Supabase Sync (Web Legacy Fallback)
@@ -327,31 +330,45 @@ export const localApi = {
     },
     auth: {
         me: async () => {
-            const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
-            const { doc, getDoc, setDoc } = await import('firebase/firestore');
+            const { auth: firebaseAuth } = await import('../lib/firebase');
 
             const fbUser = firebaseAuth.currentUser;
             if (fbUser) {
                 // Background Sync: Hydrate local IndexedDB from Firestore
-                setTimeout(() => localApi.sync.pullFromFirestore().catch(console.error), 2000);
-
-                // Fetch from Firestore
-                const userDocRef = doc(firestoreDB, 'users', fbUser.uid);
-                try {
-                    const snap = await getDoc(userDocRef);
-                    if (snap.exists()) {
-                        const data = snap.data();
-                        localStorage.setItem('user_profile', JSON.stringify({ id: fbUser.uid, ...data }));
-                        return { id: fbUser.uid, ...data };
-                    } else {
-                        // Initialize Firestore profile if it doesn't exist
-                        const newProfile = { email: fbUser.email, full_name: fbUser.displayName || '' };
-                        await setDoc(userDocRef, newProfile);
-                        return { id: fbUser.uid, ...newProfile };
-                    }
-                } catch (e) {
-                    console.error("Firestore error in me():", e);
+                if (navigator.onLine) {
+                    setTimeout(() => localApi.sync.pullFromFirestore().catch(console.error), 2000);
                 }
+
+                // Only attempt Firestore fetch when online
+                if (typeof navigator !== 'undefined' && navigator.onLine) {
+                    try {
+                        const { db: firestoreDB } = await import('../lib/firebase');
+                        const { doc, getDoc, setDoc } = await import('firebase/firestore');
+                        const userDocRef = doc(firestoreDB, 'users', fbUser.uid);
+                        const snap = await getDoc(userDocRef);
+                        if (snap.exists()) {
+                            const data = snap.data();
+                            localStorage.setItem('user_profile', JSON.stringify({ id: fbUser.uid, ...data }));
+                            return { id: fbUser.uid, ...data };
+                        } else {
+                            const newProfile = { email: fbUser.email, full_name: fbUser.displayName || '' };
+                            await setDoc(userDocRef, newProfile);
+                            return { id: fbUser.uid, ...newProfile };
+                        }
+                    } catch (e) {
+                        if (e.code !== 'unavailable' && !e.message?.includes('offline')) {
+                            console.error("Firestore error in me():", e);
+                        }
+                    }
+                }
+
+                // Offline: return cached profile with Firebase uid
+                const saved = localStorage.getItem('user_profile');
+                if (saved) {
+                    const parsed = safeJsonParse(saved, { fallback: null });
+                    if (parsed) return { ...parsed, id: fbUser.uid };
+                }
+                return { id: fbUser.uid, full_name: fbUser.displayName || '', email: fbUser.email };
             }
 
             // Fallback to local storage
@@ -418,6 +435,25 @@ export const localApi = {
                     time_spent_minutes: metadata.timeSpent || 0,
                     created_date: new Date().toISOString()
                 });
+
+                // GLOBAL ADMIN TRACKING
+                try {
+                    const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
+                    const { doc, setDoc, increment } = await import('firebase/firestore');
+                    const user = firebaseAuth.currentUser;
+
+                    if (user) {
+                        const statsRef = doc(firestoreDB, 'admin', 'analytics', 'features', type);
+                        await setDoc(statsRef, {
+                            count: increment(1),
+                            last_used: new Date().toISOString(),
+                            topic_featured: topic
+                        }, { merge: true });
+                    }
+                } catch (adminErr) {
+                    // Silently fail admin tracking to not block user experience
+                }
+
                 return true;
             } catch (err) {
                 console.error("Interaction log failed:", err);

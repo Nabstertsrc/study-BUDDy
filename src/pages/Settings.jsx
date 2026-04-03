@@ -10,8 +10,10 @@ import {
   User,
   Bell,
   Palette,
-  Link
+  Link,
+  GraduationCap
 } from "lucide-react";
+import { useAuth } from "@/lib/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,10 +30,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function Settings() {
-  const { data: user } = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: () => base44.auth.me(),
-  });
+  const { user, userProfile, updateProfile } = useAuth();
 
   const [profileData, setProfileData] = useState({
     full_name: "",
@@ -46,6 +45,7 @@ export default function Settings() {
     deepseek: localStorage.getItem('deepseek_key') || "",
   });
 
+  const [namingPref, setNamingPref] = useState(localStorage.getItem('naming_pref') || 'Modules');
   const [backendReady, setBackendReady] = useState(false);
 
   // Load profile data when user is fetched
@@ -88,7 +88,8 @@ export default function Settings() {
   const saveAiKeys = () => {
     localStorage.setItem('gemini_key', aiKeys.gemini);
     localStorage.setItem('deepseek_key', aiKeys.deepseek);
-    toast.success("AI keys saved successfully!");
+    localStorage.setItem('naming_pref', namingPref);
+    toast.success("Preferences saved successfully!");
   };
 
   const saveNotificationSettings = async () => {
@@ -148,12 +149,23 @@ export default function Settings() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Email</Label>
-                <Input
-                  value={profileData.email}
-                  onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                  placeholder="Email address"
-                />
+                <Label>Identity Role</Label>
+                <div className="flex gap-2">
+                  {['Student', 'Learner'].map((role) => (
+                    <Button
+                      key={role}
+                      variant={userProfile?.role === role ? "default" : "outline"}
+                      className={cn(
+                        "flex-1 rounded-xl font-bold",
+                        userProfile?.role === role ? "bg-slate-900 text-white" : "text-slate-500"
+                      )}
+                      onClick={() => updateProfile({ role })}
+                    >
+                      <GraduationCap className="w-4 h-4 mr-2" />
+                      {role}
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -179,53 +191,65 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-4">
-              <div className="p-4 rounded-xl bg-violet-50 border border-violet-100 mb-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 mb-4 shadow-2xl shadow-indigo-900/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={cn("w-3 h-3 rounded-full animate-pulse", backendReady ? "bg-green-500" : "bg-red-400")} />
+                    <div className={cn("w-3 h-3 rounded-full animate-pulse", backendReady ? "bg-emerald-500" : "bg-red-500")} />
                     <div>
-                      <h4 className="font-bold text-sm text-violet-900">Railway AI Cloud</h4>
-                      <p className="text-[10px] text-violet-600 font-medium">
-                        {backendReady ? "Connected & Active (Zero-Key Mode)" : "Cloud Backend Offline"}
+                      <h4 className="font-bold text-sm text-slate-100 uppercase tracking-tight">Railway AI Matrix</h4>
+                      <p className="text-[10px] text-indigo-400 font-black">
+                        {backendReady ? "ENCRYPTED & ACTIVE" : "OFFLINE"}
                       </p>
                     </div>
                   </div>
                   {backendReady && (
-                    <span className="text-[10px] bg-violet-100 text-violet-700 font-bold px-2 py-0.5 rounded-full">SECURE</span>
+                    <span className="text-[10px] bg-indigo-500/20 text-indigo-400 font-black px-2 py-0.5 rounded-full border border-indigo-500/30">QUANTUM SECURE</span>
                   )}
                 </div>
-                <p className="mt-2 text-[10px] text-slate-500 italic">
-                  * All AI processing is currently securely routed through your Railway backend. Keys are never stored on this device.
-                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Terminology Pref</Label>
+                  <select
+                    value={namingPref}
+                    onChange={(e) => setNamingPref(e.target.value)}
+                    className="w-full bg-white border-2 border-slate-100 rounded-xl p-2 text-sm font-bold text-slate-700 outline-none focus:border-indigo-500 transition-all"
+                  >
+                    <option value="Modules">Modules</option>
+                    <option value="Subjects">Subjects</option>
+                  </select>
+                </div>
+                <div className="space-y-2 flex flex-col justify-end pb-1 text-right">
+                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Applied globally</span>
+                </div>
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2">
-                    <Key className="w-4 h-4 text-slate-400" />
-                    Gemini API Key (Local Override)
-                  </Label>
-                </div>
+                <Label className="flex items-center gap-2">
+                  <Key className="w-4 h-4 text-slate-400" />
+                  Gemini API (Local Overlay)
+                </Label>
                 <Input
                   type="password"
-                  placeholder="Only if you want to use your own local key..."
+                  placeholder="Overwrites cloud backend if provided..."
                   value={aiKeys.gemini}
                   onChange={(e) => setAiKeys({ ...aiKeys, gemini: e.target.value })}
+                  className="rounded-xl border-2"
                 />
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2">
-                    <Key className="w-4 h-4 text-slate-400" />
-                    DeepSeek API Key (Local Override)
-                  </Label>
-                </div>
+                <Label className="flex items-center gap-2">
+                  <Key className="w-4 h-4 text-slate-400" />
+                  DeepSeek API (Local Overlay)
+                </Label>
                 <Input
                   type="password"
-                  placeholder="Only if you want to use your own local key..."
+                  placeholder="Fallback for high-speed chat..."
                   value={aiKeys.deepseek}
                   onChange={(e) => setAiKeys({ ...aiKeys, deepseek: e.target.value })}
+                  className="rounded-xl border-2"
                 />
               </div>
             </div>

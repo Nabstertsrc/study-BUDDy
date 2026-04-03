@@ -34,12 +34,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User as UserIcon } from "lucide-react";
 
-const navigation = [
+const getNavigation = (isAdmin, namingPref) => [
   { name: "Dashboard", icon: LayoutDashboard, page: "Dashboard" },
-  { name: "Modules", icon: BookOpen, page: "Modules" },
+  { name: namingPref === 'Subjects' ? 'Subjects' : 'Modules', icon: BookOpen, page: "Modules" },
   { name: "Organizer", icon: Layers, page: "AutoOrganizer" },
   { name: "Study Lab", icon: Brain, page: "StudyLab" },
-  { name: "Monitoring", icon: ShieldCheck, page: "Monitoring" },
+  ...(isAdmin ? [{ name: "Registry", icon: ShieldCheck, page: "Monitoring" }] : []),
   { name: "Learning", icon: GraduationCap, page: "LearningPath" },
   { name: "Books", icon: Library, page: "PrescribedBooks" },
   { name: "Assignments", icon: ClipboardList, page: "Assignments" },
@@ -47,9 +47,11 @@ const navigation = [
 ];
 
 export default function Layout({ children, currentPageName }) {
-  const { user, logout } = useAuth();
+  const { user, isAdmin, userProfile, logout, sendVerification } = useAuth();
   const [balance, setBalance] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const namingPref = localStorage.getItem('naming_pref') || 'Modules';
+  const navigation = getNavigation(isAdmin, namingPref);
 
   useEffect(() => {
     localApi.wallet.getBalance().then(setBalance);
@@ -86,13 +88,14 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             <div className="flex items-center gap-6">
-              <Link to={createPageUrl("Dashboard")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Dashboard" ? "text-blue-600" : "text-black hover:text-blue-600")}>Feed</Link>
-              <Link to={createPageUrl("Modules")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Modules" ? "text-blue-600" : "text-black hover:text-blue-600")}>Modules</Link>
-              <Link to={createPageUrl("AutoOrganizer")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "AutoOrganizer" ? "text-blue-600" : "text-black hover:text-blue-600")}>Organizer</Link>
-              <Link to={createPageUrl("Assignments")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Assignments" ? "text-blue-600" : "text-black hover:text-blue-600")}>Tasks</Link>
-              <Link to={createPageUrl("StudyLab")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "StudyLab" ? "text-blue-600" : "text-black hover:text-blue-600")}>Lab</Link>
-              <Link to={createPageUrl("PrescribedBooks")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "PrescribedBooks" ? "text-blue-600" : "text-black hover:text-blue-600")}>Books</Link>
-              <Link to={createPageUrl("LearningPath")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "LearningPath" ? "text-blue-600" : "text-black hover:text-blue-600")}>Upgrade</Link>
+              <Link to={createPageUrl("Dashboard")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Dashboard" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Feed</Link>
+              <Link to={createPageUrl("Modules")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Modules" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>{namingPref}</Link>
+              <Link to={createPageUrl("AutoOrganizer")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "AutoOrganizer" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Organizer</Link>
+              <Link to={createPageUrl("Assignments")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Assignments" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Tasks</Link>
+              <Link to={createPageUrl("StudyLab")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "StudyLab" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Lab</Link>
+              {isAdmin && (
+                <Link to={createPageUrl("Monitoring")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Monitoring" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Admin</Link>
+              )}
             </div>
           </div>
 
@@ -117,7 +120,10 @@ export default function Layout({ children, currentPageName }) {
               <DropdownMenuContent align="end" className="w-56 mt-2">
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold">{user?.email?.split('@')[0] || 'User'}</span>
+                    <span className="text-sm font-bold flex items-center gap-2">
+                      <GraduationCap className="w-3 h-3 text-indigo-600" />
+                      {userProfile?.role || 'Learner'} {user?.email?.split('@')[0] || 'User'}
+                    </span>
                     <span className="text-[10px] text-slate-500 font-medium truncate">{user?.email}</span>
                   </div>
                 </DropdownMenuLabel>
@@ -152,6 +158,37 @@ export default function Layout({ children, currentPageName }) {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-black">S</div>
           </div>
         </header>
+
+        {/* Email Verification Banner */}
+        <AnimatePresence>
+          {!user?.emailVerified && user && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="bg-amber-500 text-white px-6 py-2 flex items-center justify-between text-[10px] font-black uppercase tracking-widest z-[100]"
+            >
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4" />
+                <span>Verification required for cloud sync</span>
+              </div>
+              <button
+                onClick={async () => {
+                  const result = await sendVerification();
+                  const { toast } = await import('sonner');
+                  if (result.success) {
+                    toast.success("Verification email sent!");
+                  } else {
+                    toast.error(result.message || "Failed to send verification email.");
+                  }
+                }}
+                className="bg-white/20 hover:bg-white/40 px-3 py-1 rounded-lg transition-all border border-white/30"
+              >
+                Resend Link
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto pencil-scroll scroll-smooth p-6 xl:p-10">

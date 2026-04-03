@@ -74,6 +74,8 @@ export default function Modules() {
     color: moduleColors[0],
     progress: 0,
   });
+  const namingPref = localStorage.getItem('naming_pref') || 'Modules';
+  const singleTerm = namingPref === 'Subjects' ? 'Subject' : 'Module';
   const [searchingOnline, setSearchingOnline] = useState(false);
 
   const queryClient = useQueryClient();
@@ -230,10 +232,10 @@ Return only factual information found online. If you cannot find specific inform
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-            My Modules
+            My {namingPref}
           </h1>
           <p className="text-slate-500 mt-1">
-            Manage your enrolled courses and track progress
+            Manage your enrolled {namingPref.toLowerCase()} and track progress
           </p>
         </div>
         <Button
@@ -241,7 +243,7 @@ Return only factual information found online. If you cannot find specific inform
           className="bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/25"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add Module
+          Add {singleTerm}
         </Button>
       </div>
 
@@ -249,7 +251,7 @@ Return only factual information found online. If you cannot find specific inform
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <Input
-          placeholder="Search modules..."
+          placeholder={`Search ${namingPref.toLowerCase()}...`}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-10 bg-white border-slate-200"
