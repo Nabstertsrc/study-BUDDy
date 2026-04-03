@@ -274,8 +274,8 @@ export default function Dashboard() {
               value={balance}
               icon={Zap}
               gradient="bg-gradient-to-br from-indigo-600 to-blue-700"
-              subtitle="Free Monthly Credits"
-              trend="10/mo"
+              subtitle="Next Free Refresh"
+              trend={localApi.wallet.getNextResetDate() || 'Pending'}
               trendUp={true}
             />
             <StatsCard

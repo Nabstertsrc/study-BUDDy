@@ -198,7 +198,7 @@ export default function PaymentPage() {
             <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
               <p className="text-red-700 font-bold text-sm">You're out of credits!</p>
-              <p className="text-red-600 text-xs mt-0.5">Purchase a pack below to keep using AI features. Your free credits reset on the 1st of next month.</p>
+              <p className="text-red-600 text-xs mt-0.5">Purchase a pack below to keep using AI features. Your free credits reset on {localApi.wallet.getNextResetDate()}.</p>
             </div>
           </div>
         )}

@@ -40,7 +40,8 @@ export default function MonitoringDashboard() {
         totalInteractions: 0,
         uniquePages: 0,
         aiCalls: 0,
-        totalUsers: 0
+        totalUsers: 0,
+        storageFolders: 0
     });
 
     const refreshLogs = async () => {
@@ -49,12 +50,27 @@ export default function MonitoringDashboard() {
             const { db: firestoreDB } = await import('@/lib/firebase');
             const { collection, getDocs, limit, orderBy: fsOrderBy, query } = await import('firebase/firestore');
 
-            // 1. Fetch Users
-            const usersRef = collection(firestoreDB, 'admin', 'registry', 'users');
-            const usersSnap = await getDocs(query(usersRef, limit(20)));
+            // 1. Fetch Users (Old and New directly from 'users' collection)
+            const usersRef = collection(firestoreDB, 'users');
+            const usersSnap = await getDocs(query(usersRef, limit(100)));
             const usersList = [];
-            usersSnap.forEach(doc => usersList.push({ id: doc.id, ...doc.data() }));
+            usersSnap.forEach(doc => {
+                const d = doc.data();
+                usersList.push({ uid: doc.id, email: d.email || 'N/A', role: d.role || 'Learner', last_seen: d.last_seen || d.created_at || null });
+            });
             setRegisteredUsers(usersList);
+
+            // 1.5 Fetch Storage Info
+            let sFolders = 0;
+            try {
+                const { storage } = await import('@/lib/firebase');
+                const { ref, listAll } = await import('firebase/storage');
+                const uploadsRef = ref(storage, 'uploads');
+                const listRes = await listAll(uploadsRef);
+                sFolders = listRes.prefixes.length;
+            } catch (e) {
+                console.warn("Storage check failed. Might require CORS/Rules updates", e);
+            }
 
             // 2. Fetch Feature Analytics
             const featuresRef = collection(firestoreDB, 'admin', 'analytics', 'features');
@@ -71,7 +87,8 @@ export default function MonitoringDashboard() {
                 totalInteractions: allActivities.length,
                 uniquePages: new Set(allActivities.map(l => l.topic)).size,
                 aiCalls: allActivities.filter(l => l.activity_type?.includes('ai')).length,
-                totalUsers: usersList.length
+                totalUsers: usersList.length,
+                storageFolders: sFolders
             });
         } catch (err) {
             console.error("Failed to load admin metrics:", err);
@@ -175,10 +192,10 @@ export default function MonitoringDashboard() {
                             <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
                                 <Users className="w-6 h-6" />
                             </div>
-                            <span className="text-[10px] font-black text-slate-400 uppercase">Registry</span>
+                            <span className="text-[10px] font-black text-slate-400 uppercase">FS / DB</span>
                         </div>
-                        <h4 className="text-3xl font-black text-white">{stats.totalUsers}</h4>
-                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">Total Registered</p>
+                        <h4 className="text-3xl font-black text-white">{stats.totalUsers} / {stats.storageFolders}</h4>
+                        <p className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">Users / Storages</p>
                     </CardContent>
                 </Card>
             </div>

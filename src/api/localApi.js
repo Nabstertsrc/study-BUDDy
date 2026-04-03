@@ -159,8 +159,8 @@ export const localApi = {
          */
         checkAndResetMonthlyCredits: async () => {
             const now = new Date();
-            const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            const lastReset = localStorage.getItem('last_credit_reset_month');
+            const lastResetTime = parseInt(localStorage.getItem('last_credit_reset_timestamp') || '0', 10);
+            const daysSinceReset = (now.getTime() - lastResetTime) / (1000 * 60 * 60 * 24);
 
             // One-time migration: clear stale unlimited-mode values (sentinel was 9999999)
             const staleCheck = parseInt(localStorage.getItem('credit_balance') || '0', 10);
@@ -169,12 +169,14 @@ export const localApi = {
                 localStorage.removeItem('credit_balance');
                 localStorage.removeItem('purchased_credit_balance');
                 localStorage.removeItem('free_credits_this_month');
-                localStorage.removeItem('last_credit_reset_month');
+                localStorage.removeItem('last_credit_reset_timestamp');
             }
 
-            if (lastReset !== currentMonth) {
-                // New month: top up the free credits on top of any purchased balance
-                const rawBalance = parseInt(localStorage.getItem('credit_balance') || '0', 10);
+            // Cleanup old tracking method
+            localStorage.removeItem('last_credit_reset_month');
+
+            if (lastResetTime === 0 || daysSinceReset >= 31) {
+                // 31 days have passed: top up the free credits on top of any purchased balance
                 const purchasedBalance = parseInt(localStorage.getItem('purchased_credit_balance') || '0', 10);
 
                 // Free monthly credits are separate — reset them
@@ -182,9 +184,16 @@ export const localApi = {
                 // Recalculate total
                 const newTotal = purchasedBalance + localApi.wallet.FREE_MONTHLY_CREDITS;
                 localStorage.setItem('credit_balance', String(newTotal));
-                localStorage.setItem('last_credit_reset_month', currentMonth);
-                console.log(`[Wallet] Monthly reset: ${localApi.wallet.FREE_MONTHLY_CREDITS} free credits added. New total: ${newTotal}`);
+                localStorage.setItem('last_credit_reset_timestamp', String(now.getTime()));
+                console.log(`[Wallet] 31-day reset: ${localApi.wallet.FREE_MONTHLY_CREDITS} free credits added. New total: ${newTotal}`);
             }
+        },
+
+        getNextResetDate: () => {
+            const lastResetTime = parseInt(localStorage.getItem('last_credit_reset_timestamp') || '0', 10);
+            if (!lastResetTime) return 'Pending';
+            const nextReset = new Date(lastResetTime + 31 * 24 * 60 * 60 * 1000);
+            return nextReset.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
         },
 
         getBalance: async () => {
