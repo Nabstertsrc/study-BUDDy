@@ -41,7 +41,7 @@ export default function MonitoringDashboard() {
         uniquePages: 0,
         aiCalls: 0,
         totalUsers: 0,
-        storageFolders: 0
+        storageFolders: 'N/A'
     });
 
     const refreshLogs = async () => {
@@ -61,16 +61,9 @@ export default function MonitoringDashboard() {
             setRegisteredUsers(usersList);
 
             // 1.5 Fetch Storage Info
-            let sFolders = 0;
-            try {
-                const { storage } = await import('@/lib/firebase');
-                const { ref, listAll } = await import('firebase/storage');
-                const uploadsRef = ref(storage, 'uploads');
-                const listRes = await listAll(uploadsRef);
-                sFolders = listRes.prefixes.length;
-            } catch (e) {
-                console.warn("Storage check failed. Might require CORS/Rules updates", e);
-            }
+            // Client-side listAll() often triggers 400 CORS/Rules errors on Firebase.
+            // A dedicated backend or Firebase Admin SDK is needed to safely check storage root usage.
+            let sFolders = 'N/A';
 
             // 2. Fetch Feature Analytics
             const featuresRef = collection(firestoreDB, 'admin', 'analytics', 'features');
