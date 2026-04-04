@@ -16,9 +16,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
-// Modern Firestore with built-in offline persistence (replaces deprecated enableIndexedDbPersistence)
+// Modern Firestore with built-in offline persistence and forced long-polling for restrictive networks
 export const db = initializeFirestore(app, {
-    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    experimentalForceLongPolling: true
 });
 
 export const storage = getStorage(app);
