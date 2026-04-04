@@ -159,11 +159,13 @@ export const localApi = {
          */
         checkAndResetMonthlyCredits: async () => {
             const now = new Date();
-            const lastResetTime = parseInt(localStorage.getItem('last_credit_reset_timestamp') || '0', 10);
+            let lastResetTime = parseInt(localStorage.getItem('last_credit_reset_timestamp'), 10);
+            if (isNaN(lastResetTime)) lastResetTime = 0;
             const daysSinceReset = (now.getTime() - lastResetTime) / (1000 * 60 * 60 * 24);
 
-            // One-time migration: clear stale unlimited-mode values (sentinel was 9999999)
-            const staleCheck = parseInt(localStorage.getItem('credit_balance') || '0', 10);
+            let staleCheck = parseInt(localStorage.getItem('credit_balance'), 10);
+            if (isNaN(staleCheck)) staleCheck = 0;
+
             if (staleCheck > 9000) {
                 console.log('[Wallet] Migrating from unlimited mode to real credit economy...');
                 localStorage.removeItem('credit_balance');
@@ -176,12 +178,10 @@ export const localApi = {
             localStorage.removeItem('last_credit_reset_month');
 
             if (lastResetTime === 0 || daysSinceReset >= 31) {
-                // 31 days have passed: top up the free credits on top of any purchased balance
-                const purchasedBalance = parseInt(localStorage.getItem('purchased_credit_balance') || '0', 10);
+                let purchasedBalance = parseInt(localStorage.getItem('purchased_credit_balance'), 10);
+                if (isNaN(purchasedBalance)) purchasedBalance = 0;
 
-                // Free monthly credits are separate — reset them
                 localStorage.setItem('free_credits_this_month', String(localApi.wallet.FREE_MONTHLY_CREDITS));
-                // Recalculate total
                 const newTotal = purchasedBalance + localApi.wallet.FREE_MONTHLY_CREDITS;
                 localStorage.setItem('credit_balance', String(newTotal));
                 localStorage.setItem('last_credit_reset_timestamp', String(now.getTime()));
@@ -190,15 +190,16 @@ export const localApi = {
         },
 
         getNextResetDate: () => {
-            const lastResetTime = parseInt(localStorage.getItem('last_credit_reset_timestamp') || '0', 10);
-            if (!lastResetTime) return 'Pending';
+            let lastResetTime = parseInt(localStorage.getItem('last_credit_reset_timestamp'), 10);
+            if (isNaN(lastResetTime) || !lastResetTime) return 'Pending';
             const nextReset = new Date(lastResetTime + 31 * 24 * 60 * 60 * 1000);
             return nextReset.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
         },
 
         getBalance: async () => {
             await localApi.wallet.checkAndResetMonthlyCredits();
-            let balance = parseInt(localStorage.getItem('credit_balance') || '0', 10);
+            let balance = parseInt(localStorage.getItem('credit_balance'), 10);
+            if (isNaN(balance)) balance = 0;
 
             // Firestore Sync (Primary Source of Truth) — skip when offline
             if (typeof navigator !== 'undefined' && navigator.onLine) {
@@ -301,9 +302,14 @@ export const localApi = {
 
         spendCredits: async (amount, reason) => {
             await localApi.wallet.checkAndResetMonthlyCredits();
-            const currentTotal = parseInt(localStorage.getItem('credit_balance') || '0', 10);
-            const freeRemaining = parseInt(localStorage.getItem('free_credits_this_month') || '0', 10);
-            const purchasedBalance = parseInt(localStorage.getItem('purchased_credit_balance') || '0', 10);
+            let currentTotal = parseInt(localStorage.getItem('credit_balance'), 10);
+            if (isNaN(currentTotal)) currentTotal = 0;
+
+            let freeRemaining = parseInt(localStorage.getItem('free_credits_this_month'), 10);
+            if (isNaN(freeRemaining)) freeRemaining = 0;
+
+            let purchasedBalance = parseInt(localStorage.getItem('purchased_credit_balance'), 10);
+            if (isNaN(purchasedBalance)) purchasedBalance = 0;
 
             if (currentTotal < amount) {
                 throw new Error('INSUFFICIENT_CREDITS');
@@ -517,18 +523,10 @@ export const localApi = {
                 }
             },
             InvokeLLM: async ({ prompt, systemPrompt = "", ...options }) => {
-                try {
-                    await localApi.wallet.spendCredits(1, "AI Generation");
-                } catch (e) {
-                    throw new Error("You have run out of credits! Please upgrade or top up your balance.");
-                }
-
                 const { BackendBridge } = await import('../lib/backend-bridge');
                 try {
                     return await BackendBridge.generateText(prompt, systemPrompt, options);
                 } catch (bridgeError) {
-                    console.warn("[Wallet] Refunding 1 credit due to backend AI failure...");
-                    await localApi.wallet.addCredits(1, { amount: 0, currency: 'USD', note: 'Refund for failed AI generation' });
                     throw bridgeError;
                 }
             },
