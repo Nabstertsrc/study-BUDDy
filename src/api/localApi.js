@@ -186,6 +186,8 @@ export const localApi = {
                 localStorage.setItem('credit_balance', String(newTotal));
                 localStorage.setItem('last_credit_reset_timestamp', String(now.getTime()));
                 console.log(`[Wallet] 31-day reset: ${localApi.wallet.FREE_MONTHLY_CREDITS} free credits added. New total: ${newTotal}`);
+                // Ensure cloud gets the new reset balance so it doesn't overwrite it on the next fetch
+                localApi.wallet.updateRemoteBalance(newTotal).catch(e => console.warn(e));
             }
         },
 

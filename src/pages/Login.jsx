@@ -19,14 +19,24 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault()
         setLoading(true)
+        
+        // 1. Show waiting message
+        const loadingId = toast.loading('Logging in, please wait...')
 
         try {
             await signInWithEmailAndPassword(auth, email, password)
 
-            toast.success('Welcome back!')
+            // 2. Show success message
+            toast.success('Successfully logged in!', { id: loadingId })
             navigate('/')
         } catch (error) {
-            toast.error(error.message)
+            // 3. Show error if they aren't registered
+            // Note: Firebase sometimes uses invalid-login-credentials for security reasons
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-login-credentials') {
+                toast.error('Account not found. Please register first.', { id: loadingId })
+            } else {
+                toast.error(error.message, { id: loadingId })
+            }
         } finally {
             setLoading(false)
         }

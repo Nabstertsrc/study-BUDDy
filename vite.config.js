@@ -5,7 +5,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/study-BUDDy/',
+  base: '/',
   logLevel: 'error',
   // Inject keys directly for stability — ensures they survive deployment where .env loading might be inconsistent
   define: {
