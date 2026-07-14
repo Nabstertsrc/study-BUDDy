@@ -53,7 +53,7 @@ const isBackendAvailable = async () => {
     try {
         const res = await fetch("https://api.profilegenius.fun/health", {
             method: "GET",
-            signal: AbortSignal.timeout(2000)
+            signal: AbortSignal.timeout(15000)
         });
         return res.ok;
     } catch {

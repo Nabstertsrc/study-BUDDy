@@ -22,7 +22,7 @@ export const BackendBridge = {
      */
     async isPythonReady() {
         try {
-            const res = await fetch(`${BASE_URLS.PYTHON}/health`, { method: 'GET', signal: AbortSignal.timeout(1000) });
+            const res = await fetch(`${BASE_URLS.PYTHON}/health`, { method: 'GET', signal: AbortSignal.timeout(15000) });
             return res.ok;
         } catch (e) {
             return false;
