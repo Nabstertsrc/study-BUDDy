@@ -446,8 +446,8 @@ def generate():
         return jsonify({
             "error": "All AI models failed",
             "details": {
-                "gemini": err,
-                "openai": err_oa
+                "gemini": str(err),
+                "openai": str(err_oa)
             }
         }), 500
     except Exception as e:

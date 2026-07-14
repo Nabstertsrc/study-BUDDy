@@ -151,7 +151,8 @@ export const BackendBridge = {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || `Python Backend Error: ${response.status}`);
+                const details = errorData.details ? JSON.stringify(errorData.details) : '';
+                throw new Error(errorData.error + (details ? ` | Details: ${details}` : '') || `Python Backend Error: ${response.status}`);
             }
 
             const result = await response.json();
