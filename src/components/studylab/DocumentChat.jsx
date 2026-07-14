@@ -51,7 +51,7 @@ let _backendDown = false;
 const isBackendAvailable = async () => {
     if (_backendDown) return false;
     try {
-        const res = await fetch("https://queue-marshal-server-production-a2fe.up.railway.app/health", {
+        const res = await fetch("https://api.profilegenius.fun/health", {
             method: "GET",
             signal: AbortSignal.timeout(2000)
         });
