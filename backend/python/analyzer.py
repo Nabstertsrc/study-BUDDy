@@ -318,6 +318,10 @@ def call_gemini(prompt, system_prompt=SYSTEM_PROMPT, image_data=None, mime_type=
 def health():
     return jsonify({"status": "healthy"})
 
+@app.route('/', methods=['GET'])
+def root():
+    return jsonify({"status": "ok", "service": "study-BUDDy backend"})
+
 def extract_json(text):
     if not text:
         return None
@@ -504,9 +508,11 @@ def generate():
 
 @app.errorhandler(Exception)
 def handle_exception(e):
+    from werkzeug.exceptions import HTTPException
     # Pass through HTTP errors
-    # if isinstance(e, HTTPException): return e
-    
+    if isinstance(e, HTTPException):
+        return e
+
     print(f"GLOBAL ERROR: {e}")
     sys.stdout.flush()
     return jsonify({
