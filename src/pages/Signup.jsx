@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { auth } from '../lib/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,12 +23,15 @@ export default function Signup() {
         setLoading(true)
 
         try {
-            await createUserWithEmailAndPassword(auth, email, password)
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+
+            // Send verification email
+            await sendEmailVerification(userCredential.user)
 
             // Specifically sync this initial profile back to Firestore natively so Windows and Web instances persist it!
             await base44.auth.updateProfile({ email, full_name: fullName })
 
-            toast.success('Account created! You can now login.')
+            toast.success('Account created! Please check your email to verify your account.')
             navigate('/Login')
         } catch (error) {
             toast.error(error.message)
