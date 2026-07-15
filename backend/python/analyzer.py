@@ -135,7 +135,7 @@ def get_available_models(api_key=None):
     current_key = api_key or GEMINI_API_KEY
     if not current_key:
         print("DEBUG: No Gemini API key provided for model listing")
-        return ['models/gemini-1.5-flash', 'models/gemini-2.0-flash']
+        return ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash']
         
     try:
         genai.configure(api_key=current_key)
@@ -173,7 +173,7 @@ def get_available_models(api_key=None):
     except Exception as e:
         print(f"DEBUG: Failed to list models: {e}")
         sys.stdout.flush()
-        return ['models/gemini-2.0-flash', 'models/gemini-1.5-flash']
+        return ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash']
 
 def call_pollinations(prompt, system_prompt=""):
     """
@@ -278,7 +278,9 @@ def call_gemini(prompt, system_prompt=SYSTEM_PROMPT, image_data=None, mime_type=
             try:
                 print(f"DEBUG: Trying Gemini model: {model_id}")
                 sys.stdout.flush()
-                model = genai.GenerativeModel(model_id)
+                # Strip 'models/' prefix — GenerativeModel works better without it (uses v1 not v1beta)
+                clean_id = model_id.replace('models/', '') if model_id.startswith('models/') else model_id
+                model = genai.GenerativeModel(clean_id)
                 
                 # Add request_options for timeout
                 if image_data and mime_type:
