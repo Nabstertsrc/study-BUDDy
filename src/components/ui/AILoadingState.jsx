@@ -1,8 +1,33 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Sparkles, Brain, Zap, Search } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, Brain, Zap, Search, ServerCog } from 'lucide-react';
 
-const AILoadingState = ({ title = "AI is thinking...", message = "Processing your request with neural precision" }) => {
+const defaultSteps = [
+    { time: 0, title: "Connecting...", msg: "Reaching out to AI servers" },
+    { time: 3000, title: "Analyzing...", msg: "Processing your request with neural precision" },
+    { time: 8000, title: "Still thinking...", msg: "Complex requests take a bit longer. Hold tight!" },
+    { time: 15000, title: "Waking up backend...", msg: "Cloud servers might be waking up from sleep..." },
+    { time: 25000, title: "Trying Fallback...", msg: "Primary AI is busy. Routing to free Pollinations AI backup..." },
+    { time: 40000, title: "Almost there...", msg: "Generating final response..." }
+];
+
+const AILoadingState = ({ customSteps }) => {
+    const [stepIndex, setStepIndex] = useState(0);
+    const steps = customSteps || defaultSteps;
+
+    useEffect(() => {
+        const timers = steps.map((step, index) => {
+            if (index === 0) return null; // Initial state
+            return setTimeout(() => {
+                setStepIndex(index);
+            }, step.time);
+        });
+
+        return () => timers.forEach(t => t && clearTimeout(t));
+    }, [steps]);
+
+    const currentStep = steps[stepIndex];
+
     return (
         <div className="flex flex-col items-center justify-center p-12 min-h-[400px] text-center space-y-8 bg-white/40 backdrop-blur-xl rounded-[3rem] border-2 border-white/60 shadow-3xl overflow-hidden relative">
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5" />
@@ -66,17 +91,27 @@ const AILoadingState = ({ title = "AI is thinking...", message = "Processing you
                 </motion.div>
             </div>
 
-            <div className="relative z-10 space-y-4 max-w-sm">
-                <h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">
-                    {title}
-                </h3>
-                <p className="text-slate-500 font-bold leading-relaxed">
-                    {message}
-                </p>
+            <div className="relative z-10 space-y-4 max-w-sm h-[100px] flex flex-col justify-center">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={stepIndex}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">
+                            {currentStep.title}
+                        </h3>
+                        <p className="text-slate-500 font-bold leading-relaxed mt-2">
+                            {currentStep.msg}
+                        </p>
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
             <div className="relative z-10 flex gap-4 pt-4">
-                {[Zap, Search, Brain].map((Icon, i) => (
+                {[Zap, Search, Brain, ServerCog].map((Icon, i) => (
                     <motion.div
                         key={i}
                         animate={{
