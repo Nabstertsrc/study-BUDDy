@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://profilegenius.fun", "http://localhost:5173", "http://127.0.0.1:5173"])
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # Increase to 50MB for large PDFs/Documents
 
 # Telegram Production Configuration
@@ -33,8 +33,8 @@ def configure_api_keys(request_data):
     req_keys = request_data.get('keys', {})
     
     # Prioritize Request Key -> Env Key
-    gemini_key = req_keys.get('gemini') or os.getenv("VITE_GEMINI_API_KEY") or os.getenv("VITE_GOOGLE_API_KEY")
-    openai_key = req_keys.get('openai') or os.getenv("VITE_OPENAI_API_KEY")
+    gemini_key = req_keys.get('gemini') or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    openai_key = req_keys.get('openai') or os.getenv("OPENAI_API_KEY")
     
     if gemini_key:
         try:

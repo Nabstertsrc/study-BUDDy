@@ -4,12 +4,12 @@
  * Ensures portable builds have access to bundled API keys
  */
 
-// Keys are injected at build time by Vite's define
+// Keys are injected at build time by Vite's define or Render's environment variables
 const ENV_KEYS = {
-    gemini: null,
-    deepseek: null,
-    openai: null,
-    xai: null,
+    gemini: import.meta.env.VITE_GEMINI_API_KEY || null,
+    deepseek: import.meta.env.VITE_DEEPSEEK_API_KEY || null,
+    openai: import.meta.env.VITE_OPENAI_API_KEY || null,
+    xai: import.meta.env.VITE_XAI_API_KEY || null,
     supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
     supabaseKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 }

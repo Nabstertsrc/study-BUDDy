@@ -194,16 +194,16 @@ export default function Settings() {
               <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 mb-4 shadow-2xl shadow-indigo-900/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={cn("w-3 h-3 rounded-full animate-pulse", backendReady ? "bg-emerald-500" : "bg-red-500")} />
+                    <div className={cn("w-3 h-3 rounded-full animate-pulse", backendReady ? "bg-emerald-500" : "bg-amber-500")} />
                     <div>
-                      <h4 className="font-bold text-sm text-slate-100 uppercase tracking-tight">Railway AI Matrix</h4>
+                      <h4 className="font-bold text-sm text-slate-100 uppercase tracking-tight">AI Backend (Render)</h4>
                       <p className="text-[10px] text-indigo-400 font-black">
-                        {backendReady ? "ENCRYPTED & ACTIVE" : "OFFLINE"}
+                        {backendReady ? "ONLINE & READY" : "WAKING UP (may take ~30s)"}
                       </p>
                     </div>
                   </div>
                   {backendReady && (
-                    <span className="text-[10px] bg-indigo-500/20 text-indigo-400 font-black px-2 py-0.5 rounded-full border border-indigo-500/30">QUANTUM SECURE</span>
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-400 font-black px-2 py-0.5 rounded-full border border-emerald-500/30">CONNECTED</span>
                   )}
                 </div>
               </div>
@@ -228,29 +228,31 @@ export default function Settings() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Key className="w-4 h-4 text-slate-400" />
-                  Gemini API (Local Overlay)
+                  Gemini API Key (Optional Override)
                 </Label>
                 <Input
                   type="password"
-                  placeholder="Overwrites cloud backend if provided..."
+                  placeholder="Leave empty to use the server's default key..."
                   value={aiKeys.gemini}
                   onChange={(e) => setAiKeys({ ...aiKeys, gemini: e.target.value })}
                   className="rounded-xl border-2"
                 />
+                <p className="text-xs text-slate-400">Stored only in this browser. Overrides the server key when set.</p>
               </div>
 
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
                   <Key className="w-4 h-4 text-slate-400" />
-                  DeepSeek API (Local Overlay)
+                  DeepSeek API Key (Optional Override)
                 </Label>
                 <Input
                   type="password"
-                  placeholder="Fallback for high-speed chat..."
+                  placeholder="Leave empty to use the server's default key..."
                   value={aiKeys.deepseek}
                   onChange={(e) => setAiKeys({ ...aiKeys, deepseek: e.target.value })}
                   className="rounded-xl border-2"
                 />
+                <p className="text-xs text-slate-400">Stored only in this browser. Overrides the server key when set.</p>
               </div>
             </div>
 
