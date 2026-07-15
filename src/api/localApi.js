@@ -187,7 +187,7 @@ export const localApi = {
                 localStorage.setItem('last_credit_reset_timestamp', String(now.getTime()));
                 console.log(`[Wallet] 31-day reset: ${localApi.wallet.FREE_MONTHLY_CREDITS} free credits added. New total: ${newTotal}`);
                 // Ensure cloud gets the new reset balance so it doesn't overwrite it on the next fetch
-                localApi.wallet.updateRemoteBalance(newTotal).catch(e => console.warn(e));
+                localApi.wallet.syncWalletToCloud().catch(e => console.warn(e));
             }
         },
 
@@ -199,11 +199,7 @@ export const localApi = {
         },
 
         getBalance: async () => {
-            await localApi.wallet.checkAndResetMonthlyCredits();
-            let balance = parseInt(localStorage.getItem('credit_balance'), 10);
-            if (isNaN(balance)) balance = 0;
-
-            // Firestore Sync (Primary Source of Truth) — skip when offline
+            // 1. Firestore Sync (Primary Source of Truth) — fetch before reset check!
             if (typeof navigator !== 'undefined' && navigator.onLine) {
                 try {
                     const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
@@ -215,10 +211,17 @@ export const localApi = {
                         const snap = await getDoc(userDocRef);
                         if (snap.exists()) {
                             const data = snap.data();
-                            if (data.credit_balance !== undefined && data.credit_balance !== balance) {
-                                console.log(`[Wallet] Syncing local balance (${balance}) with cloud (${data.credit_balance})`);
-                                balance = data.credit_balance;
-                                localStorage.setItem('credit_balance', String(balance));
+                            if (data.credit_balance !== undefined) {
+                                localStorage.setItem('credit_balance', String(data.credit_balance));
+                            }
+                            if (data.purchased_credit_balance !== undefined) {
+                                localStorage.setItem('purchased_credit_balance', String(data.purchased_credit_balance));
+                            }
+                            if (data.free_credits_this_month !== undefined) {
+                                localStorage.setItem('free_credits_this_month', String(data.free_credits_this_month));
+                            }
+                            if (data.last_credit_reset_timestamp !== undefined) {
+                                localStorage.setItem('last_credit_reset_timestamp', String(data.last_credit_reset_timestamp));
                             }
                         }
                     }
@@ -229,8 +232,15 @@ export const localApi = {
                 }
             }
 
+            // 2. Now check for monthly resets using the downloaded state
+            await localApi.wallet.checkAndResetMonthlyCredits();
+
+            let balance = parseInt(localStorage.getItem('credit_balance'), 10);
+            if (isNaN(balance)) balance = 0;
+
             // Supabase Sync (Web Legacy Fallback)
             try {
+                const { supabase } = await import('../lib/supabase');
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
                     const { data: profile } = await supabase
@@ -242,6 +252,7 @@ export const localApi = {
                     if (profile && profile.credit_balance > balance) {
                         balance = profile.credit_balance;
                         localStorage.setItem('credit_balance', String(balance));
+                        await localApi.wallet.syncWalletToCloud();
                     }
                 }
             } catch (e) {
@@ -251,7 +262,7 @@ export const localApi = {
             return Math.max(0, balance);
         },
 
-        updateRemoteBalance: async (newBalance) => {
+        syncWalletToCloud: async () => {
             try {
                 const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
                 const { doc, setDoc } = await import('firebase/firestore');
@@ -259,11 +270,17 @@ export const localApi = {
                 const user = firebaseAuth.currentUser;
                 if (!user) return;
 
+                const walletState = {
+                    credit_balance: parseInt(localStorage.getItem('credit_balance') || '0', 10),
+                    purchased_credit_balance: parseInt(localStorage.getItem('purchased_credit_balance') || '0', 10),
+                    free_credits_this_month: parseInt(localStorage.getItem('free_credits_this_month') || '0', 10),
+                    last_credit_reset_timestamp: parseInt(localStorage.getItem('last_credit_reset_timestamp') || '0', 10)
+                };
+
                 const userDocRef = doc(firestoreDB, 'users', user.uid);
-                await setDoc(userDocRef, { credit_balance: newBalance }, { merge: true });
-                console.log(`[Wallet] Remote balance updated to ${newBalance} in Firestore`);
+                await setDoc(userDocRef, walletState, { merge: true });
             } catch (e) {
-                console.error("[Wallet] Failed to sync balance to Firestore:", e);
+                console.error("[Wallet] Failed to sync wallet to Firestore:", e);
             }
         },
 
@@ -287,7 +304,7 @@ export const localApi = {
             localStorage.setItem('purchased_credit_balance', String(newPurchased));
 
             // Sync to Cloud
-            await localApi.wallet.updateRemoteBalance(newTotal);
+            await localApi.wallet.syncWalletToCloud();
 
             await localApi.entities.Transaction.create({
                 ...transactionData,
@@ -330,7 +347,7 @@ export const localApi = {
             localStorage.setItem('credit_balance', String(newTotal));
 
             // Sync to Cloud
-            await localApi.wallet.updateRemoteBalance(newTotal);
+            await localApi.wallet.syncWalletToCloud();
 
             await localApi.entities.Transaction.create({
                 amount: 0,
