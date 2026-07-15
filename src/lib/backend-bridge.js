@@ -47,8 +47,13 @@ export const BackendBridge = {
      */
     async isGoReady() {
         try {
-            // Go server doesn't have a specific health endpoint yet, but we can verify checking root or just assume off if connection fails
-            const res = await fetch(`${BASE_URLS.GO}/search?q=ping`, { method: 'GET', signal: AbortSignal.timeout(1000) });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 1000);
+            const res = await fetch(`${BASE_URLS.GO}/search?q=ping`, { 
+                method: 'GET', 
+                signal: controller.signal 
+            });
+            clearTimeout(timeoutId);
             return res.ok;
         } catch (e) {
             return false;

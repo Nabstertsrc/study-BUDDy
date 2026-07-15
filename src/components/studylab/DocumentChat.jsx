@@ -51,10 +51,14 @@ let _backendDown = false;
 const isBackendAvailable = async () => {
     if (_backendDown) return false;
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        
         const res = await fetch("https://api.profilegenius.fun/health", {
             method: "GET",
-            signal: AbortSignal.timeout(15000)
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
         return res.ok;
     } catch {
         console.log("DocumentChat: Python backend is offline — using direct Gemini for all AI calls.");
@@ -87,12 +91,16 @@ const callPollinationsDirect = async (prompt, systemPrompt = "") => {
     if (systemPrompt) messages.push({ role: "system", content: systemPrompt });
     messages.push({ role: "user", content: prompt });
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
+
     const res = await fetch("https://text.pollinations.ai/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages, model: "openai", private: true }),
-        signal: AbortSignal.timeout(60000)
+        signal: controller.signal
     });
+    clearTimeout(timeoutId);
 
     if (!res.ok) throw new Error(`Pollinations returned ${res.status}`);
     const text = await res.text();
