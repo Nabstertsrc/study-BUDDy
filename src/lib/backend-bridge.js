@@ -156,6 +156,9 @@ export const BackendBridge = {
             }
 
             const keys = getAPIKeys();
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s hard timeout
+
             const response = await fetch(`${BASE_URLS.PYTHON}/generate`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -164,8 +167,10 @@ export const BackendBridge = {
                     systemPrompt,
                     ...(Object.values(keys).some(k => k !== null) ? { keys } : {}),
                     ...options
-                })
+                }),
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
