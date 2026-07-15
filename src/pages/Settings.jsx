@@ -79,6 +79,17 @@ export default function Settings() {
     loadSettings();
   }, []);
 
+  const handleVerifyEmail = async () => {
+    toast.loading("Sending verification email...");
+    const res = await sendVerification();
+    toast.dismiss();
+    if (res.success) {
+      toast.success("Verification email sent! Check your inbox.");
+    } else {
+      toast.error(res.message, { duration: 8000 });
+    }
+  };
+
   const saveProfile = async () => {
     // @ts-ignore
     await base44.auth.updateProfile(profileData);
@@ -138,6 +149,24 @@ export default function Settings() {
             </div>
 
             <Separator />
+            
+            {!user?.emailVerified && (
+              <div className="bg-amber-500/10 border-2 border-amber-500/20 p-4 rounded-xl flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-amber-600">Email Not Verified</h4>
+                  <p className="text-xs text-amber-600/80 mt-1 max-w-sm">
+                    You need to verify your email to secure your account. If the email doesn't send, ensure your domain is authorized in Firebase.
+                  </p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="border-amber-500/30 text-amber-600 hover:bg-amber-500/10"
+                  onClick={handleVerifyEmail}
+                >
+                  Resend Email
+                </Button>
+              </div>
+            )}
 
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-2">

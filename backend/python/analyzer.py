@@ -13,7 +13,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, origins=["https://profilegenius.fun", "http://localhost:5173", "http://127.0.0.1:5173"])
+# Allow all origins for the API so the web app can connect from any domain or subpath
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # Increase to 50MB for large PDFs/Documents
 
 # Telegram Production Configuration
