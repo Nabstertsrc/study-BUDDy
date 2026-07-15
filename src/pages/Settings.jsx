@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function Settings() {
-  const { user, userProfile, updateProfile } = useAuth();
+  const { user, userProfile, updateProfile, sendVerification } = useAuth();
 
   const [profileData, setProfileData] = useState({
     full_name: "",
