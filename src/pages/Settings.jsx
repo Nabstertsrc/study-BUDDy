@@ -65,7 +65,7 @@ export default function Settings() {
       const settings = await getNotificationSettings();
       setNotificationSettings(settings);
 
-      // Check Railway availability
+      // Check Render availability
       try {
         const { BackendBridge } = await import('@/lib/backend-bridge');
         const ready = await BackendBridge.isPythonReady();

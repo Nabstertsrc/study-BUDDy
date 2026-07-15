@@ -149,7 +149,7 @@ export const studyBuddyAI = {
     async classifyAndExtract(fileBase64, mimeType, options = {}) {
         console.log("AI classifyAndExtract: Routed via BackendBridge");
 
-        // Use Local Python Backend exclusively (Secrets are held on Railway)
+        // Use Python Backend exclusively (Secrets are held on Render)
         try {
             return await BackendBridge.classifyDocument(fileBase64, mimeType, options.isBackground || false);
         } catch (err) {

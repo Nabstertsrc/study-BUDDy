@@ -5,4 +5,5 @@ PyMuPDF
 python-dotenv
 flask
 flask-cors
-telethon
+requests
+gunicorn
