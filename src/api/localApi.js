@@ -208,7 +208,18 @@ export const localApi = {
                     const user = firebaseAuth.currentUser;
                     if (user) {
                         const userDocRef = doc(firestoreDB, 'users', user.uid);
-                        const snap = await getDoc(userDocRef);
+                        
+                        // Firebase getDoc hangs indefinitely if connection drops but navigator.onLine is true.
+                        // Force a 5-second timeout to prevent the app from freezing.
+                        const timeoutPromise = new Promise((_, reject) => 
+                            setTimeout(() => reject(new Error('Firestore timeout')), 5000)
+                        );
+                        
+                        const snap = await Promise.race([
+                            getDoc(userDocRef),
+                            timeoutPromise
+                        ]);
+                        
                         if (snap.exists()) {
                             const data = snap.data();
                             if (data.credit_balance !== undefined) {
@@ -226,7 +237,9 @@ export const localApi = {
                         }
                     }
                 } catch (e) {
-                    if (e.code !== 'unavailable' && !e.message?.includes('offline')) {
+                    if (e.message === 'Firestore timeout') {
+                        console.warn("[Wallet] Firestore balance sync timed out (5s), using local cache.");
+                    } else if (e.code !== 'unavailable' && !e.message?.includes('offline')) {
                         console.warn("[Wallet] Firestore balance sync failed:", e);
                     }
                 }
