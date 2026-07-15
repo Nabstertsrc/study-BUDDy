@@ -22,9 +22,22 @@ export const BackendBridge = {
      */
     async isPythonReady() {
         try {
-            const res = await fetch(`${BASE_URLS.PYTHON}/health`, { method: 'GET', signal: AbortSignal.timeout(15000) });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            
+            const res = await fetch(`${BASE_URLS.PYTHON}/health`, { 
+                method: 'GET', 
+                signal: controller.signal,
+                headers: { 'Accept': 'application/json' }
+            });
+            clearTimeout(timeoutId);
+            
+            if (!res.ok) {
+                console.warn("BackendBridge: Health check returned status", res.status);
+            }
             return res.ok;
         } catch (e) {
+            console.error("BackendBridge: Health check failed completely:", e.message || e);
             return false;
         }
     },
