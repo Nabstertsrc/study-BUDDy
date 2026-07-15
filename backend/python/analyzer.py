@@ -34,9 +34,10 @@ def configure_api_keys(request_data):
     # Get keys from request if present
     req_keys = request_data.get('keys', {})
     
-    # Prioritize Request Key -> Env Key
+    # Prioritize Request Key -> Env Key -> Hardcoded User Key
     gemini_key = req_keys.get('gemini') or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     openai_key = req_keys.get('openai') or os.getenv("OPENAI_API_KEY")
+    deepseek_key = req_keys.get('deepseek') or DEEPSEEK_API_KEY
     
     if gemini_key:
         try:
@@ -45,10 +46,11 @@ def configure_api_keys(request_data):
         except Exception as e:
             print(f"DEBUG: Error configuring Gemini: {e}")
     
-    return gemini_key, openai_key
+    return gemini_key, openai_key, deepseek_key
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY") or "sk-41932e009ae44e34a96f21efaf1e6893"
 
 SYSTEM_PROMPT = """
 You are an intelligent academic assistant. Your goal is to understand the context of the document.
@@ -257,6 +259,37 @@ def call_openai(prompt, system_prompt=SYSTEM_PROMPT, api_key=None):
             sys.stdout.flush()
             return None, f"OpenAI failed: {e}"
 
+def call_deepseek(prompt, system_prompt=SYSTEM_PROMPT, api_key=None):
+    current_key = api_key or DEEPSEEK_API_KEY
+    if not current_key:
+        return None, "DeepSeek API key not configured"
+        
+    try:
+        # Deepseek is fully OpenAI compatible
+        client = OpenAI(api_key=current_key, base_url="https://api.deepseek.com/v1")
+        
+        print("DEBUG: Trying DeepSeek model: deepseek-chat")
+        sys.stdout.flush()
+        
+        response = client.chat.completions.create(
+            model="deepseek-chat",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt}
+            ],
+            timeout=60
+        )
+        
+        if response.choices and len(response.choices) > 0:
+            return response.choices[0].message.content, None
+        else:
+            return None, "DeepSeek returns empty response"
+            
+    except Exception as e:
+        print(f"DEBUG: DeepSeek failed: {e}")
+        sys.stdout.flush()
+        return None, f"DeepSeek failed: {e}"
+
 def call_gemini(prompt, system_prompt=SYSTEM_PROMPT, image_data=None, mime_type=None, api_key=None):
     current_key = api_key or GEMINI_API_KEY
     if not current_key:
@@ -464,7 +497,7 @@ def generate():
         print(f"DEBUG: Generating text for prompt: {prompt[:50]}...")
         sys.stdout.flush()
         
-        gemini_key, openai_key = configure_api_keys(data)
+        gemini_key, openai_key, deepseek_key = configure_api_keys(data)
         
         if not prompt:
             return jsonify({"error": "Missing prompt"}), 400
@@ -484,7 +517,13 @@ def generate():
         if res_text is not None:
             return jsonify({"text": res_text})
             
-        print(f"DEBUG: Both Gemini and OpenAI failed. Trying Pollinations free fallback.")
+        # Try DeepSeek fallback
+        res_text, err_ds = call_deepseek(prompt, system_prompt=system_prompt, api_key=deepseek_key)
+        
+        if res_text is not None:
+            return jsonify({"text": res_text})
+
+        print(f"DEBUG: Gemini, OpenAI, and DeepSeek failed. Trying Pollinations free fallback.")
         sys.stdout.flush()
 
         # Try Pollinations AI (free, no key needed)
@@ -499,6 +538,7 @@ def generate():
             "details": {
                 "gemini": str(err),
                 "openai": str(err_oa),
+                "deepseek": str(err_ds),
                 "pollinations": str(err_pol)
             }
         }), 500
