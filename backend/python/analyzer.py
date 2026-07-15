@@ -3,6 +3,7 @@ import json
 import base64
 import fitz  # PyMuPDF
 import sys
+import requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
@@ -45,8 +46,8 @@ def configure_api_keys(request_data):
     
     return gemini_key, openai_key
 
-GEMINI_API_KEY = os.getenv("VITE_GEMINI_API_KEY") or os.getenv("VITE_GOOGLE_API_KEY")
-OPENAI_API_KEY = os.getenv("VITE_OPENAI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 SYSTEM_PROMPT = """
 You are an intelligent academic assistant. Your goal is to understand the context of the document.
@@ -173,6 +174,41 @@ def get_available_models(api_key=None):
         print(f"DEBUG: Failed to list models: {e}")
         sys.stdout.flush()
         return ['models/gemini-2.0-flash', 'models/gemini-1.5-flash']
+
+def call_pollinations(prompt, system_prompt=""):
+    """
+    Free AI fallback via Pollinations AI — no API key required.
+    https://text.pollinations.ai/
+    """
+    try:
+        print("DEBUG: Trying Pollinations AI (free fallback)...")
+        sys.stdout.flush()
+
+        messages = []
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        messages.append({"role": "user", "content": prompt})
+
+        response = requests.post(
+            "https://text.pollinations.ai/",
+            json={
+                "messages": messages,
+                "model": "openai",
+                "private": True
+            },
+            timeout=60
+        )
+
+        if response.ok and response.text:
+            print("DEBUG: Pollinations AI responded successfully.")
+            sys.stdout.flush()
+            return response.text, None
+        else:
+            return None, f"Pollinations returned status {response.status_code}"
+    except Exception as e:
+        print(f"DEBUG: Pollinations AI failed: {e}")
+        sys.stdout.flush()
+        return None, str(e)
 
 def call_openai(prompt, system_prompt=SYSTEM_PROMPT, api_key=None):
     current_key = api_key or OPENAI_API_KEY
@@ -441,13 +477,22 @@ def generate():
         if res_text is not None:
             return jsonify({"text": res_text})
             
-        print(f"DEBUG: Both Gemini and OpenAI failed.")
+        print(f"DEBUG: Both Gemini and OpenAI failed. Trying Pollinations free fallback.")
+        sys.stdout.flush()
+
+        # Try Pollinations AI (free, no key needed)
+        res_text, err_pol = call_pollinations(prompt, system_prompt=system_prompt)
+        if res_text is not None:
+            return jsonify({"text": res_text})
+
+        print(f"DEBUG: All AI providers failed.")
         sys.stdout.flush()
         return jsonify({
             "error": "All AI models failed",
             "details": {
                 "gemini": str(err),
-                "openai": str(err_oa)
+                "openai": str(err_oa),
+                "pollinations": str(err_pol)
             }
         }), 500
     except Exception as e:

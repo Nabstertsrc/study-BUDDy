@@ -67,32 +67,41 @@ const isBackendAvailable = async () => {
  * Call AI directly via the Gemini SDK (no backend needed).
  */
 const callGeminiDirect = async (prompt, systemPrompt = "") => {
-    try {
-        await localApi.wallet.spendCredits(1, "Document Chat");
-    } catch (e) {
-        throw new Error("You have run out of credits! Please upgrade or top up your balance.");
-    }
-
     const keys = getAPIKeys();
     if (!keys.gemini) {
-        throw new Error("No AI service available. Please ensure your Gemini API key is configured in Settings.");
+        throw new Error("NO_GEMINI_KEY");
     }
 
-    try {
-        const genAI = new GoogleGenerativeAI(keys.gemini);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-        const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
-        const result = await model.generateContent(fullPrompt);
-        return result.response.text();
-    } catch (err) {
-        console.warn("[Wallet] Refunding 1 credit due to Gemini API failure...");
-        await localApi.wallet.addCredits(1, { amount: 0, currency: 'USD', note: 'Refund for failed Gemini Chat' });
-        throw err;
-    }
+    const genAI = new GoogleGenerativeAI(keys.gemini);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
+    const result = await model.generateContent(fullPrompt);
+    return result.response.text();
 };
 
 /**
- * Resilient AI caller: uses backend if available, otherwise calls Gemini directly.
+ * Call Pollinations AI — 100% free, no API key required.
+ */
+const callPollinationsDirect = async (prompt, systemPrompt = "") => {
+    const messages = [];
+    if (systemPrompt) messages.push({ role: "system", content: systemPrompt });
+    messages.push({ role: "user", content: prompt });
+
+    const res = await fetch("https://text.pollinations.ai/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages, model: "openai", private: true }),
+        signal: AbortSignal.timeout(60000)
+    });
+
+    if (!res.ok) throw new Error(`Pollinations returned ${res.status}`);
+    const text = await res.text();
+    if (!text) throw new Error("Pollinations returned empty response");
+    return text;
+};
+
+/**
+ * Resilient AI caller: Backend → Gemini Direct → Pollinations (free).
  */
 const callAI = async (prompt, systemPrompt = "") => {
     const backendUp = await isBackendAvailable();
@@ -103,13 +112,35 @@ const callAI = async (prompt, systemPrompt = "") => {
             if (err.message && err.message.includes("credits")) {
                 throw err; // Don't fall back, this is a hard stop
             }
-            console.warn("DocumentChat: Backend call failed, falling back to Gemini direct:", err.message);
+            console.warn("DocumentChat: Backend call failed, falling back to direct AI:", err.message);
             _backendDown = true;
         }
     }
 
-    // Direct Gemini API call (deducts credit internally)
-    return await callGeminiDirect(prompt, systemPrompt);
+    // Try Gemini SDK directly if key available
+    try {
+        await localApi.wallet.spendCredits(1, "Document Chat");
+        try {
+            return await callGeminiDirect(prompt, systemPrompt);
+        } catch (err) {
+            if (err.message === "NO_GEMINI_KEY") {
+                // No Gemini key — fall through to Pollinations
+                console.log("DocumentChat: No Gemini key, trying Pollinations AI (free)...");
+            } else {
+                // Gemini key exists but call failed — refund and try Pollinations
+                console.warn("DocumentChat: Gemini direct failed, trying Pollinations:", err.message);
+                await localApi.wallet.addCredits(1, { amount: 0, currency: 'USD', note: 'Refund for failed Gemini, falling back to free AI' });
+            }
+            return await callPollinationsDirect(prompt, systemPrompt);
+        }
+    } catch (err) {
+        if (err.message && (err.message.includes("credits") || err.message.includes("run out"))) {
+            throw err;
+        }
+        // Last resort: try Pollinations without spending a credit
+        console.warn("DocumentChat: All paid AI failed. Trying Pollinations (free)...");
+        return await callPollinationsDirect(prompt, systemPrompt);
+    }
 };
 
 // Legacy extractPDFWithGemini replaced by local extractTextFromPDF to prevent AI payload crashing
