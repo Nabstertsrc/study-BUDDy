@@ -12,6 +12,7 @@ import {
   XCircle,
   ChevronDown,
   Trash2,
+  Zap,
 } from "lucide-react";
 import { isPast } from "date-fns";
 import StatsCard from "@/components/dashboard/StatsCard";
