@@ -1,7 +1,7 @@
 import Dexie from 'dexie';
 
-// VERSION 6: Fresh start for the new app name
-export const db = new Dexie('StudyBuddy_Final_v6');
+// Restore version 5 to prevent local data loss
+export const db = new Dexie('StudyBuddy_Final_v5');
 console.log("APP_BOOT_VERSION: v3.6_FORCED_CLEAN_BOOT");
 
 if (window.location.href.includes('Music')) {
