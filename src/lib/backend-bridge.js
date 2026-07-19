@@ -131,7 +131,7 @@ export const BackendBridge = {
 
             const keys = getAPIKeys();
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s hard timeout
+            const timeoutId = setTimeout(() => controller.abort(), 120000); // 120s hard timeout
 
             const response = await fetch(`${BASE_URLS.PYTHON}/generate`, {
                 method: 'POST',
