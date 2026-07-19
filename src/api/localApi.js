@@ -18,7 +18,15 @@ const syncToFirestore = async (tableName, action, id, data = null) => {
         } else {
             // Filter out undefined values and explicitly include userId for root-level rule compatibility
             const cleanData = { userId: user.uid };
-            if (data) Object.entries(data).forEach(([k, v]) => { if (v !== undefined) cleanData[k] = v; });
+            if (data) Object.entries(data).forEach(([k, v]) => { 
+                if (v !== undefined) {
+                    if (typeof v === 'string' && v.length > 500000) {
+                        cleanData[k] = v.substring(0, 500000) + '...[TRUNCATED FOR CLOUD]';
+                    } else {
+                        cleanData[k] = v; 
+                    }
+                } 
+            });
             await setDoc(docRef, cleanData, { merge: true });
         }
     } catch (e) {

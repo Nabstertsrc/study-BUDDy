@@ -42,7 +42,6 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const [aiStatus, setAiStatus] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
   const { checkForNotifications } = useNotifications();
 
   const namingPref = localStorage.getItem('naming_pref') || 'Modules';
@@ -50,12 +49,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     getAIStatus().then(setAiStatus);
-
-    // Check if onboarding is needed
-    const hasSeenOnboarding = localStorage.getItem('has_seen_onboarding_v2');
-    if (!hasSeenOnboarding) {
-      setShowOnboarding(true);
-    }
   }, []);
 
   const { data: modules, isLoading: modulesLoading } = useQuery({
@@ -139,7 +132,6 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-screen-2xl mx-auto space-y-8 animate-in fade-in duration-700">
-      {showOnboarding && <OnboardingModal onComplete={() => setShowOnboarding(false)} />}
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -157,6 +149,12 @@ export default function Dashboard() {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 hidden sm:flex" onClick={() => window.open('https://www.buymeacoffee.com/', '_blank')}>
+            ☕ Buy me a coffee $5
+          </Button>
+          <Button variant="outline" className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hidden md:flex" onClick={() => window.open('https://www.paypal.com/donate', '_blank')}>
+            💝 Donate $10
+          </Button>
           {/* AI Status Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
