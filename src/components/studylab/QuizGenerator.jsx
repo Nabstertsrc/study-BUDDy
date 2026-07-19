@@ -152,15 +152,19 @@ Requirements:
       }
 
       // Validate questions format
-      const validQuestions = rawQuestions.filter(q =>
-        q.question &&
+      const validQuestions = rawQuestions.filter(q => {
+        // AI sometimes returns string instead of number
+        if (typeof q.correct_answer === 'string') {
+          q.correct_answer = parseInt(q.correct_answer, 10);
+        }
+        
+        return q.question &&
         q.options &&
         Array.isArray(q.options) &&
-        q.options.length === 4 &&
+        q.options.length >= 2 &&
         typeof q.correct_answer === 'number' &&
-        q.correct_answer >= 0 &&
-        q.correct_answer <= 3
-      );
+        !isNaN(q.correct_answer)
+      });
 
       if (validQuestions.length === 0) {
         toast.error("Invalid quiz format. Please try again.");
