@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
-import FloatingIcons from '@/components/auth/FloatingIcons'
+import { useNavigate } from 'react-router-dom'
 import logo from '@/assets/logo.png'
 import { base44 } from '@/api/base44Client'
 
@@ -41,21 +41,25 @@ export default function Signup() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 relative overflow-hidden">
-            <FloatingIcons />
-            <div className="z-10 w-full max-w-md flex flex-col items-center">
-                <div className="w-24 h-24 mb-6 bg-slate-900/50 backdrop-blur-xl p-3 rounded-3xl shadow-2xl shadow-blue-500/20 border border-white/10 flex items-center justify-center">
-                    <img src={logo} alt="Study Buddy Logo" className="w-full h-full object-contain" />
+        <div className="min-h-screen flex flex-col bg-slate-50 relative overflow-hidden font-sans">
+            <div className="w-full h-16 bg-white border-b border-slate-200 flex items-center px-6 shadow-sm">
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+                    <img src={logo} alt="Study Buddy Logo" className="h-8 w-auto object-contain" />
+                    <span className="font-extrabold text-xl tracking-tight text-blue-600">Study Buddy</span>
                 </div>
-                <Card className="w-full shadow-2xl border-white/10 bg-slate-900/60 backdrop-blur-2xl text-slate-100">
-                    <CardHeader className="text-center pb-2">
-                        <CardTitle className="text-2xl font-black text-white">Create an Account</CardTitle>
-                        <CardDescription className="text-slate-400">Start your learning journey with Study Buddy</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSignup} className="space-y-4">
+            </div>
+            
+            <div className="flex-1 flex items-center justify-center p-4">
+                <div className="w-full max-w-[440px]">
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 sm:p-10">
+                        <div className="text-center mb-8">
+                            <h1 className="text-2xl font-bold text-slate-900 mb-2">Create an Account</h1>
+                            <p className="text-slate-500 text-sm">Start your learning journey with Study Buddy</p>
+                        </div>
+                        
+                        <form onSubmit={handleSignup} className="space-y-5">
                             <div className="space-y-2">
-                                <Label htmlFor="fullName" className="text-slate-300">Full Name</Label>
+                                <Label htmlFor="fullName" className="text-slate-700 font-semibold text-sm">Full Name</Label>
                                 <Input
                                     id="fullName"
                                     type="text"
@@ -63,48 +67,57 @@ export default function Signup() {
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
                                     required
-                                    className="bg-slate-950/50 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                                    className="h-12 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus-visible:ring-blue-500 rounded-lg shadow-sm"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-slate-300">Email</Label>
+                                <Label htmlFor="email" className="text-slate-700 font-semibold text-sm">Email Address</Label>
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="m@example.com"
+                                    placeholder="Enter your email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="bg-slate-950/50 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                                    className="h-12 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus-visible:ring-blue-500 rounded-lg shadow-sm"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password" className="text-slate-300">Password</Label>
+                                <Label htmlFor="password" className="text-slate-700 font-semibold text-sm">Password</Label>
                                 <Input
                                     id="password"
                                     type="password"
+                                    placeholder="Create a password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    className="bg-slate-950/50 border-white/10 text-white focus-visible:ring-blue-500"
+                                    className="h-12 bg-white border-slate-300 text-slate-900 placeholder:text-slate-400 focus-visible:ring-blue-500 rounded-lg shadow-sm"
                                 />
                             </div>
-                            <Button className="w-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/25 transition-all" type="submit" disabled={loading}>
+                            
+                            <Button 
+                                className="w-full h-12 mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-base rounded-lg transition-colors shadow-sm" 
+                                type="submit" 
+                                disabled={loading}
+                            >
                                 {loading ? 'Creating account...' : 'Sign Up'}
                             </Button>
-                            <div className="text-center text-sm text-slate-400">
+                        </form>
+                        
+                        <div className="mt-8 pt-6 border-t border-slate-100">
+                            <div className="text-center text-sm text-slate-600">
                                 Already have an account?{' '}
                                 <button
                                     type="button"
                                     onClick={() => navigate('/Login')}
-                                    className="text-blue-400 hover:text-blue-300 font-semibold hover:underline"
+                                    className="text-blue-600 font-semibold hover:underline"
                                 >
-                                    Login
+                                    Log In
                                 </button>
                             </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )

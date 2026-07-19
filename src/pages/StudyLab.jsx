@@ -93,24 +93,31 @@ export default function StudyLab() {
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-white border border-slate-200/60 p-1 h-auto flex-wrap">
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              className={cn(
-                "data-[state=active]:bg-slate-900 data-[state=active]:text-white",
-                "flex items-center gap-2 px-4 py-2.5"
-              )}
-            >
-              <tab.icon className="w-4 h-4" />
-              <span className="hidden sm:inline">{tab.label}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col md:flex-row w-full gap-8">
+        {/* Vertical Sidebar Tabs */}
+        <div className="w-full md:w-64 shrink-0">
+          <div className="bg-white rounded-2xl border border-slate-200/60 p-3 shadow-sm sticky top-6">
+            <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-3">AI Services</h2>
+            <TabsList className="flex flex-col h-auto bg-transparent border-0 space-y-1 w-full">
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.id}
+                  value={tab.id}
+                  className={cn(
+                    "w-full justify-start data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:font-bold data-[state=active]:shadow-none",
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-600 hover:bg-slate-50"
+                  )}
+                >
+                  <tab.icon className={cn("w-5 h-5", activeTab === tab.id ? "text-blue-600" : "text-slate-400")} />
+                  <span>{tab.label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+        </div>
 
-        <div className="mt-8">
+        {/* Content Area */}
+        <div className="flex-1 min-w-0">
           <TabsContent value="quiz" className="mt-0">
             <div className="space-y-8">
               <div className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 rounded-2xl p-6 border border-violet-200/50 flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
