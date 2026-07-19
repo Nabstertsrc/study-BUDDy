@@ -9,7 +9,7 @@ export default defineConfig({
   logLevel: 'error',
   // Inject keys directly for stability — ensures they survive deployment where .env loading might be inconsistent
   define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify("https://srv-d9b3h18js32c73akvqc0.onrender.com"),
+    'import.meta.env.VITE_API_URL': JSON.stringify("https://api.profilegenius.fun"),
     'import.meta.env.VITE_SUPABASE_URL': JSON.stringify("https://bejdomlxsaqoxzwlbloe.supabase.co"),
     'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlamRvbWx4c2Fxb3h6d2xibG9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI5Nzk0NTIsImV4cCI6MjA3ODU1NTQ1Mn0.f0X9LCHhAnn8NsoMbl9Y6E9QVD3zhFCKrfCQ-QbZgBQ"),
     'import.meta.env.VITE_FIREBASE_API_KEY': JSON.stringify("AIzaSyA3yJJAN99Qe2XdbGfG5_bjFaroR6gyYps"),
