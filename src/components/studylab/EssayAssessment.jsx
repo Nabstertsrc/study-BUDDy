@@ -29,6 +29,7 @@ import confetti from "canvas-confetti";
 import AILoadingState from "@/components/ui/AILoadingState";
 import { toast } from "sonner";
 import { safeJsonParse } from "@/lib/safeJsonParser";
+import AdGate from "@/components/common/AdGate";
 
 export default function EssayAssessment() {
   const [prompt, setPrompt] = useState("");
@@ -363,23 +364,28 @@ Each module should be:
 
                     <div className="relative pt-8 mt-8 border-t border-white/10">
                       <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Button
-                          onClick={gradeEssay}
-                          disabled={!title || !prompt || !content || content.trim().split(/\s+/).length < 50 || grading}
-                          className="w-full bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 hover:from-indigo-700 hover:via-blue-700 hover:to-indigo-700 shadow-2xl shadow-indigo-500/40 text-white font-black rounded-[2rem] h-20 text-xl tracking-tighter group transition-all duration-300"
-                        >
-                          {grading ? (
-                            <>
-                              <Loader2 className="w-6 h-6 mr-3 animate-spin" />
-                              Processing Neural Data...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-6 h-6 mr-3 group-hover:animate-pulse" />
-                              Initialize Evaluation
-                            </>
-                          )}
-                        </Button>
+                        <AdGate
+                          featureName="Essay Evaluation"
+                          onProceed={gradeEssay}
+                          trigger={
+                            <Button
+                              disabled={!title || !prompt || !content || content.trim().split(/\s+/).length < 50 || grading}
+                              className="w-full bg-gradient-to-r from-indigo-600 via-blue-600 to-indigo-600 hover:from-indigo-700 hover:via-blue-700 hover:to-indigo-700 shadow-2xl shadow-indigo-500/40 text-white font-black rounded-[2rem] h-20 text-xl tracking-tighter group transition-all duration-300"
+                            >
+                              {grading ? (
+                                <>
+                                  <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                                  Processing Neural Data...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-6 h-6 mr-3 group-hover:animate-pulse" />
+                                  Initialize Evaluation
+                                </>
+                              )}
+                            </Button>
+                          }
+                        />
                       </motion.div>
                     </div>
                   </div>

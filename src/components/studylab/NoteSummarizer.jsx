@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import confetti from "canvas-confetti";
 import AILoadingState from "@/components/ui/AILoadingState";
 import { safeJsonParse } from "@/lib/safeJsonParser";
+import AdGate from "@/components/common/AdGate";
 
 export default function NoteSummarizer({ materials, onGenerate }) {
   const [source, setSource] = useState("text");
@@ -321,24 +322,29 @@ Return only the structured data as valid JSON. Do not include any other text or 
             whileTap={{ scale: 0.99 }}
             className="mt-10"
           >
-            <Button
-              onClick={generateSummary}
-              disabled={generating || (source === "text" ? !text : !materialId)}
-              size="lg"
-              className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:via-indigo-700 hover:to-violet-700 shadow-[0_20px_50px_rgba(37,99,235,0.3)] text-white font-black rounded-[2rem] h-20 text-xl tracking-tight group"
-            >
-              {generating ? (
-                <>
-                  <Loader2 className="w-6 h-6 mr-3 animate-spin" />
-                  Synthesizing Cognitive Model...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-6 h-6 mr-3 group-hover:animate-spin" />
-                  Initialize Neural Synthesis
-                </>
-              )}
-            </Button>
+          <AdGate
+            featureName="Note Summarizer"
+            onProceed={generateSummary}
+            trigger={
+              <Button
+                disabled={generating || (source === "text" ? !text : !materialId)}
+                size="lg"
+                className="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-700 hover:via-indigo-700 hover:to-violet-700 shadow-[0_20px_50px_rgba(37,99,235,0.3)] text-white font-black rounded-[2rem] h-20 text-xl tracking-tight group"
+              >
+                {generating ? (
+                  <>
+                    <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                    Synthesizing Cognitive Model...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-6 h-6 mr-3 group-hover:animate-spin" />
+                    Initialize Neural Synthesis
+                  </>
+                )}
+              </Button>
+            }
+          />
           </motion.div>
         </div>
       </motion.div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import {
@@ -9,16 +9,12 @@ import {
   Menu,
   X,
   Layers,
-  Zap,
-  Wallet,
-  PlusCircle,
   ShieldCheck,
   Library,
   GraduationCap,
   ClipboardList,
   Users
 } from "lucide-react";
-import { localApi } from "@/api/localApi";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import NotificationBell from "@/components/NotificationBell";
@@ -48,18 +44,9 @@ const getNavigation = (isAdmin, namingPref) => [
 
 export default function Layout({ children, currentPageName }) {
   const { user, isAdmin, userProfile, logout, sendVerification } = useAuth();
-  const [balance, setBalance] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const namingPref = localStorage.getItem('naming_pref') || 'Modules';
   const navigation = getNavigation(isAdmin, namingPref);
-
-  useEffect(() => {
-    localApi.wallet.getBalance().then(setBalance);
-    const interval = setInterval(() => {
-      localApi.wallet.getBalance().then(setBalance);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 flex overflow-hidden">
@@ -100,11 +87,6 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 px-4 py-2 bg-blue-900 text-white rounded-2xl shadow-lg">
-              <Wallet className="w-4 h-4 text-blue-400" />
-              <span className="text-sm font-black tracking-tighter">{balance} <span className="text-[8px] opacity-70">CREDITS</span></span>
-              <Link to={createPageUrl("Payment")} className="ml-2 hover:scale-110 transition-transform"><PlusCircle className="w-4 h-4 text-emerald-400" /></Link>
-            </div>
             <NotificationBell />
 
             <DropdownMenu>
@@ -154,7 +136,6 @@ export default function Layout({ children, currentPageName }) {
           </button>
           <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
           <div className="flex items-center gap-4">
-            <span className="text-sm font-black text-slate-900">{balance}</span>
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-black">S</div>
           </div>
         </header>
@@ -199,12 +180,10 @@ export default function Layout({ children, currentPageName }) {
           <footer className="mt-20 pt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest pb-10">
             <div className="flex items-center gap-4">
               <span>© 2026 Nabster Tsr</span>
-              <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-amber-500" /> Professional Tier</span>
             </div>
             <div className="flex items-center gap-6">
               <a href="#" className="hover:text-slate-900 transition-colors">Privacy</a>
               <a href="#" className="hover:text-slate-900 transition-colors">Terms</a>
-              <Link to={createPageUrl("Payment")} className="text-blue-600 hover:text-blue-700 font-black">Upgrade Now</Link>
             </div>
           </footer>
         </div>
@@ -214,13 +193,10 @@ export default function Layout({ children, currentPageName }) {
           <div className="max-w-[1920px] mx-auto flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-widest px-4">
             <div className="flex items-center gap-4">
               <span>© 2026 Nabster Tsr</span>
-              <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-amber-500" /> System Active</span>
+              <span className="text-emerald-500">● System Active</span>
             </div>
             <div className="flex items-center gap-4">
-              <span className={`font-bold ${balance === 0 ? 'text-red-400' : balance <= 3 ? 'text-amber-400' : 'text-slate-400'}`}>
-                {balance === 0 ? '⚠ 0 Credits' : balance <= 3 ? `⚡ ${balance} Credits` : `${balance} Credits`}
-              </span>
-              <Link to={createPageUrl("Payment")} className="text-blue-600 hover:underline">Top Up</Link>
+              <span className="text-slate-400">Powered by AI</span>
             </div>
           </div>
         </footer>

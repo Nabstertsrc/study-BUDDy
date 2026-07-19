@@ -30,6 +30,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import AILoadingState from "@/components/ui/AILoadingState";
 import { safeJsonParse } from "@/lib/safeJsonParser";
+import AdGate from "@/components/common/AdGate";
 
 export default function QuizGenerator({ modules, materials }) {
   const [source, setSource] = useState("text");
@@ -631,24 +632,29 @@ Requirements:
             </p>
           </div>
 
-          <Button
-            onClick={generateQuiz}
-            disabled={generating || (source === "text" ? !text : !materialId)}
-            size="lg"
-            className="w-full h-16 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 hover:from-violet-700 hover:via-purple-700 hover:to-pink-700 shadow-2xl shadow-violet-500/40 text-white font-bold text-lg rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
-          >
-            {generating ? (
-              <div className="flex items-center gap-3">
-                <Loader2 className="w-6 h-6 animate-spin" />
-                <span>Crafting Your Personalized Quiz...</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <Sparkles className="w-6 h-6" />
-                <span>Generate Quiz</span>
-              </div>
-            )}
-          </Button>
+          <AdGate
+            featureName="Quiz Generator"
+            onProceed={generateQuiz}
+            trigger={
+              <Button
+                disabled={generating || (source === "text" ? !text : !materialId)}
+                size="lg"
+                className="w-full h-16 bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 hover:from-violet-700 hover:via-purple-700 hover:to-pink-700 shadow-2xl shadow-violet-500/40 text-white font-bold text-lg rounded-2xl transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+              >
+                {generating ? (
+                  <div className="flex items-center gap-3">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    <span>Crafting Your Personalized Quiz...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-6 h-6" />
+                    <span>Generate Quiz</span>
+                  </div>
+                )}
+              </Button>
+            }
+          />
         </div>
       </div>
     </div>

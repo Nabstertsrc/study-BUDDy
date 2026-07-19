@@ -20,9 +20,9 @@ export default function HowItWorks() {
             description: "Generates step-by-step personalized learning paths for you based on your uploaded curriculum or goals."
         },
         {
-            title: "Credits System (Pay As You Go)",
-            icon: <CreditCard className="w-8 h-8 text-amber-500" />,
-            description: "Advanced AI generation costs credits. Manage your free tier or purchase additional credit bundles whenever you need them via PayPal or Yoco."
+            title: "Ad-Supported AI Generation",
+            icon: <Zap className="w-8 h-8 text-amber-500" />,
+            description: "Advanced AI generation is completely free! Simply view a short ad before accessing premium AI features like deep-dives and detailed assessments."
         },
         {
             title: "Prescribed Books Library",

@@ -33,13 +33,39 @@ export const getAIStatus = async () => {
         };
     }
 
-    // Fallback for web-only dev (should not be hit in Electron app)
+    // Web build: check if Python backend (Render) is alive — this is the primary AI source
+    try {
+        const backendOnline = await BackendBridge.isPythonReady();
+        if (backendOnline) {
+            return {
+                gemini: true,
+                deepseek: true,
+                grok: false,
+                openai: false,
+                details: {
+                    gemini: { status: true, model: 'gemini-2.0-flash (via backend)' },
+                    deepseek: { status: true, model: 'deepseek-chat (via backend)' },
+                    grok: { status: false },
+                    openai: { status: false }
+                }
+            };
+        }
+    } catch (_) {
+        // Backend unreachable — fall through to key check
+    }
+
+    // Final fallback: check local keys only
     return {
         gemini: !!keys.gemini,
         deepseek: !!keys.deepseek,
         grok: !!keys.xai,
         openai: !!keys.openai,
-        details: {}
+        details: {
+            gemini: { status: !!keys.gemini, model: keys.gemini ? 'gemini-2.0-flash (local key)' : undefined, error: !keys.gemini ? 'No API key' : undefined },
+            deepseek: { status: !!keys.deepseek, model: keys.deepseek ? 'deepseek-chat (local key)' : undefined, error: !keys.deepseek ? 'No API key' : undefined },
+            grok: { status: !!keys.xai, error: !keys.xai ? 'No API key' : undefined },
+            openai: { status: !!keys.openai, error: !keys.openai ? 'No API key' : undefined }
+        }
     };
 };
 

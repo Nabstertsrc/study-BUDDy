@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
@@ -7,11 +7,8 @@ import {
   Upload,
   Sparkles,
   ChevronRight,
-  Lock,
-  Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { localApi } from "@/api/localApi";
 import {
   Select,
   SelectContent,
@@ -59,27 +56,12 @@ const actions = [
 ];
 
 export default function QuickActions() {
-  const [balance, setBalance] = useState(20);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    localApi.wallet.getBalance().then(setBalance);
-    const interval = setInterval(() => {
-      localApi.wallet.getBalance().then(setBalance);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleAction = (value) => {
     const action = actions.find(a => a.title === value);
     if (!action) return;
-
-    const isLocked = action.isAi && balance < 1;
-    if (isLocked) {
-      navigate(createPageUrl("Payment"));
-    } else {
-      navigate(createPageUrl(action.page) + action.params);
-    }
+    navigate(createPageUrl(action.page) + action.params);
   };
 
   return (
@@ -110,61 +92,48 @@ export default function QuickActions() {
 
       {/* Desktop Horizontal Slider */}
       <div className="flex flex-nowrap gap-6 overflow-x-auto pb-8 pt-2 -mx-2 px-2 pencil-scroll scroll-smooth lg:flex hidden">
-        {actions.map((action, index) => {
-          const isLocked = action.isAi && balance < 1;
+        {actions.map((action, index) => (
+          <Link
+            key={index}
+            to={createPageUrl(action.page) + action.params}
+            className="group relative overflow-hidden rounded-[2rem] p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border min-w-[340px] flex-shrink-0 bg-white border-slate-100 hover:border-blue-400 shadow-xl shadow-slate-200/20"
+          >
+            <div className={cn(
+              "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity",
+              action.gradient
+            )} />
 
-          return (
-            <Link
-              key={index}
-              to={isLocked ? createPageUrl("Payment") : createPageUrl(action.page) + action.params}
-              className={cn(
-                "group relative overflow-hidden rounded-[2rem] p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border min-w-[340px] flex-shrink-0",
-                isLocked
-                  ? "bg-slate-50/80 border-slate-200 grayscale-[0.8]"
-                  : "bg-white border-slate-100 hover:border-blue-400 shadow-xl shadow-slate-200/20"
-              )}
-            >
+            {/* Internal Horizontal Layout */}
+            <div className="relative flex items-center gap-5">
               <div className={cn(
-                "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity",
+                "w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg transform transition-transform group-hover:rotate-6 flex-shrink-0",
                 action.gradient
-              )} />
+              )}>
+                <action.icon className="w-8 h-8 text-white" />
+              </div>
 
-              {/* Internal Horizontal Layout */}
-              <div className="relative flex items-center gap-5">
-                <div className={cn(
-                  "w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center shadow-lg transform transition-transform group-hover:rotate-6 flex-shrink-0",
-                  isLocked ? "from-slate-400 to-slate-500" : action.gradient
-                )}>
-                  {isLocked ? (
-                    <Lock className="w-8 h-8 text-white" />
-                  ) : (
-                    <action.icon className="w-8 h-8 text-white" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <h4 className="font-black text-slate-900 text-lg tracking-tight truncate">{action.title}</h4>
+                  {action.isAi && (
+                    <span className="px-1.5 py-0.5 bg-violet-100 text-violet-700 text-[8px] font-black rounded-full uppercase tracking-tighter">AI</span>
                   )}
                 </div>
+                <p className="text-xs text-slate-500 line-clamp-2 leading-tight">
+                  {action.description}
+                </p>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <h4 className="font-black text-slate-900 text-lg tracking-tight truncate">{action.title}</h4>
-                    {isLocked && (
-                      <span className="px-1.5 py-0.5 bg-slate-900 text-white text-[8px] font-black rounded-full uppercase tracking-tighter">Locked</span>
-                    )}
+                <div className="mt-3 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3 text-violet-500" />
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Free with Ads</span>
                   </div>
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-tight">
-                    {isLocked ? "Upgrade to unlock AI features" : action.description}
-                  </p>
-
-                  <div className="mt-3 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5">
-                      <Zap className={cn("w-3 h-3 fill-current", isLocked ? "text-slate-300" : "text-amber-500")} />
-                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">1 Credit</span>
-                    </div>
-                    {!isLocked && <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />}
-                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
                 </div>
               </div>
-            </Link>
-          );
-        })}
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

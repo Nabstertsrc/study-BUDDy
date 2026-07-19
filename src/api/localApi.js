@@ -586,12 +586,6 @@ export const localApi = {
         },
         Organizer: {
             AutoOrganizeUpload: async (file) => {
-                try {
-                    await localApi.wallet.spendCredits(1, "AI Auto-Organizer");
-                } catch (e) {
-                    throw new Error("You have run out of credits! Please upgrade or top up your balance to analyze files.");
-                }
-
                 let result;
                 try {
                     const { extractTextFromPDF } = await import('../lib/pdfProcessor');
@@ -617,8 +611,7 @@ export const localApi = {
 
                     if (!result?.data) throw new Error("AI failed to extract structured data from this file.");
                 } catch (err) {
-                    console.warn("[Wallet] Refunding 1 credit due to Auto-Organizer failure...");
-                    await localApi.wallet.addCredits(1, { amount: 0, currency: 'USD', note: 'Refund for failed Auto-Organizer' });
+                    console.warn("[Auto-Organizer] AI failed to parse document...", err);
                     throw err;
                 }
 

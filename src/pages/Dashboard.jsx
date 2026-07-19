@@ -11,10 +11,7 @@ import {
   CheckCircle,
   XCircle,
   ChevronDown,
-  Zap,
   Trash2,
-  Calendar,
-  History
 } from "lucide-react";
 import { isPast } from "date-fns";
 import StatsCard from "@/components/dashboard/StatsCard";
@@ -39,14 +36,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNotifications } from "@/lib/NotificationContext";
 import OnboardingModal from "@/components/OnboardingModal";
-import { localApi } from "@/api/localApi";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
   const [aiStatus, setAiStatus] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [balance, setBalance] = useState(0);
   const { checkForNotifications } = useNotifications();
 
   const namingPref = localStorage.getItem('naming_pref') || 'Modules';
@@ -54,18 +49,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     getAIStatus().then(setAiStatus);
-    localApi.wallet.getBalance().then(setBalance);
-
-    const interval = setInterval(() => {
-      localApi.wallet.getBalance().then(setBalance);
-    }, 5000);
 
     // Check if onboarding is needed
     const hasSeenOnboarding = localStorage.getItem('has_seen_onboarding_v2');
     if (!hasSeenOnboarding) {
       setShowOnboarding(true);
     }
-    return () => clearInterval(interval);
   }, []);
 
   const { data: modules, isLoading: modulesLoading } = useQuery({
@@ -122,12 +111,8 @@ export default function Dashboard() {
   };
 
   const handleClearData = async () => {
-    if (confirm("Are you sure you want to DELETE ALL DATA? This cannot be undone. Your wallet will be reset to 10 free credits.")) {
+    if (confirm("Are you sure you want to DELETE ALL DATA? This cannot be undone.")) {
       await db.delete();
-      localStorage.removeItem('credit_balance');
-      localStorage.removeItem('purchased_credit_balance');
-      localStorage.removeItem('free_credits_this_month');
-      localStorage.removeItem('last_credit_reset_month');
       window.location.reload();
     }
   };
@@ -155,39 +140,6 @@ export default function Dashboard() {
     <div className="max-w-screen-2xl mx-auto space-y-8 animate-in fade-in duration-700">
       {showOnboarding && <OnboardingModal onComplete={() => setShowOnboarding(false)} />}
 
-      {/* Premium Tier Quick-Selector */}
-      <div className="bg-gradient-to-r from-blue-600 via-indigo-700 to-slate-900 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden group">
-        <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
-          <Zap className="w-48 h-48 fill-current" />
-        </div>
-        <div className="relative flex flex-col xl:flex-row items-center justify-between gap-8">
-          <div className="space-y-2 text-center xl:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-xs font-bold tracking-widest text-blue-200">
-              <Sparkles className="w-3 h-3" />
-              UPGRADE YOUR PLAN
-            </div>
-            <h2 className="text-3xl font-black">Ready to unlock more?</h2>
-            <p className="text-blue-100/70 text-sm max-w-md">Get instant access to deep-dive reports, unlimited summaries, and personalized AI pathways.</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full xl:w-auto">
-            {[
-              { name: 'Starter', price: '$5', url: 'https://pay.yoco.com/r/7XPopK' },
-              { name: 'Professional', price: '$10', url: 'https://pay.yoco.com/r/mEq5we' },
-              { name: 'Academic', price: '$15', url: 'https://pay.yoco.com/r/4gzxbB' }
-            ].map(plan => (
-              <button
-                key={plan.name}
-                onClick={() => window.open(plan.url, '_blank')}
-                className="p-5 bg-white/5 hover:bg-white/10 backdrop-blur-md rounded-3xl border border-white/10 flex flex-col items-center gap-1 transition-all hover:scale-105 active:scale-95"
-              >
-                <span className="text-[10px] font-bold text-blue-300 uppercase tracking-tighter">{plan.name}</span>
-                <span className="text-xl font-black">{plan.price}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -269,15 +221,6 @@ export default function Dashboard() {
           ))
         ) : (
           <>
-            <StatsCard
-              title="Available Credits"
-              value={balance}
-              icon={Zap}
-              gradient="bg-gradient-to-br from-indigo-600 to-blue-700"
-              subtitle="Next Free Refresh"
-              trend={localApi.wallet.getNextResetDate() || 'Pending'}
-              trendUp={true}
-            />
             <StatsCard
               title={`Enrolled ${namingPref}`}
               value={modules?.length || 0}

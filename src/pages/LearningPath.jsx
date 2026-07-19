@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -41,6 +40,7 @@ import InsightsPanel from "@/components/dashboard/InsightsPanel";
 import StudyPlanGenerator from "@/components/dashboard/StudyPlanGenerator";
 import RecommendationsPanel from "@/components/dashboard/RecommendationsPanel";
 import { generateRecommendations } from "@/lib/recommendationEngine";
+import AdGate from "@/components/common/AdGate";
 
 export default function LearningPath() {
   const [generating, setGenerating] = useState(false);
@@ -131,7 +131,7 @@ export default function LearningPath() {
 
         toast.success("AI Study Plan generated!", { id: "gen-plan" });
       } catch (err) {
-        toast.error("Failed to generate plan. Check your credits.", { id: "gen-plan" });
+        toast.error("Failed to generate plan. Please try again later.", { id: "gen-plan" });
       }
     } else {
       refetchRecs();
@@ -309,24 +309,29 @@ Use conversational language, analogies, and examples. Make it fun and relatable!
               a personalized learning path just for you! Get tailored recommendations,
               identify areas to focus on, and achieve your goals faster.
             </p>
-            <Button
-              onClick={handleRefresh}
-              disabled={isLoading || recsFetching}
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 shadow-xl shadow-blue-500/30"
-            >
-              {isLoading || recsFetching ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Analyzing Your Progress...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Generate My Learning Path
-                </>
-              )}
-            </Button>
+            <AdGate
+              featureName="AI Learning Path"
+              onProceed={handleRefresh}
+              trigger={
+                <Button
+                  disabled={isLoading || recsFetching}
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 shadow-xl shadow-blue-500/30"
+                >
+                  {isLoading || recsFetching ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Analyzing Your Progress...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Generate My Learning Path
+                    </>
+                  )}
+                </Button>
+              }
+            />
 
             <div className="mt-12 grid md:grid-cols-3 gap-6 text-left">
               {[

@@ -23,6 +23,7 @@ import { ProfessionalAIContent } from "@/components/ui/ProfessionalAIContent";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import AILoadingState from "@/components/ui/AILoadingState";
+import AdGate from "@/components/common/AdGate";
 
 export default function DeepDive() {
   const [topic, setTopic] = useState("");
@@ -215,24 +216,29 @@ Answer in a fun, engaging way! Use simple language, cool analogies, and make sur
                 whileTap={{ scale: 0.99 }}
                 className="mt-12"
               >
-                <Button
-                  onClick={generateExplanation}
-                  disabled={generating || !topic}
-                  size="lg"
-                  className="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 shadow-[0_20px_50px_rgba(16,185,129,0.3)] text-white font-black rounded-[2rem] h-20 text-2xl tracking-tighter group transition-all duration-300"
-                >
-                  {generating ? (
-                    <>
-                      <Loader2 className="w-7 h-7 mr-4 animate-spin" />
-                      Deconstructing Knowledge...
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-7 h-7 mr-4 group-hover:animate-bounce" />
-                      Initialize Neural Exploration
-                    </>
-                  )}
-                </Button>
+                <AdGate
+                  featureName="Neural Deep Dive"
+                  onProceed={generateExplanation}
+                  trigger={
+                    <Button
+                      disabled={generating || !topic}
+                      size="lg"
+                      className="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 shadow-[0_20px_50px_rgba(16,185,129,0.3)] text-white font-black rounded-[2rem] h-20 text-2xl tracking-tighter group transition-all duration-300"
+                    >
+                      {generating ? (
+                        <>
+                          <Loader2 className="w-7 h-7 mr-4 animate-spin" />
+                          Deconstructing Knowledge...
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="w-7 h-7 mr-4 group-hover:animate-bounce" />
+                          Initialize Neural Exploration
+                        </>
+                      )}
+                    </Button>
+                  }
+                />
               </motion.div>
             </div>
           </motion.div>

@@ -123,8 +123,8 @@ export default function MonitoringDashboard() {
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="flex flex-col items-end">
-                        <span className="text-[10px] font-black text-slate-400 uppercase">Credits Mode</span>
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 font-black">UNLIMITED ELITE</Badge>
+                        <span className="text-[10px] font-black text-slate-400 uppercase">System Mode</span>
+                        <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 font-black">AD-SUPPORTED ELITE</Badge>
                     </div>
                     <Button
                         variant="outline"
@@ -358,7 +358,7 @@ export default function MonitoringDashboard() {
                     </h3>
                     <p className="text-indigo-100 font-bold max-w-2xl text-sm leading-relaxed">
                         The auditor captures high-precision forensic data of all platform usage.
-                        In unlimited mode, we track logic flows rather than credit depletion to maintain system integrity.
+                        We track logic flows to maintain system integrity.
                     </p>
                     <div className="flex flex-wrap gap-4 mt-8">
                         {['Force Sync', 'Purge Audit', 'Export Log'].map(action => (

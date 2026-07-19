@@ -12,7 +12,7 @@ const PORTS = {
 };
 
 const BASE_URLS = {
-    PYTHON: `https://api.profilegenius.fun`,
+    PYTHON: import.meta.env.VITE_API_URL || `http://127.0.0.1:${PORTS.PYTHON}`,
     GO: `http://127.0.0.1:${PORTS.GO}`
 };
 
@@ -66,13 +66,7 @@ export const BackendBridge = {
      * @param {string} mimeType 
      */
     async classifyDocument(fileBase64, mimeType, isBackground = false) {
-        // Import localApi dynamically to avoid circular dependencies
-        const { localApi } = await import('../api/localApi');
-
         try {
-            const balance = await localApi.wallet.getBalance();
-            if (!isBackground && balance < 1) throw new Error("INSUFFICIENT_CREDITS");
-
             const keys = getAPIKeys();
             const response = await fetch(`${BASE_URLS.PYTHON}/classify`, {
                 method: 'POST',
@@ -96,22 +90,8 @@ export const BackendBridge = {
                 throw new Error(data.error);
             }
 
-            // Deduct credit only on success AND if not background
-            if (!isBackground) {
-                await localApi.wallet.spendCredits(1, `Classify Document: ${mimeType}`);
-            }
-
             return data;
         } catch (error) {
-            if (error.message === 'INSUFFICIENT_CREDITS') {
-                // Show user-friendly toast
-                import('sonner').then(({ toast }) => {
-                    toast.error('Not enough credits! Please top up your wallet.', {
-                        description: 'Go to the Credits page to purchase more or wait for your monthly free credits.',
-                        duration: 6000
-                    });
-                });
-            }
             console.error("BackendBridge: Classify failed:", error);
             throw error;
         }
@@ -143,13 +123,7 @@ export const BackendBridge = {
      * @param {string} systemPrompt 
      */
     async generateText(prompt, systemPrompt = "", options = {}) {
-        const { localApi } = await import('../api/localApi');
-        const isBackground = options.isBackground || false;
-
         try {
-            const balance = await localApi.wallet.getBalance();
-            if (!isBackground && balance < 1) throw new Error("INSUFFICIENT_CREDITS");
-
             let finalPrompt = prompt;
             if (options.response_json_schema) {
                 finalPrompt += `\n\nIMPORTANT: You must return ONLY valid JSON exactly matching this schema:\n${JSON.stringify(options.response_json_schema, null, 2)}`;
@@ -180,11 +154,6 @@ export const BackendBridge = {
 
             const result = await response.json();
 
-            // Deduct credit only on success AND if not background
-            if (!isBackground) {
-                await localApi.wallet.spendCredits(1, `AI Inquiry: ${prompt.substring(0, 30)}...`);
-            }
-
             // If response_json_schema was provided, try to parse text as JSON
             if (options.response_json_schema && typeof result.text === 'string') {
                 try {
@@ -196,14 +165,6 @@ export const BackendBridge = {
 
             return result.text;
         } catch (error) {
-            if (error.message === 'INSUFFICIENT_CREDITS') {
-                import('sonner').then(({ toast }) => {
-                    toast.error('Out of credits!', {
-                        description: 'Top up your wallet to keep using AI features. You receive 10 free credits every month.',
-                        duration: 6000
-                    });
-                });
-            }
             console.error("BackendBridge: Generate failed:", error);
             throw error;
         }

@@ -40,6 +40,7 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { isPDF, extractTextFromPDF } from "@/lib/pdfProcessor";
 import AILoadingState from "@/components/ui/AILoadingState";
+import AdGate from "@/components/common/AdGate";
 
 // Track backend availability so we don't waste time retrying a dead server
 let _backendDown = false;
@@ -117,9 +118,6 @@ const callAI = async (prompt, systemPrompt = "") => {
         try {
             return await base44.integrations.Core.InvokeLLM({ prompt, systemPrompt });
         } catch (err) {
-            if (err.message && err.message.includes("credits")) {
-                throw err; // Don't fall back, this is a hard stop
-            }
             console.warn("DocumentChat: Backend call failed, falling back to direct AI:", err.message);
             _backendDown = true;
         }
@@ -127,26 +125,15 @@ const callAI = async (prompt, systemPrompt = "") => {
 
     // Try Gemini SDK directly if key available
     try {
-        await localApi.wallet.spendCredits(1, "Document Chat");
-        try {
-            return await callGeminiDirect(prompt, systemPrompt);
-        } catch (err) {
-            if (err.message === "NO_GEMINI_KEY") {
-                // No Gemini key — fall through to Pollinations
-                console.log("DocumentChat: No Gemini key, trying Pollinations AI (free)...");
-            } else {
-                // Gemini key exists but call failed — refund and try Pollinations
-                console.warn("DocumentChat: Gemini direct failed, trying Pollinations:", err.message);
-                await localApi.wallet.addCredits(1, { amount: 0, currency: 'USD', note: 'Refund for failed Gemini, falling back to free AI' });
-            }
-            return await callPollinationsDirect(prompt, systemPrompt);
-        }
+        return await callGeminiDirect(prompt, systemPrompt);
     } catch (err) {
-        if (err.message && (err.message.includes("credits") || err.message.includes("run out"))) {
-            throw err;
+        if (err.message === "NO_GEMINI_KEY") {
+            // No Gemini key — fall through to Pollinations
+            console.log("DocumentChat: No Gemini key, trying Pollinations AI (free)...");
+        } else {
+            // Gemini key exists but call failed — try Pollinations
+            console.warn("DocumentChat: Gemini direct failed, trying Pollinations:", err.message);
         }
-        // Last resort: try Pollinations without spending a credit
-        console.warn("DocumentChat: All paid AI failed. Trying Pollinations (free)...");
         return await callPollinationsDirect(prompt, systemPrompt);
     }
 };
@@ -632,7 +619,7 @@ INSTRUCTIONS:
             }
         } catch (error) {
             console.error("Chat error:", error);
-            const errMsg = "⚠️ I had trouble processing your question. This could be due to insufficient credits or a connection issue. Please try again!";
+            const errMsg = "⚠️ I had trouble processing your question. This could be due to a connection issue or high server load. Please try again!";
             setConversation([
                 ...newConversation,
                 { role: "assistant", content: errMsg }
@@ -1146,18 +1133,23 @@ INSTRUCTIONS:
                                 </Button>
                             )}
 
-                            <Button
-                                onClick={() => askQuestion()}
-                                disabled={generating || (!question.trim() && !isListening)}
-                                size="lg"
-                                className="absolute right-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 shadow-xl shadow-cyan-500/30 w-11 h-11 rounded-xl p-0"
-                            >
-                                {generating ? (
-                                    <Loader2 className="w-5 h-5 animate-spin" />
-                                ) : (
-                                    <Send className="w-5 h-5" />
-                                )}
-                            </Button>
+                            <AdGate
+                                featureName="Document Chat"
+                                onProceed={() => askQuestion()}
+                                trigger={
+                                    <Button
+                                        disabled={generating || (!question.trim() && !isListening)}
+                                        size="lg"
+                                        className="absolute right-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 shadow-xl shadow-cyan-500/30 w-11 h-11 rounded-xl p-0"
+                                    >
+                                        {generating ? (
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                        ) : (
+                                            <Send className="w-5 h-5" />
+                                        )}
+                                    </Button>
+                                }
+                            />
                         </div>
                         <p className="text-center text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-3">
                             {isListening ? "🔴 Recording — speak your question" : isSpeaking ? "🔊 AI is speaking..." : `Responses are based on your uploaded document • ${conversation.filter(m => m.role === "user").length} questions asked`}
