@@ -43,21 +43,21 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 relative overflow-hidden">
+        <div className="min-h-screen flex items-center justify-center bg-slate-950 p-4 relative overflow-hidden">
             <FloatingIcons />
             <div className="z-10 w-full max-w-md flex flex-col items-center">
-                <div className="w-24 h-24 mb-6 bg-white p-3 rounded-3xl shadow-xl shadow-blue-500/10 border border-slate-100 flex items-center justify-center">
+                <div className="w-24 h-24 mb-6 bg-slate-900/50 backdrop-blur-xl p-3 rounded-3xl shadow-2xl shadow-blue-500/20 border border-white/10 flex items-center justify-center">
                     <img src={logo} alt="Study Buddy Logo" className="w-full h-full object-contain" />
                 </div>
-                <Card className="w-full shadow-2xl border-slate-200/60 bg-white/95 backdrop-blur-xl">
+                <Card className="w-full shadow-2xl border-white/10 bg-slate-900/60 backdrop-blur-2xl text-slate-100">
                     <CardHeader className="text-center pb-2">
-                        <CardTitle className="text-2xl font-black">Welcome Back</CardTitle>
-                        <CardDescription>Enter your details to access your workspace</CardDescription>
+                        <CardTitle className="text-2xl font-black text-white">Welcome Back</CardTitle>
+                        <CardDescription className="text-slate-400">Enter your details to access your workspace</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleLogin} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email" className="text-slate-300">Email</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -65,27 +65,29 @@ export default function Login() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
+                                    className="bg-slate-950/50 border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password" className="text-slate-300">Password</Label>
                                 <Input
                                     id="password"
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
+                                    className="bg-slate-950/50 border-white/10 text-white focus-visible:ring-blue-500"
                                 />
                             </div>
-                            <Button className="w-full" type="submit" disabled={loading}>
+                            <Button className="w-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/25 transition-all" type="submit" disabled={loading}>
                                 {loading ? 'Logging in...' : 'Login'}
                             </Button>
-                            <div className="text-center text-sm text-slate-500">
+                            <div className="text-center text-sm text-slate-400">
                                 Don't have an account?{' '}
                                 <button
                                     type="button"
                                     onClick={() => navigate('/Signup')}
-                                    className="text-primary hover:underline"
+                                    className="text-blue-400 hover:text-blue-300 font-semibold hover:underline"
                                 >
                                     Sign up
                                 </button>

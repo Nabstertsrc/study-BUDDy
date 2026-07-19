@@ -26,14 +26,15 @@ const FloatingIcons = () => {
     ];
 
     return (
-        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-blue-50/30">
+        <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-slate-950">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/40 via-slate-950 to-slate-950"></div>
             {items.map((item, index) => (
                 <motion.div
                     key={index}
                     initial={{ y: 0, opacity: 0 }}
                     animate={{
                         y: [0, -20, 0],
-                        opacity: 0.15,
+                        opacity: 0.8,
                         rotate: [0, 5, -5, 0]
                     }}
                     transition={{
@@ -54,7 +55,7 @@ const FloatingIcons = () => {
                     <item.Icon size={item.size} strokeWidth={1.5} />
                 </motion.div>
             ))}
-            <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]" />
+            <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[2px]" />
         </div>
     );
 };
