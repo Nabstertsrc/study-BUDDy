@@ -17,7 +17,8 @@ import {
   Eye,
   Send,
   Clock,
-  MessageSquareText
+  MessageSquareText,
+  Share2
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -325,6 +326,13 @@ export default function StudyLab() {
                                 toast.error("Download failed.");
                               }
                             }
+                          } else if (action === 'share') {
+                            if (mat.file_url) {
+                              navigator.clipboard.writeText(mat.file_url);
+                              toast.success("Link copied! Anyone with the link can view this file.");
+                            } else {
+                              toast.error("No valid link available to share.");
+                            }
                           }
                         };
 
@@ -399,10 +407,20 @@ export default function StudyLab() {
                                         variant="outline"
                                         className="h-9 px-3 rounded-xl border-slate-200 hover:bg-white hover:text-emerald-600 hover:border-emerald-200 shadow-sm transition-all"
                                         onClick={() => handleAction('download', material)}
+                                        title="Download"
                                       >
                                         <Download className="w-4 h-4" />
                                       </Button>
                                     )}
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-9 px-3 rounded-xl border-slate-200 hover:bg-white hover:text-purple-600 hover:border-purple-200 shadow-sm transition-all"
+                                      onClick={() => handleAction('share', material)}
+                                      title="Share link"
+                                    >
+                                      <Share2 className="w-4 h-4" />
+                                    </Button>
                                   </>
                                 )}
 
