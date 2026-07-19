@@ -67,7 +67,7 @@ export default function StudyPlanGenerator({ studyPlan, onGenerate }) {
                                 : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200"
                         )}
                     >
-                        {isPlaceholder ? "Generate AI Plan (1 Credit)" : "Refresh Plan"}
+                        {isPlaceholder ? "Generate AI Plan" : "Refresh Plan"}
                     </button>
                 )}
             </div>

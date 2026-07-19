@@ -199,80 +199,7 @@ export const localApi = {
         },
 
         getBalance: async () => {
-            // 1. Firestore Sync (Primary Source of Truth) — fetch before reset check!
-            if (typeof navigator !== 'undefined' && navigator.onLine) {
-                try {
-                    const { auth: firebaseAuth, db: firestoreDB } = await import('../lib/firebase');
-                    const { doc, getDoc } = await import('firebase/firestore');
-
-                    const user = firebaseAuth.currentUser;
-                    if (user) {
-                        const userDocRef = doc(firestoreDB, 'users', user.uid);
-                        
-                        // Firebase getDoc hangs indefinitely if connection drops but navigator.onLine is true.
-                        // Force a 5-second timeout to prevent the app from freezing.
-                        const timeoutPromise = new Promise((_, reject) => 
-                            setTimeout(() => reject(new Error('Firestore timeout')), 5000)
-                        );
-                        
-                        const snap = await Promise.race([
-                            getDoc(userDocRef),
-                            timeoutPromise
-                        ]);
-                        
-                        if (snap.exists()) {
-                            const data = snap.data();
-                            if (data.credit_balance !== undefined) {
-                                localStorage.setItem('credit_balance', String(data.credit_balance));
-                            }
-                            if (data.purchased_credit_balance !== undefined) {
-                                localStorage.setItem('purchased_credit_balance', String(data.purchased_credit_balance));
-                            }
-                            if (data.free_credits_this_month !== undefined) {
-                                localStorage.setItem('free_credits_this_month', String(data.free_credits_this_month));
-                            }
-                            if (data.last_credit_reset_timestamp !== undefined) {
-                                localStorage.setItem('last_credit_reset_timestamp', String(data.last_credit_reset_timestamp));
-                            }
-                        }
-                    }
-                } catch (e) {
-                    if (e.message === 'Firestore timeout') {
-                        console.warn("[Wallet] Firestore balance sync timed out (5s), using local cache.");
-                    } else if (e.code !== 'unavailable' && !e.message?.includes('offline')) {
-                        console.warn("[Wallet] Firestore balance sync failed:", e);
-                    }
-                }
-            }
-
-            // 2. Now check for monthly resets using the downloaded state
-            await localApi.wallet.checkAndResetMonthlyCredits();
-
-            let balance = parseInt(localStorage.getItem('credit_balance'), 10);
-            if (isNaN(balance)) balance = 0;
-
-            // Supabase Sync (Web Legacy Fallback)
-            try {
-                const { supabase } = await import('../lib/supabase');
-                const { data: { user } } = await supabase.auth.getUser();
-                if (user) {
-                    const { data: profile } = await supabase
-                        .from('profiles')
-                        .select('credit_balance')
-                        .eq('id', user.id)
-                        .single();
-
-                    if (profile && profile.credit_balance > balance) {
-                        balance = profile.credit_balance;
-                        localStorage.setItem('credit_balance', String(balance));
-                        await localApi.wallet.syncWalletToCloud();
-                    }
-                }
-            } catch (e) {
-                // console.warn("[Wallet] Supabase sync failed:", e);
-            }
-
-            return Math.max(0, balance);
+            return 999999;
         },
 
         syncWalletToCloud: async () => {
@@ -306,73 +233,11 @@ export const localApi = {
         },
 
         addCredits: async (amount, transactionData) => {
-            await localApi.wallet.checkAndResetMonthlyCredits();
-            const currentTotal = parseInt(localStorage.getItem('credit_balance') || '0', 10);
-            const currentPurchased = parseInt(localStorage.getItem('purchased_credit_balance') || '0', 10);
-
-            const newTotal = currentTotal + amount;
-            const newPurchased = currentPurchased + amount;
-
-            localStorage.setItem('credit_balance', String(newTotal));
-            localStorage.setItem('purchased_credit_balance', String(newPurchased));
-
-            // Sync to Cloud
-            await localApi.wallet.syncWalletToCloud();
-
-            await localApi.entities.Transaction.create({
-                ...transactionData,
-                amount: transactionData.amount || 0,
-                credits_added: amount,
-                type: 'credit_purchase',
-                status: 'completed',
-                date: new Date().toISOString()
-            });
-
-            console.log(`[Wallet] +${amount} credits purchased. New balance: ${newTotal}`);
-            return newTotal;
+            return 999999;
         },
 
         spendCredits: async (amount, reason) => {
-            await localApi.wallet.checkAndResetMonthlyCredits();
-            let currentTotal = parseInt(localStorage.getItem('credit_balance'), 10);
-            if (isNaN(currentTotal)) currentTotal = 0;
-
-            let freeRemaining = parseInt(localStorage.getItem('free_credits_this_month'), 10);
-            if (isNaN(freeRemaining)) freeRemaining = 0;
-
-            let purchasedBalance = parseInt(localStorage.getItem('purchased_credit_balance'), 10);
-            if (isNaN(purchasedBalance)) purchasedBalance = 0;
-
-            if (currentTotal < amount) {
-                throw new Error('INSUFFICIENT_CREDITS');
-            }
-
-            // Deduct from free credits first, then from purchased
-            let freeToDeduct = Math.min(amount, freeRemaining);
-            let purchasedToDeduct = amount - freeToDeduct;
-
-            const newFree = freeRemaining - freeToDeduct;
-            const newPurchased = Math.max(0, purchasedBalance - purchasedToDeduct);
-            const newTotal = currentTotal - amount;
-
-            localStorage.setItem('free_credits_this_month', String(newFree));
-            localStorage.setItem('purchased_credit_balance', String(newPurchased));
-            localStorage.setItem('credit_balance', String(newTotal));
-
-            // Sync to Cloud
-            await localApi.wallet.syncWalletToCloud();
-
-            await localApi.entities.Transaction.create({
-                amount: 0,
-                credits_added: -amount,
-                type: 'credit_usage',
-                reason: reason,
-                status: 'completed',
-                date: new Date().toISOString()
-            });
-
-            console.log(`[Wallet] -${amount} credits for "${reason}". Remaining: ${newTotal}`);
-            return newTotal;
+            return 999999;
         }
     },
     auth: {

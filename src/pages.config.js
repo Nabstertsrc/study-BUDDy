@@ -3,7 +3,6 @@ import Assignments from './pages/Assignments';
 import Dashboard from './pages/Dashboard';
 import LearningPath from './pages/LearningPath';
 import Modules from './pages/Modules';
-import Payment from './pages/Payment';
 import Settings from './pages/Settings';
 import StudyLab from './pages/StudyLab';
 import Welcome from './pages/Welcome';
@@ -23,7 +22,6 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "LearningPath": LearningPath,
     "Modules": Modules,
-    "Payment": Payment,
     "Settings": Settings,
     "StudyLab": StudyLab,
     "Welcome": Welcome,

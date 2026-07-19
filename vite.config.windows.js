@@ -13,6 +13,7 @@ export default defineConfig(({ mode }) => {
     logLevel: 'error',
     // ✅ CRITICAL FIX: Inject env vars at build time for portable builds
     define: {
+      'import.meta.env.VITE_API_URL': JSON.stringify("https://srv-d9b3h18js32c73akvqc0.onrender.com"),
       'import.meta.env.VITE_GEMINI_API_KEY': JSON.stringify(env.VITE_GEMINI_API_KEY),
       'import.meta.env.VITE_GOOGLE_API_KEY': JSON.stringify(env.VITE_GOOGLE_API_KEY),
       'import.meta.env.VITE_DEEPSEEK_API_KEY': JSON.stringify(env.VITE_DEEPSEEK_API_KEY),
