@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -38,13 +38,21 @@ const ProtectedRoute = ({ children }) => {
 const AppRoutes = () => {
   // Public routes that don't need auth
   const publicRoutes = ['Login', 'Signup', 'Welcome', 'HowItWorks'];
+  
+  const fallback = (
+    <div className="h-screen w-screen flex items-center justify-center bg-slate-50">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+    </div>
+  );
 
   return (
     <Routes>
       <Route path="/" element={
         <ProtectedRoute>
           <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
+            <Suspense fallback={fallback}>
+              <MainPage />
+            </Suspense>
           </LayoutWrapper>
         </ProtectedRoute>
       } />
@@ -54,9 +62,11 @@ const AppRoutes = () => {
         // Hide Layout for purely auth screens
         const noLayout = path === 'Login' || path === 'Signup';
 
-        const Element = noLayout ? <Page /> : (
+        const Element = noLayout ? (
+          <Suspense fallback={fallback}><Page /></Suspense>
+        ) : (
           <LayoutWrapper currentPageName={path}>
-            <Page />
+            <Suspense fallback={fallback}><Page /></Suspense>
           </LayoutWrapper>
         );
 

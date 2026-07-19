@@ -1,6 +1,6 @@
 import base44 from "@base44/vite-plugin"
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import path from 'path'
 
 // https://vite.dev/config/
@@ -30,6 +30,7 @@ export default defineConfig({
       visualEditAgent: true
     }),
     react(),
+    splitVendorChunkPlugin(),
   ],
   resolve: {
     alias: {

@@ -1,18 +1,19 @@
-import Achievements from './pages/Achievements';
-import Assignments from './pages/Assignments';
-import Dashboard from './pages/Dashboard';
-import LearningPath from './pages/LearningPath';
-import Modules from './pages/Modules';
-import Settings from './pages/Settings';
-import StudyLab from './pages/StudyLab';
-import Welcome from './pages/Welcome';
-import PrescribedBooks from './pages/PrescribedBooks';
-import AutoOrganizer from './pages/AutoOrganizer';
-import MonitoringDashboard from './pages/MonitoringDashboard';
-import HowItWorks from './pages/HowItWorks';
-import CommunityHub from './pages/CommunityHub';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+import { lazyImport } from './lib/lazyImport';
+const Achievements = lazyImport(() => import('./pages/Achievements'));
+const Assignments = lazyImport(() => import('./pages/Assignments'));
+const Dashboard = lazyImport(() => import('./pages/Dashboard'));
+const LearningPath = lazyImport(() => import('./pages/LearningPath'));
+const Modules = lazyImport(() => import('./pages/Modules'));
+const Settings = lazyImport(() => import('./pages/Settings'));
+const StudyLab = lazyImport(() => import('./pages/StudyLab'));
+const Welcome = lazyImport(() => import('./pages/Welcome'));
+const PrescribedBooks = lazyImport(() => import('./pages/PrescribedBooks'));
+const AutoOrganizer = lazyImport(() => import('./pages/AutoOrganizer'));
+const MonitoringDashboard = lazyImport(() => import('./pages/MonitoringDashboard'));
+const HowItWorks = lazyImport(() => import('./pages/HowItWorks'));
+const CommunityHub = lazyImport(() => import('./pages/CommunityHub'));
+const Login = lazyImport(() => import('./pages/Login'));
+const Signup = lazyImport(() => import('./pages/Signup'));
 import __Layout from './Layout.jsx';
 
 
