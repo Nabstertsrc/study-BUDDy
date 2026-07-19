@@ -25,8 +25,14 @@ export default function UpcomingDeadlines({ assignments, modules }) {
     return { text: formatDistanceToNow(d, { addSuffix: true }), urgent: false };
   };
 
+  const isValidDate = (d) => {
+    if (!d) return false;
+    const parsed = new Date(d);
+    return parsed instanceof Date && !isNaN(parsed.getTime());
+  };
+
   const sortedAssignments = [...(assignments || [])]
-    .filter(a => a.status !== "submitted" && a.status !== "graded" && !isPast(new Date(a.due_date)))
+    .filter(a => a.status !== "submitted" && a.status !== "graded" && isValidDate(a.due_date) && !isPast(new Date(a.due_date)))
     .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())
     .slice(0, 5);
 

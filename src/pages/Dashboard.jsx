@@ -113,8 +113,14 @@ export default function Dashboard() {
 
   const isLoading = modulesLoading || assignmentsLoading || quizzesLoading || sessionsLoading;
 
+  const isValidDate = (d) => {
+    if (!d) return false;
+    const parsed = new Date(d);
+    return parsed instanceof Date && !isNaN(parsed.getTime());
+  };
+
   const pendingAssignments = assignments?.filter(
-    a => a.status !== "submitted" && a.status !== "graded" && !isPast(new Date(a.due_date))
+    a => a.status !== "submitted" && a.status !== "graded" && isValidDate(a.due_date) && !isPast(new Date(a.due_date))
   ).length || 0;
 
   const totalStudyMinutes = sessions?.reduce((acc, s) => acc + (s.duration_minutes || 0), 0) || 0;
