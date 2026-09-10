@@ -183,7 +183,7 @@ export default function Layout({ children, currentPageName }) {
 
           <footer className="mt-12 sm:mt-16 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest pb-4 lg:pb-6">
             <div className="flex items-center gap-4">
-              <span>© 2026 Nabster Tsr</span>
+              <span>(c) 2026 Nabster Tsr</span>
             </div>
             <div className="flex items-center gap-6">
               <a href="https://buymeacoffee.com/nabstertsr" target="_blank" rel="noopener noreferrer" className="hover:text-amber-700 transition-colors">Support</a>
@@ -197,8 +197,8 @@ export default function Layout({ children, currentPageName }) {
         <footer className="hidden lg:flex w-full bg-white border-t border-slate-200 p-3 flex-shrink-0 z-40">
           <div className="max-w-[1920px] mx-auto flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-widest px-4">
             <div className="flex items-center gap-4">
-              <span>© 2026 Nabster Tsr</span>
-              <span className="text-emerald-500">● System Active</span>
+              <span>(c) 2026 Nabster Tsr</span>
+              <span className="text-emerald-500">System Active</span>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-slate-400">Powered by AI</span>

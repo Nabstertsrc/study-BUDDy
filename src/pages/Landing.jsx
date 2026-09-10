@@ -65,7 +65,7 @@ const HOW_IT_WORKS = [
   {
     step: '2',
     title: 'Learn the method',
-    body: 'Get clear, step-by-step guidance that explains the why Ã¢â‚¬â€ not just a final answer to copy.',
+    body: 'Get clear, step-by-step guidance that explains the why  -  not just a final answer to copy.',
     lottie: 'student-learning.json',
     lottieLabel: 'Student learning with AI help',
   },
@@ -82,31 +82,31 @@ const WHO_ITS_FOR = [
   {
     icon: GraduationCap,
     title: 'Students',
-    body: 'After-school help, weekend catch-up, and exam season when textbooks alone arenÃ¢â‚¬â„¢t enough.',
+    body: 'After-school help, weekend catch-up, and exam season when textbooks alone aren't enough.',
   },
   {
     icon: Users,
     title: 'Parents',
-    body: 'A calmer way to support homework nights Ã¢â‚¬â€ method-first help you can trust more than a random chat tab.',
+    body: 'A calmer way to support homework nights  -  method-first help you can trust more than a random chat tab.',
   },
   {
     icon: Moon,
     title: 'Night owls & crunch time',
-    body: 'Built for the hours when tutors arenÃ¢â‚¬â„¢t awake and deadlines are real.',
+    body: 'Built for the hours when tutors aren't awake and deadlines are real.',
   },
 ];
 
 const WHY_NOT_CHATBOT = [
-  'Focused on homework and study workflows Ã¢â‚¬â€ not open-ended chat distractions.',
+  'Focused on homework and study workflows  -  not open-ended chat distractions.',
   'Step-by-step teaching so you understand the method, not only the answer.',
   'Tools for quizzes, summaries, and organizing materials in one place.',
-  'Clear product ownership: Nabster Tsr Study Buddy Ã¢â‚¬â€ not a generic chatbot wrapper.',
+  'Clear product ownership: Nabster Tsr Study Buddy  -  not a generic chatbot wrapper.',
 ];
 
 const FAQ = [
   {
     q: 'Is Study Buddy free to start?',
-    a: 'Yes. You can get started free. Some advanced AI features may show a short ad Ã¢â‚¬â€ no fake prices here, just try it.',
+    a: 'Yes. You can get started free. Some advanced AI features may show a short ad  -  no fake prices here, just try it.',
   },
   {
     q: 'Will it just give me the answer?',
@@ -114,11 +114,11 @@ const FAQ = [
   },
   {
     q: 'Is this the same as Profile Genius?',
-    a: 'No. This product is Study Buddy Ã¢â‚¬â€ AI homework help by Nabster Tsr. profilegenius.fun is simply the current web host domain.',
+    a: 'No. This product is Study Buddy  -  AI homework help by Nabster Tsr. profilegenius.fun is simply the current web host domain.',
   },
   {
     q: 'Where can I read the EULA?',
-    a: 'Use the EULA link in the footer anytime. YouÃ¢â‚¬â„¢ll also be asked to accept it before using the core app for the first time.',
+    a: 'Use the EULA link in the footer anytime. You'll also be asked to accept it before using the core app for the first time.',
   },
 ];
 
@@ -196,10 +196,10 @@ export default function Landing() {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-blue-100/80 text-blue-700 text-xs font-semibold px-3 py-1 mb-5">
                 <Sparkles className="w-3.5 h-3.5" />
-                AI homework help Ã‚Â· method first
+                AI homework help | method first
               </div>
               <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
-                Study Buddy Ã¢â‚¬â€ AI homework help that teaches the method, not just the answer.
+                Study Buddy  -  AI homework help that teaches the method, not just the answer.
               </h1>
               <p className="mt-4 sm:mt-5 text-base sm:text-lg text-slate-600 max-w-2xl leading-relaxed">
                 Built for students (and parents) who need clear step-by-step help after school, late nights, and exam season.
@@ -228,7 +228,7 @@ export default function Landing() {
                 </a>
               </div>
               <p className="mt-4 text-xs text-slate-500">
-                By Nabster Tsr Â· Web app free Â· Android APK available below Â· No account needed to read this page
+                By Nabster Tsr | Web app free | Android APK available below | No account needed to read this page
               </p>
             </div>
             <div className="relative">
@@ -297,7 +297,7 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16">
           <div className="grid lg:grid-cols-2 gap-8 items-center mb-10">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Who itÃ¢â‚¬â„¢s for</h2>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Who it's for</h2>
               <p className="text-slate-500 max-w-2xl">Real study pressure, not generic AI demos.</p>
             </div>
             <LandingLottie
@@ -327,7 +327,7 @@ export default function Landing() {
             <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Why not a random chatbot?</h2>
           </div>
           <p className="text-slate-400 mb-6 max-w-2xl text-sm sm:text-base">
-            Chatbots can answer anything. Study Buddy is shaped for learning Ã¢â‚¬â€ clearer steps, study tools, and a product you can come back to.
+            Chatbots can answer anything. Study Buddy is shaped for learning  -  clearer steps, study tools, and a product you can come back to.
           </p>
           <ul className="space-y-3">
             {WHY_NOT_CHATBOT.map((line) => (
@@ -386,7 +386,7 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-slate-500">
           <div>
             <div className="font-bold text-slate-800">Study Buddy</div>
-            <div>Ã‚Â© {new Date().getFullYear()} Nabster Tsr Study Buddy</div>
+            <div>(c) {new Date().getFullYear()} Nabster Tsr Study Buddy</div>
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <Link to="/HowItWorks" className="hover:text-blue-600">How it works</Link>
