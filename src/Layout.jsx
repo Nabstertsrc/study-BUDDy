@@ -186,6 +186,7 @@ export default function Layout({ children, currentPageName }) {
               <span>© 2026 Nabster Tsr</span>
             </div>
             <div className="flex items-center gap-6">
+              <a href="https://buymeacoffee.com/nabstertsr" target="_blank" rel="noopener noreferrer" className="hover:text-amber-700 transition-colors">Support</a>
               <a href="#" className="hover:text-slate-900 transition-colors">Privacy</a>
               <a href="#" className="hover:text-slate-900 transition-colors">Terms</a>
             </div>

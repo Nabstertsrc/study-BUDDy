@@ -176,6 +176,14 @@ export default function Landing() {
             >
               Get started free
             </Button>
+            <a
+              href="https://buymeacoffee.com/nabstertsr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center h-9 px-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-sm font-semibold hover:bg-amber-100 transition-colors"
+            >
+              Buy me a coffee
+            </a>
           </div>
         </div>
       </header>

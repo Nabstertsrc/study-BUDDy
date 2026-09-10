@@ -155,7 +155,7 @@ export default function Dashboard() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <Button variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 hidden sm:flex" onClick={() => window.open('https://www.buymeacoffee.com/', '_blank')}>
+          <Button variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 flex" onClick={() => window.open('https://buymeacoffee.com/nabstertsr', '_blank')}>
             ☕ Buy me a coffee $5
           </Button>
           <Button variant="outline" className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 hidden md:flex" onClick={() => window.open('https://www.paypal.com/donate', '_blank')}>
