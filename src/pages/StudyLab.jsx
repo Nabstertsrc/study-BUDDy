@@ -60,7 +60,7 @@ function AiCreditsHint() {
   return (
     <p className="text-xs text-slate-400 mt-2">
       AI credits: <span className="font-semibold text-slate-600">{credits}</span>
-      {" "}· Watch a short ad in the Android app to refill (no click needed)
+      {" "}· Watch a short ad to refill (browser or Android — no click needed)
     </p>
   );
 }

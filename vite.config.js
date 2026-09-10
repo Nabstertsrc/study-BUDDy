@@ -19,6 +19,7 @@ export default defineConfig({
     'import.meta.env.VITE_FIREBASE_STORAGE_BUCKET': JSON.stringify("queueafrica-eb107.firebasestorage.app"),
     'import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID': JSON.stringify("311336122689"),
     'import.meta.env.VITE_FIREBASE_APP_ID': JSON.stringify("1:311336122689:web:564f0e8b930e8c5b7ac9c0"),
+    'import.meta.env.VITE_ADSENSE_CLIENT': JSON.stringify("ca-pub-4822909337458174"),
     'import.meta.env.VITE_ADMOB_APP_ID': JSON.stringify("ca-app-pub-4822909337458174~3440478092"),
     'import.meta.env.VITE_ADMOB_REWARDED_AI': JSON.stringify("ca-app-pub-4822909337458174/2775826783"),
     'import.meta.env.VITE_ADMOB_BANNER_LAB': JSON.stringify("ca-app-pub-4822909337458174/8704764718"),

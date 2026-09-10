@@ -7,8 +7,10 @@ import ErrorBoundary from '@/components/common/ErrorBoundary.jsx'
 
 import { App as CapApp } from '@capacitor/app';
 import { initializeAdMob } from '@/lib/adMobService';
+import { loadWebAdsScript } from '@/lib/webAdsService';
 
 initializeAdMob().catch(() => {});
+loadWebAdsScript().catch(() => {});
 
 // Handle Android Back Button
 CapApp.addListener('backButton', ({ canGoBack }) => {

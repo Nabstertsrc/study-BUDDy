@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { AI_CREDITS_PER_REWARD } from "@/lib/adConfig";
 import { getAiCredits } from "@/lib/aiCredits";
-import { canShowAdMob } from "@/lib/adMobService";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 
@@ -28,10 +27,6 @@ export default function AiAdGateProvider({ children }) {
   useEffect(() => {
     window.__studyBuddyConfirmAd = ({ creditsPerReward } = {}) =>
       new Promise((resolve) => {
-        if (!canShowAdMob()) {
-          resolve(true);
-          return;
-        }
         setResolver(() => resolve);
         setOpen(true);
         // stash for UI label
@@ -66,8 +61,8 @@ export default function AiAdGateProvider({ children }) {
               <div>
                 <h3 className="font-bold text-slate-900">Unlock AI with a short ad</h3>
                 <p className="text-sm text-slate-500">
-                  Watch a rewarded ad to get {window.__studyBuddyAdCredits || AI_CREDITS_PER_REWARD} AI uses.
-                  You never need to click the ad — just watch.
+                  Watch a short ad to get {window.__studyBuddyAdCredits || AI_CREDITS_PER_REWARD} AI uses.
+                  Works in the browser and Android app. You never need to click the ad — just watch.
                 </p>
               </div>
             </div>

@@ -6,8 +6,7 @@ import {
   spendAiCredit,
   spendWebDailyFree,
 } from "./aiCredits";
-import { canShowAdMob, showRewardedAiAd } from "./adMobService";
-import { isNativeShell } from "./platform";
+import { showRewardedAiAd } from "./adMobService";
 
 const ADMIN_EMAILS = ["nabstertsr@gmail.com", "nabsterts@gmail.com"];
 
@@ -19,8 +18,8 @@ function isAdminEmail(email) {
  * Gate for user-facing AI calls.
  * - Admins: free
  * - Background helpers (isBackground): free (no modal spam)
- * - Native: spend credit or watch rewarded ad → +credits
- * - Web: limited daily free; then ask to use the Android app for rewarded ads
+ * - Spend credit or watch rewarded ad (Android AdMob / browser Ad Placement) → +credits
+ * - Web: limited daily free; Soft daily free only if ad inventory does not fill
  */
 export async function ensureAiAccess(options = {}) {
   if (options.isBackground || options.skipAdGate) {
@@ -42,42 +41,40 @@ export async function ensureAiAccess(options = {}) {
     return { allowed: true, fromCredits: true, remaining: getAiCredits() };
   }
 
-  if (canShowAdMob()) {
-    // Ask UI layer to confirm (optional); then show rewarded ad
-    if (typeof window.__studyBuddyConfirmAd === "function") {
-      const ok = await window.__studyBuddyConfirmAd({
-        creditsPerReward: AI_CREDITS_PER_REWARD,
-      });
-      if (!ok) {
-        const err = new Error("Watch a short ad to unlock AI features.");
-        err.code = "AI_AD_REQUIRED";
-        throw err;
-      }
-    }
-    const result = await showRewardedAiAd();
-    if (!result.ok) {
-      const err = new Error(
-        result.reason === "web"
-          ? "Rewarded ads are available in the Study Buddy Android app."
-          : "Could not show rewarded ad. Try again in a moment."
-      );
-      err.code = "AI_AD_FAILED";
+  // Confirm then show rewarded ad (AdMob on Android, Ad Placement API in browser)
+  if (typeof window.__studyBuddyConfirmAd === "function") {
+    const ok = await window.__studyBuddyConfirmAd({
+      creditsPerReward: AI_CREDITS_PER_REWARD,
+    });
+    if (!ok) {
+      const err = new Error("Watch a short ad to unlock AI features.");
+      err.code = "AI_AD_REQUIRED";
       throw err;
     }
+  }
+
+  const result = await showRewardedAiAd();
+  if (result.ok) {
     addAiCredits(AI_CREDITS_PER_REWARD);
     spendAiCredit();
     return { allowed: true, fromReward: true, remaining: getAiCredits() };
   }
 
-  // Web fallback — soft free daily quota (not fake ads)
+  // Soft free daily only when ad inventory is unavailable (no fill / AdSense inactive)
   if (getWebDailyRemaining() > 0) {
     spendWebDailyFree();
-    return { allowed: true, fromWebDaily: true, remaining: getWebDailyRemaining() };
+    return {
+      allowed: true,
+      fromWebDaily: true,
+      remaining: getWebDailyRemaining(),
+      adReason: result.reason,
+    };
   }
 
   const err = new Error(
-    "You've used today's free AI on the web. Open the Study Buddy Android app and watch a short ad to unlock more — or support us on Buy Me a Coffee."
+    "No ad was available and today's free AI uses are used up. Try again later, or support us on Buy Me a Coffee."
   );
   err.code = "AI_WEB_LIMIT";
+  err.adReason = result.reason;
   throw err;
 }

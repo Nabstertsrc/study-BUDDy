@@ -29,7 +29,8 @@ export async function initializeAdMob() {
  */
 export async function showRewardedAiAd() {
   if (!canShowAdMob()) {
-    return { ok: false, reason: "web" };
+    const { showWebRewardedAiAd } = await import("./webAdsService");
+    return showWebRewardedAiAd();
   }
   try {
     await initializeAdMob();
