@@ -146,7 +146,7 @@ export default function Dashboard() {
             <Sparkles className="w-4 h-4" />
             <span className="text-sm font-medium">AI-Powered Learning</span>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
             Study Buddy Dashboard
           </h1>
           <p className="text-slate-500 mt-1">

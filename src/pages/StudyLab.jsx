@@ -77,25 +77,45 @@ export default function StudyLab() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-5 sm:space-y-8">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-violet-600 mb-2">
+        <div className="flex items-center gap-2 text-violet-600 mb-1.5 sm:mb-2">
           <Sparkles className="w-4 h-4" />
-          <span className="text-sm font-medium">AI-Powered</span>
+          <span className="text-xs sm:text-sm font-semibold tracking-wide uppercase">AI-Powered</span>
         </div>
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
           Study Lab
         </h1>
-        <p className="text-slate-500 mt-1">
+        <p className="text-slate-500 mt-1 text-sm sm:text-base max-w-2xl">
           Generate quizzes, summarize notes, and get in-depth explanations
         </p>
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col md:flex-row w-full gap-8">
-        {/* Vertical Sidebar Tabs */}
-        <div className="w-full md:w-64 shrink-0">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col lg:flex-row w-full gap-4 sm:gap-6 lg:gap-8">
+        {/* Mobile: horizontal service chips */}
+        <div className="lg:hidden -mx-4 px-4">
+          <TabsList className="flex h-auto w-full justify-start gap-2 overflow-x-auto no-scrollbar bg-transparent p-0 pb-1">
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className={cn(
+                  "shrink-0 rounded-full border px-3.5 py-2.5 text-xs font-semibold shadow-none",
+                  "data-[state=active]:bg-slate-900 data-[state=active]:text-white data-[state=active]:border-slate-900",
+                  "data-[state=inactive]:bg-white data-[state=inactive]:text-slate-600 data-[state=inactive]:border-slate-200"
+                )}
+              >
+                <tab.icon className="w-3.5 h-3.5 mr-1.5 inline-block align-middle" />
+                <span className="align-middle">{tab.label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+
+        {/* Desktop/tablet: vertical sidebar */}
+        <div className="hidden lg:block w-full lg:w-64 shrink-0">
           <div className="bg-white rounded-2xl border border-slate-200/60 p-3 shadow-sm sticky top-6">
             <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-3">AI Services</h2>
             <TabsList className="flex flex-col h-auto bg-transparent border-0 space-y-1 w-full">
@@ -105,11 +125,11 @@ export default function StudyLab() {
                   value={tab.id}
                   className={cn(
                     "w-full justify-start data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:font-bold data-[state=active]:shadow-none",
-                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-600 hover:bg-slate-50"
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-600 hover:bg-slate-50 min-h-11"
                   )}
                 >
-                  <tab.icon className={cn("w-5 h-5", activeTab === tab.id ? "text-blue-600" : "text-slate-400")} />
-                  <span>{tab.label}</span>
+                  <tab.icon className={cn("w-5 h-5 shrink-0", activeTab === tab.id ? "text-blue-600" : "text-slate-400")} />
+                  <span className="text-left leading-snug">{tab.label}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -184,7 +204,7 @@ export default function StudyLab() {
           </TabsContent>
 
           <TabsContent value="deepdive" className="mt-0">
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <div className="lg:col-span-2">
                 <DeepDive />
               </div>
@@ -212,7 +232,7 @@ export default function StudyLab() {
           </TabsContent>
 
           <TabsContent value="essay" className="mt-0">
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <div className="lg:col-span-2">
                 <EssayAssessment />
               </div>
@@ -230,7 +250,7 @@ export default function StudyLab() {
           </TabsContent>
 
           <TabsContent value="analysis" className="mt-0">
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <div className="lg:col-span-2">
                 <PerformanceAnalysis />
               </div>
@@ -256,7 +276,7 @@ export default function StudyLab() {
           </TabsContent>
 
           <TabsContent value="webimport" className="mt-0">
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <div className="lg:col-span-2">
                 <WebContentImporter modules={modules} />
               </div>
@@ -284,7 +304,7 @@ export default function StudyLab() {
           </TabsContent>
 
           <TabsContent value="materials" className="mt-0">
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
               <div>
                 <MaterialUploader modules={modules} onSuccess={() => { }} />
               </div>
@@ -299,13 +319,13 @@ export default function StudyLab() {
                   </div>
 
                   {(!materials || materials.length === 0) ? (
-                    <div className="p-12 text-center">
-                      <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                        <Upload className="w-8 h-8 text-slate-400" />
+                    <div className="p-8 sm:p-12 text-center">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 flex items-center justify-center mx-auto mb-4">
+                        <Upload className="w-7 h-7 sm:w-8 sm:h-8 text-orange-500" />
                       </div>
-                      <h4 className="font-medium text-slate-900 mb-1">No materials yet</h4>
-                      <p className="text-sm text-slate-500">
-                        Upload PDFs or notes to generate quizzes and summaries
+                      <h4 className="font-semibold text-slate-900 mb-1">No materials yet</h4>
+                      <p className="text-sm text-slate-500 max-w-xs mx-auto">
+                        Upload PDFs or notes to generate quizzes and summaries. They sync across your devices when you're logged in.
                       </p>
                     </div>
                   ) : (

@@ -67,21 +67,21 @@ export default function Layout({ children, currentPageName }) {
       {/* Main Container */}
       <main className="flex-1 h-screen overflow-hidden flex flex-col relative w-full">
         {/* Main Desktop Header - Responsive */}
-        <header className="hidden lg:flex h-20 bg-white/80 backdrop-blur-xl border-b border-slate-200 sticky top-0 z-[90] items-center justify-between px-10 flex-shrink-0">
+        <header className="hidden lg:flex h-16 bg-white/80 backdrop-blur-xl border-b border-slate-200/80 sticky top-0 z-[90] items-center justify-between px-6 xl:px-10 flex-shrink-0">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3 mr-4">
               <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
               <span className="font-black text-lg tracking-tight">STUDY BUDDY</span>
             </div>
 
-            <div className="flex items-center gap-6">
-              <Link to={createPageUrl("Dashboard")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Dashboard" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Feed</Link>
-              <Link to={createPageUrl("Modules")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Modules" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>{namingPref}</Link>
-              <Link to={createPageUrl("AutoOrganizer")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "AutoOrganizer" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Organizer</Link>
-              <Link to={createPageUrl("Assignments")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Assignments" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Tasks</Link>
-              <Link to={createPageUrl("StudyLab")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "StudyLab" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Lab</Link>
+            <div className="flex items-center gap-1 xl:gap-2 overflow-x-auto no-scrollbar max-w-[min(720px,50vw)]">
+              <Link to={createPageUrl("Dashboard")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "Dashboard" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Feed</Link>
+              <Link to={createPageUrl("Modules")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "Modules" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>{namingPref}</Link>
+              <Link to={createPageUrl("AutoOrganizer")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "AutoOrganizer" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Organizer</Link>
+              <Link to={createPageUrl("Assignments")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "Assignments" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Tasks</Link>
+              <Link to={createPageUrl("StudyLab")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "StudyLab" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Lab</Link>
               {isAdmin && (
-                <Link to={createPageUrl("Monitoring")} className={cn("text-xs font-black uppercase tracking-widest transition-colors", currentPageName === "Monitoring" ? "text-slate-900 underline underline-offset-8 decoration-4 decoration-indigo-600" : "text-slate-500 hover:text-slate-900")}>Admin</Link>
+                <Link to={createPageUrl("Monitoring")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "Monitoring" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Admin</Link>
               )}
             </div>
           </div>
@@ -126,17 +126,21 @@ export default function Layout({ children, currentPageName }) {
           </div>
         </header>
 
-        {/* Mobile Header Toggle - Visible on lg and below */}
-        <header className="lg:hidden h-16 glass-sidebar border-b border-slate-200 sticky top-0 z-50 flex items-center justify-between px-6 flex-shrink-0">
+        {/* Mobile Header - Visible on lg and below */}
+        <header className="lg:hidden h-14 sm:h-16 glass-sidebar border-b border-slate-200 sticky top-0 z-50 flex items-center justify-between px-4 sm:px-6 flex-shrink-0 pt-[env(safe-area-inset-top)]">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 -ml-2 rounded-xl text-slate-600 hover:bg-slate-100"
+            className="p-2.5 -ml-1 rounded-xl text-slate-600 hover:bg-slate-100 min-h-11 min-w-11 flex items-center justify-center"
+            aria-label="Open menu"
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6 text-black" /> : <Menu className="w-6 h-6 text-black" />}
+            {isMobileMenuOpen ? <X className="w-5 h-5 text-slate-900" /> : <Menu className="w-5 h-5 text-slate-900" />}
           </button>
-          <img src={logo} alt="Logo" className="w-8 h-8 object-contain" />
-          <div className="flex items-center gap-4">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-black">S</div>
+          <div className="flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
+            <img src={logo} alt="Study Buddy" className="w-7 h-7 object-contain" />
+            <span className="font-black text-sm tracking-tight text-slate-900">STUDY BUDDY</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <NotificationBell />
           </div>
         </header>
 
@@ -172,12 +176,12 @@ export default function Layout({ children, currentPageName }) {
         </AnimatePresence>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-y-auto pencil-scroll scroll-smooth p-6 xl:p-10">
+        <div className="flex-1 overflow-y-auto pencil-scroll scroll-smooth px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8 xl:px-10 pb-28 lg:pb-10">
           <div className="w-full min-h-[calc(100vh-200px)]">
             {children}
           </div>
 
-          <footer className="mt-20 pt-10 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest pb-10">
+          <footer className="mt-12 sm:mt-16 pt-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest pb-4 lg:pb-6">
             <div className="flex items-center gap-4">
               <span>© 2026 Nabster Tsr</span>
             </div>
@@ -189,7 +193,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
 
         {/* Global Footer / Status Bar */}
-        <footer className="w-full bg-white border-t border-slate-200 p-4 flex-shrink-0 z-40">
+        <footer className="hidden lg:flex w-full bg-white border-t border-slate-200 p-3 flex-shrink-0 z-40">
           <div className="max-w-[1920px] mx-auto flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-widest px-4">
             <div className="flex items-center gap-4">
               <span>© 2026 Nabster Tsr</span>
@@ -246,6 +250,47 @@ export default function Layout({ children, currentPageName }) {
             </div>
           )}
         </AnimatePresence>
+
+        {/* Mobile bottom nav */}
+        <nav className="lg:hidden fixed bottom-0 inset-x-0 z-[70] bg-white/95 backdrop-blur-xl border-t border-slate-200 pb-[env(safe-area-inset-bottom)]">
+          <div className="grid grid-cols-5 h-16">
+            {[
+              { name: "Feed", page: "Dashboard", icon: LayoutDashboard },
+              { name: namingPref === "Subjects" ? "Subjects" : "Modules", page: "Modules", icon: BookOpen },
+              { name: "Lab", page: "StudyLab", icon: Brain },
+              { name: "Tasks", page: "Assignments", icon: ClipboardList },
+              { name: "More", page: "__more__", icon: Menu },
+            ].map((item) => {
+              const active = item.page !== "__more__" && currentPageName === item.page;
+              if (item.page === "__more__") {
+                return (
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() => setIsMobileMenuOpen(true)}
+                    className="flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500 hover:text-slate-900"
+                  >
+                    <Menu className="w-5 h-5" />
+                    <span>More</span>
+                  </button>
+                );
+              }
+              return (
+                <Link
+                  key={item.name}
+                  to={createPageUrl(item.page)}
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-0.5 text-[10px] font-bold uppercase tracking-wide transition-colors",
+                    active ? "text-indigo-600" : "text-slate-500 hover:text-slate-900"
+                  )}
+                >
+                  <item.icon className={cn("w-5 h-5", active && "text-indigo-600")} />
+                  <span className="truncate max-w-[4.5rem]">{item.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
       </main>
     </div>
   );
