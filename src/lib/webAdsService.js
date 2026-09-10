@@ -2,6 +2,7 @@ import {
   ADSENSE_CLIENT,
   ADMOB_BANNER_LAB,
   ADMOB_REWARDED_AI,
+  ADSENSE_LAB_BANNER_SLOT,
 } from "./adConfig";
 
 let scriptLoaded = false;
@@ -134,10 +135,7 @@ export async function mountWebLabBanner(containerEl) {
   ins.style.minHeight = "60px";
   ins.setAttribute("data-ad-client", ADSENSE_CLIENT);
   // Prefer AdMob banner unit as data-ad-slot numeric part when AdSense unit unavailable
-  const slot = ADMOB_BANNER_LAB.includes("/")
-    ? ADMOB_BANNER_LAB.split("/").pop()
-    : ADMOB_BANNER_LAB;
-  ins.setAttribute("data-ad-slot", slot);
+  ins.setAttribute("data-ad-slot", ADSENSE_LAB_BANNER_SLOT);
   ins.setAttribute("data-ad-format", "auto");
   ins.setAttribute("data-full-width-responsive", "true");
   containerEl.appendChild(ins);
