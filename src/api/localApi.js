@@ -1,4 +1,4 @@
-import { db, getStudyStats, ensureDbOpen } from "../lib/db";
+﻿import { db, getStudyStats, ensureDbOpen } from "../lib/db";
 import { safeJsonParse } from "../lib/safeJsonParser";
 import { supabase } from "../lib/supabase";
 
@@ -74,23 +74,23 @@ const createEntity = (tableName) => ({
         const item = { ...data, created_date: data.created_date || new Date().toISOString() };
         const id = await db.table(tableName).add(item);
         const finalItem = { ...item, id };
-        // Sync to Firestore in the background
-        syncToFirestore(tableName, 'create', id, finalItem);
+        // Await Firestore sync so metadata is durable before UI continues
+        await syncToFirestore(tableName, 'create', id, finalItem);
         return finalItem;
     },
     update: async (id, data) => {
         await ensureDbOpen();
         await db.table(tableName).update(id, data);
         const finalItem = await db.table(tableName).get(id);
-        // Sync to Firestore in the background
-        syncToFirestore(tableName, 'update', id, finalItem);
+        // Await Firestore sync so metadata is durable before UI continues
+        await syncToFirestore(tableName, 'update', id, finalItem);
         return finalItem;
     },
     delete: async (id) => {
         await ensureDbOpen();
         const result = await db.table(tableName).delete(id);
-        // Sync to Firestore in the background
-        syncToFirestore(tableName, 'delete', id);
+        // Await Firestore sync so metadata is durable before UI continues
+        await syncToFirestore(tableName, 'delete', id);
         return result;
     },
     get: async (id) => {

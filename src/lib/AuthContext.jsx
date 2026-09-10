@@ -66,6 +66,19 @@ export const AuthProvider = ({ children }) => {
               role: userRole
             }, { merge: true });
 
+            // Pull study tables (materials, modules, ...) from Firestore into Dexie for cross-browser restore
+            try {
+              const { base44 } = await import('@/api/base44Client');
+              const pull = base44?.sync?.pullFromFirestore || base44?.sync?.syncFromFirestore;
+              if (typeof pull === 'function') {
+                await pull();
+              }
+            } catch (syncErr) {
+              if (syncErr?.code !== 'unavailable' && !String(syncErr?.message || '').includes('offline')) {
+                console.error('Study data pull error:', syncErr);
+              }
+            }
+
           } catch (e) {
             if (e.code !== 'unavailable' && !e.message?.includes('offline')) {
               console.error("Profile sync error:", e);
