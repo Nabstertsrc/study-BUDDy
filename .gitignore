@@ -48,3 +48,7 @@ node_modules
 .env
 .env.local
 .env.*.local
+android/key.properties
+*.jks
+*.keystore
+StudyBuddy_Signing/
