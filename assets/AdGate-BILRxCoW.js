@@ -1,1 +1,0 @@
-import{R as i,j as n}from"./vendor-DlaqCsmb.js";function f({featureName:l="AI Feature",onProceed:e,trigger:a,adSlot:s="AUTO",skipDelay:p=5,children:c}){const o=t=>{t&&(t.preventDefault(),t.stopPropagation()),e&&e()},r=a?i.cloneElement(a,{onClick:t=>{o(t)}}):null;return n.jsx(n.Fragment,{children:r})}export{f as A};
