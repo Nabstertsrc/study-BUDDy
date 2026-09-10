@@ -137,7 +137,7 @@ export default function Dashboard() {
     : [];
 
   return (
-    <div className="max-w-screen-2xl mx-auto space-y-8 animate-in fade-in duration-700">
+    <div className="max-w-screen-2xl mx-auto space-y-5 sm:space-y-8 animate-in fade-in duration-700">
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -154,7 +154,7 @@ export default function Dashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Button variant="outline" className="border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 hidden sm:flex" onClick={() => window.open('https://www.buymeacoffee.com/', '_blank')}>
             ☕ Buy me a coffee $5
           </Button>
@@ -240,7 +240,8 @@ export default function Dashboard() {
               title="Pending Tasks"
               value={pendingAssignments}
               icon={ClipboardList}
-              gradient="bg-gradient-to-br from-amber-500 to-orange-500"
+              gradient={null}
+              className="border-amber-200/80 bg-gradient-to-br from-amber-50 to-orange-50"
               subtitle="Due soon"
               trend={null}
               trendUp={false}

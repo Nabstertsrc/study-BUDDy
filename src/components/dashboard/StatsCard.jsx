@@ -12,7 +12,7 @@ export default function StatsCard({
   className = ""
 }) {
   return (
-    <div className={cn(
+    <div className={cn("min-h-[8.5rem]", 
       "relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
       gradient || "bg-white border border-slate-200/60",
       className

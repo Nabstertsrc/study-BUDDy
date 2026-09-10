@@ -77,7 +77,7 @@ export default function StudyLab() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto space-y-5 sm:space-y-8">
+    <div className="max-w-screen-xl mx-auto space-y-5 sm:space-y-8">
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 text-violet-600 mb-1.5 sm:mb-2">
@@ -140,7 +140,7 @@ export default function StudyLab() {
         <div className="flex-1 min-w-0">
           <TabsContent value="quiz" className="mt-0">
             <div className="space-y-8">
-              <div className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 rounded-2xl p-6 border border-violet-200/50 flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="bg-gradient-to-r from-violet-500/10 to-purple-500/10 rounded-2xl p-4 sm:p-6 border border-violet-200/50 flex items-start sm:items-center gap-3 sm:gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="w-12 h-12 rounded-xl bg-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/20 shrink-0">
                   <Brain className="w-6 h-6 text-white" />
                 </div>
@@ -156,7 +156,7 @@ export default function StudyLab() {
 
           <TabsContent value="docchat" className="mt-0">
             <div className="space-y-8">
-              <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl p-6 border border-cyan-200/50 flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-2xl p-4 sm:p-6 border border-cyan-200/50 flex items-start sm:items-center gap-3 sm:gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="w-12 h-12 rounded-xl bg-cyan-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 shrink-0">
                   <MessageSquareText className="w-6 h-6 text-white" />
                 </div>
@@ -171,7 +171,7 @@ export default function StudyLab() {
 
           <TabsContent value="notes" className="mt-0">
             <div className="space-y-8">
-              <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl p-6 border border-blue-200/50 flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-2xl p-4 sm:p-6 border border-blue-200/50 flex items-start sm:items-center gap-3 sm:gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
@@ -310,8 +310,8 @@ export default function StudyLab() {
               </div>
 
               <div className="lg:col-span-2">
-                <div className="bg-white rounded-2xl border border-slate-200/60">
-                  <div className="p-5 border-b border-slate-100">
+                <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm h-full min-h-[280px]">
+                  <div className="p-4 sm:p-5 border-b border-slate-100 flex items-start justify-between gap-3">
                     <h3 className="font-semibold text-slate-900">Your Materials</h3>
                     <p className="text-sm text-slate-500">
                       {materials?.length || 0} uploaded files

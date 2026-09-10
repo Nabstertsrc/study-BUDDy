@@ -176,8 +176,8 @@ export default function Layout({ children, currentPageName }) {
         </AnimatePresence>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-y-auto pencil-scroll scroll-smooth px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8 xl:px-10 pb-28 lg:pb-10">
-          <div className="w-full min-h-[calc(100vh-200px)]">
+        <div className="flex-1 overflow-y-auto pencil-scroll scroll-smooth scroll-pt-4 px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-8 xl:px-10 pb-28 lg:pb-10">
+          <div className="w-full max-w-screen-2xl mx-auto min-h-[calc(100vh-12rem)]">
             {children}
           </div>
 

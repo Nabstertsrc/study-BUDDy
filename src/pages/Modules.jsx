@@ -260,25 +260,27 @@ Return only factual information found online. If you cannot find specific inform
 
       {/* Modules Grid */}
       {isLoading ? (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 max-w-5xl">
           {Array(6).fill(0).map((_, i) => (
             <Skeleton key={i} className="h-64 rounded-2xl" />
           ))}
         </div>
       ) : filteredModules.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-slate-200/60">
-          <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="w-8 h-8 text-slate-400" />
+        <div className="text-center py-12 sm:py-16 px-6 bg-white rounded-2xl border border-dashed border-slate-200">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center mx-auto mb-4">
+            <BookOpen className="w-7 h-7 sm:w-8 sm:h-8 text-blue-600" />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900">No modules yet</h3>
-          <p className="text-slate-500 mt-1 mb-4">Add your first module to get started</p>
-          <Button onClick={() => setIsDialogOpen(true)}>
+          <h3 className="text-lg font-semibold text-slate-900">No {namingPref.toLowerCase()} yet</h3>
+          <p className="text-slate-500 mt-1 mb-5 max-w-sm mx-auto text-sm">
+            Add your first {singleTerm.toLowerCase()} to organize materials, track progress, and unlock Study Lab tools.
+          </p>
+          <Button onClick={() => setIsDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700">
             <Plus className="w-4 h-4 mr-2" />
-            Add Module
+            Add {singleTerm}
           </Button>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 max-w-5xl">
           {filteredModules.map((module, index) => (
             <div
               key={module.id}
@@ -304,7 +306,7 @@ Return only factual information found online. If you cannot find specific inform
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <MoreVertical className="w-4 h-4" />
