@@ -27,7 +27,7 @@ export default function Login() {
 
             // 2. Show success message
             toast.success('Successfully logged in!', { id: loadingId })
-            navigate('/')
+            navigate('/Dashboard')
         } catch (error) {
             // 3. Show error if they aren't registered
             // Note: Firebase sometimes uses invalid-login-credentials for security reasons

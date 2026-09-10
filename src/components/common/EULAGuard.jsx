@@ -1,20 +1,37 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { acceptEula, hasAcceptedEula, isNativeShell } from '@/lib/platform';
 
+/**
+ * Blocks product entry until the user accepts the EULA.
+ * Used around Login/Signup and protected app routes — NOT around the marketing landing.
+ */
 const EULAGuard = ({ children }) => {
+    const navigate = useNavigate();
     const [accepted, setAccepted] = useState(false);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const hasAccepted = localStorage.getItem('eula_accepted_v1');
-        if (hasAccepted === 'true') {
-            setAccepted(true);
-        }
+        setAccepted(hasAcceptedEula());
         setLoading(false);
     }, []);
 
     const handleAccept = () => {
-        localStorage.setItem('eula_accepted_v1', 'true');
+        acceptEula();
         setAccepted(true);
+    };
+
+    const handleDecline = () => {
+        if (isNativeShell()) {
+            try {
+                window.close();
+            } catch {
+                /* ignore */
+            }
+            return;
+        }
+        // Web: return to marketing landing instead of closing the tab
+        navigate('/', { replace: true });
     };
 
     if (loading) return null;
@@ -50,7 +67,6 @@ const EULAGuard = ({ children }) => {
                     position: 'relative',
                     overflow: 'hidden'
                 }}>
-                    {/* Background Glow */}
                     <div style={{
                         position: 'absolute',
                         top: '-100px',
@@ -121,7 +137,7 @@ const EULAGuard = ({ children }) => {
                                 I Accept & Continue
                             </button>
                             <button
-                                onClick={() => window.close()}
+                                onClick={handleDecline}
                                 style={{
                                     background: 'transparent',
                                     color: '#94a3b8',

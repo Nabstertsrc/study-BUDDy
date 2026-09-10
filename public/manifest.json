@@ -1,11 +1,11 @@
 {
-    "name": "Nabster Tsr Study Buddy",
-    "short_name": "Nabster Study",
-    "description": "AI-powered study companion by Nabster Tsr",
+    "name": "Study Buddy",
+    "short_name": "Study Buddy",
+    "description": "AI homework help that teaches the method, not just the answer. By Nabster Tsr.",
     "start_url": "./",
     "display": "standalone",
     "background_color": "#ffffff",
-    "theme_color": "#4f46e5",
+    "theme_color": "#2563eb",
     "icons": [
         {
             "src": "./icon.png",

@@ -5,8 +5,6 @@ import '@/index.css'
 
 import ErrorBoundary from '@/components/common/ErrorBoundary.jsx'
 
-import EULAGuard from '@/components/common/EULAGuard.jsx'
-
 import { App as CapApp } from '@capacitor/app';
 
 // Handle Android Back Button
@@ -18,10 +16,10 @@ CapApp.addListener('backButton', ({ canGoBack }) => {
   }
 });
 
+// EULA is no longer a cold-traffic first paint.
+// It is required at product entry (Login/Signup/protected app) via EULAGuard in App.jsx.
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ErrorBoundary>
-    <EULAGuard>
-      <App />
-    </EULAGuard>
+    <App />
   </ErrorBoundary>
 )
