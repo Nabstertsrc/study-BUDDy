@@ -82,7 +82,7 @@ const WHO_ITS_FOR = [
   {
     icon: GraduationCap,
     title: 'Students',
-    body: 'After-school help, weekend catch-up, and exam season when textbooks alone aren't enough.',
+    body: "After-school help, weekend catch-up, and exam season when textbooks alone aren't enough.",
   },
   {
     icon: Users,
@@ -92,7 +92,7 @@ const WHO_ITS_FOR = [
   {
     icon: Moon,
     title: 'Night owls & crunch time',
-    body: 'Built for the hours when tutors aren't awake and deadlines are real.',
+    body: "Built for the hours when tutors aren't awake and deadlines are real.",
   },
 ];
 
@@ -118,7 +118,7 @@ const FAQ = [
   },
   {
     q: 'Where can I read the EULA?',
-    a: 'Use the EULA link in the footer anytime. You'll also be asked to accept it before using the core app for the first time.',
+    a: 'Use the EULA link in the footer anytime. You will also be asked to accept it before using the core app for the first time.',
   },
 ];
 
@@ -297,7 +297,7 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16">
           <div className="grid lg:grid-cols-2 gap-8 items-center mb-10">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Who it's for</h2>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Who it is for</h2>
               <p className="text-slate-500 max-w-2xl">Real study pressure, not generic AI demos.</p>
             </div>
             <LandingLottie
