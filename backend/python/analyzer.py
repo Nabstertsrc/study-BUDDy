@@ -50,7 +50,7 @@ def configure_api_keys(request_data):
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY") or "sk-41932e009ae44e34a96f21efaf1e6893"
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 
 SYSTEM_PROMPT = """
 You are an intelligent academic assistant. Your goal is to understand the context of the document.
@@ -138,7 +138,7 @@ def get_available_models(api_key=None):
     current_key = api_key or GEMINI_API_KEY
     if not current_key:
         print("DEBUG: No Gemini API key provided for model listing")
-        return ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash']
+        return ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-pro']
         
     try:
         genai.configure(api_key=current_key)
@@ -150,13 +150,13 @@ def get_available_models(api_key=None):
         # Sort so that flash models come first, then older versions
         priority_models = []
         
-        # 1. Look for Flash 2.0 (Fastest/Newest)
-        priority_models.extend([m for m in models if '2.0' in m and 'flash' in m])
-        # 2. Look for Flash 1.5 (Standard Stable)
-        priority_models.extend([m for m in models if '1.5' in m and 'flash' in m])
-        # 3. Look for Any other Flash
+        # 1. Flash 2.5 (current)
+        priority_models.extend([m for m in models if '2.5' in m and 'flash' in m])
+        # 2. flash-latest aliases
+        priority_models.extend([m for m in models if 'flash-latest' in m and m not in priority_models])
+        # 3. Any other Flash
         priority_models.extend([m for m in models if 'flash' in m and m not in priority_models])
-        # 4. Look for Pro models
+        # 4. Pro models
         priority_models.extend([m for m in models if 'pro' in m and m not in priority_models])
         
         # Finally add everything else
@@ -176,7 +176,7 @@ def get_available_models(api_key=None):
     except Exception as e:
         print(f"DEBUG: Failed to list models: {e}")
         sys.stdout.flush()
-        return ['gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-1.5-flash']
+        return ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-pro']
 
 def call_pollinations(prompt, system_prompt=""):
     """
@@ -413,7 +413,7 @@ def classify():
     file_base64 = data.get('fileBase64')
     mime_type = data.get('mimeType')
     
-    gemini_key, _ = configure_api_keys(data)
+    gemini_key, _, _ = configure_api_keys(data)
     
     if not file_base64 or not mime_type:
         return jsonify({"error": "Missing data"}), 400
