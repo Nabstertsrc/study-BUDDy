@@ -428,6 +428,8 @@ export const localApi = {
                 }
             },
             InvokeLLM: async ({ prompt, systemPrompt = "", ...options }) => {
+                const { ensureAiAccess } = await import('../lib/ensureAiAccess');
+                await ensureAiAccess(options);
                 const { BackendBridge } = await import('../lib/backend-bridge');
                 try {
                     return await BackendBridge.generateText(prompt, systemPrompt, options);
@@ -436,6 +438,8 @@ export const localApi = {
                 }
             },
             ExtractDataFromUploadedFile: async ({ file_url, json_schema }) => {
+                const { ensureAiAccess } = await import('../lib/ensureAiAccess');
+                await ensureAiAccess({});
                 const { BackendBridge } = await import('../lib/backend-bridge');
                 // Use the bridge or AI service to extract data
                 // For now, we'll use a generic prompt since we don't have a direct Extraction API yet

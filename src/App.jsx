@@ -8,6 +8,7 @@ import PageNotFound from './lib/PageNotFound';
 import NavigationTracker from './lib/NavigationTracker';
 import StudyUsageTracker from './lib/StudyUsageTracker';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import AiAdGateProvider from '@/components/ads/AiAdGateProvider';
 import { NotificationProvider } from '@/lib/NotificationContext';
 import EULAGuard from '@/components/common/EULAGuard';
 import { isNativeShell } from '@/lib/platform';
@@ -121,6 +122,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClientInstance}>
       <AuthProvider>
+      <AiAdGateProvider>
         <NotificationProvider>
           <Router basename={import.meta.env.BASE_URL} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <NavigationTracker />
@@ -130,6 +132,7 @@ function App() {
 
           <Toaster />
         </NotificationProvider>
+      </AiAdGateProvider>
       </AuthProvider>
     </QueryClientProvider>
   )

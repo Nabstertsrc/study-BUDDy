@@ -39,6 +39,8 @@ import { format } from "date-fns";
 import { ProfessionalAIContent } from "@/components/ui/ProfessionalAIContent";
 import { Button } from "@/components/ui/button";
 import { Copy, CheckCircle } from "lucide-react";
+import LabBannerAd from "@/components/ads/LabBannerAd";
+import { useAiCredits } from "@/components/ads/AiAdGateProvider";
 
 const tabs = [
   { id: "quiz", label: "Quiz Generator", icon: Brain, color: "text-violet-600", bg: "bg-violet-100" },
@@ -52,6 +54,16 @@ const tabs = [
   { id: "telegram", label: "Telegram Discovery", icon: Sparkles, color: "text-sky-500", bg: "bg-sky-50" },
   { id: "materials", label: "Materials", icon: FolderOpen, color: "text-orange-600", bg: "bg-orange-100" },
 ];
+
+function AiCreditsHint() {
+  const { credits } = useAiCredits();
+  return (
+    <p className="text-xs text-slate-400 mt-2">
+      AI credits: <span className="font-semibold text-slate-600">{credits}</span>
+      {" "}· Watch a short ad in the Android app to refill (no click needed)
+    </p>
+  );
+}
 
 export default function StudyLab() {
   const [activeTab, setActiveTab] = useState("quiz");
@@ -90,6 +102,7 @@ export default function StudyLab() {
         <p className="text-slate-500 mt-1 text-sm sm:text-base max-w-2xl">
           Generate quizzes, summarize notes, and get in-depth explanations
         </p>
+        <AiCreditsHint />
       </div>
 
       {/* Tabs */}
@@ -474,6 +487,7 @@ export default function StudyLab() {
           </TabsContent>
         </div>
       </Tabs>
+      <LabBannerAd />
     </div>
   );
 }
