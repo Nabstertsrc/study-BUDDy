@@ -89,7 +89,7 @@ export default function StudyLab() {
   });
 
   return (
-    <div className="max-w-screen-xl mx-auto space-y-5 sm:space-y-8">
+    <div className="w-full max-w-[1400px] mx-auto space-y-5 sm:space-y-8">
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 text-violet-600 mb-1.5 sm:mb-2">

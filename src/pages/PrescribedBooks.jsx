@@ -37,7 +37,7 @@ export default function PrescribedBooks() {
   }, {});
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="w-full max-w-[1400px] mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>

@@ -227,7 +227,7 @@ Return only factual information found online. If you cannot find specific inform
   ) || [];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-5 sm:space-y-8">
+    <div className="w-full max-w-[1400px] mx-auto space-y-5 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -260,7 +260,7 @@ Return only factual information found online. If you cannot find specific inform
 
       {/* Modules Grid */}
       {isLoading ? (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 max-w-5xl">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 w-full">
           {Array(6).fill(0).map((_, i) => (
             <Skeleton key={i} className="h-64 rounded-2xl" />
           ))}
@@ -280,7 +280,7 @@ Return only factual information found online. If you cannot find specific inform
           </Button>
         </div>
       ) : (
-        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 max-w-5xl">
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 w-full">
           {filteredModules.map((module, index) => (
             <div
               key={module.id}

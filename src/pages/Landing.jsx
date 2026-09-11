@@ -156,7 +156,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
             <img src={logo} alt="Study Buddy" className="h-8 w-auto object-contain" />
             <span className="font-extrabold text-lg sm:text-xl tracking-tight text-blue-600 truncate">
@@ -191,7 +191,7 @@ export default function Landing() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-50 via-slate-50 to-slate-50 pointer-events-none" />
-        <div className="relative max-w-5xl mx-auto px-4 pt-10 pb-14 sm:pt-16 sm:pb-20">
+        <div className="relative max-w-7xl mx-auto px-4 pt-10 pb-14 sm:pt-16 sm:pb-20">
           <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-blue-100/80 text-blue-700 text-xs font-semibold px-3 py-1 mb-5">
@@ -243,7 +243,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 pb-4">
+      <section className="max-w-7xl mx-auto px-4 pb-4">
         <div className="grid sm:grid-cols-3 gap-3">
           <div className="rounded-2xl border border-slate-100 bg-white p-3 flex items-center gap-3 shadow-sm">
             <LandingLottie file="reading-books.json" className="h-16 w-16 shrink-0" ariaLabel="Reading materials" />
@@ -269,7 +269,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section id="how-it-works" className="max-w-5xl mx-auto px-4 py-12 sm:py-16 scroll-mt-20">
+      <section id="how-it-works" className="max-w-7xl mx-auto px-4 py-12 sm:py-16 scroll-mt-20">
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">How it works</h2>
         <p className="text-slate-500 mb-8 max-w-2xl">Three simple steps from stuck to understanding.</p>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -294,7 +294,7 @@ export default function Landing() {
       </section>
 
       <section className="bg-white border-y border-slate-100">
-        <div className="max-w-5xl mx-auto px-4 py-12 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
           <div className="grid lg:grid-cols-2 gap-8 items-center mb-10">
             <div>
               <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Who it is for</h2>
@@ -320,7 +320,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 py-12 sm:py-16">
+      <section className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
         <div className="rounded-3xl bg-slate-900 text-slate-100 p-6 sm:p-10">
           <div className="flex items-center gap-2 mb-3">
             <Shield className="w-5 h-5 text-blue-400" />
@@ -340,7 +340,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 pb-4">
+      <section className="max-w-7xl mx-auto px-4 pb-4">
         <div className="grid sm:grid-cols-3 gap-4">
           {[
             { icon: Brain, title: 'Method-first AI', body: 'Explanations that build understanding.' },
@@ -358,7 +358,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 py-12 sm:py-16">
+      <section className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-6">FAQ</h2>
         <div className="space-y-3">
           {FAQ.map((item) => (
@@ -367,7 +367,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 pb-14">
+      <section className="max-w-7xl mx-auto px-4 pb-14">
         <div className="rounded-3xl border border-blue-100 bg-blue-50 p-6 sm:p-10 text-center">
           <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Ready when the homework hits?</h2>
           <p className="text-slate-600 mb-6 max-w-lg mx-auto text-sm sm:text-base">
@@ -383,7 +383,7 @@ export default function Landing() {
       </section>
 
       <footer className="border-t border-slate-200 bg-white">
-        <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-slate-500">
           <div>
             <div className="font-bold text-slate-800">Study Buddy</div>
             <div>(c) {new Date().getFullYear()} Nabster Tsr Study Buddy</div>
