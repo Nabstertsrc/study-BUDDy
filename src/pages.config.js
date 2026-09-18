@@ -20,6 +20,7 @@ const Blog = lazyImport(() => import('./pages/Blog'));
 const BlogPost = lazyImport(() => import('./pages/BlogPost'));
 const Privacy = lazyImport(() => import('./pages/Privacy'));
 const About = lazyImport(() => import('./pages/About'));
+const BrainGames = lazyImport(() => import('./pages/BrainGames'));
 import __Layout from './Layout.jsx';
 
 
@@ -45,6 +46,7 @@ export const PAGES = {
     "BlogPost": BlogPost,
     "Privacy": Privacy,
     "About": About,
+    "BrainGames": BrainGames,
 }
 
 export const pagesConfig = {

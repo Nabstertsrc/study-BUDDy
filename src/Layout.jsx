@@ -13,7 +13,8 @@ import {
   Library,
   GraduationCap,
   ClipboardList,
-  Users
+  Users,
+  Gamepad2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,6 +40,7 @@ const getNavigation = (isAdmin, namingPref) => [
   { name: "Learning", icon: GraduationCap, page: "LearningPath" },
   { name: "Books", icon: Library, page: "PrescribedBooks" },
   { name: "Assignments", icon: ClipboardList, page: "Assignments" },
+  { name: "Games", icon: Gamepad2, page: "BrainGames" },
   { name: "Community", icon: Users, page: "CommunityHub" },
 ];
 
