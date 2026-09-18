@@ -55,7 +55,7 @@ const WebRoot = ({ fallback, dashboardElement }) => {
 
 const AppRoutes = () => {
   // Public marketing / legal / auth entry — Landing & EULA skip the EULA wall
-  const publicRoutes = ['Login', 'Signup', 'Welcome', 'HowItWorks', 'Landing', 'EULA'];
+  const publicRoutes = ['Login', 'Signup', 'Welcome', 'HowItWorks', 'Landing', 'EULA', 'Blog', 'BlogPost', 'Privacy', 'About'];
   // Auth screens + anything that enters the product should accept EULA first
   const eulaBeforeEntry = ['Login', 'Signup', 'Welcome'];
 
@@ -88,7 +88,8 @@ const AppRoutes = () => {
       <Route path="/" element={rootElement} />
       {Object.entries(Pages).map(([path, Page]) => {
         const isPublic = publicRoutes.includes(path);
-        const noLayout = path === 'Login' || path === 'Signup' || path === 'Landing' || path === 'EULA';
+        const noLayout = path === 'Login' || path === 'Signup' || path === 'Landing' || path === 'EULA'
+          || path === 'Blog' || path === 'BlogPost' || path === 'Privacy' || path === 'About';
         const needsEula = eulaBeforeEntry.includes(path) || !isPublic;
 
         const pageNode = (
@@ -108,7 +109,7 @@ const AppRoutes = () => {
         return (
           <Route
             key={path}
-            path={`/${path}`}
+            path={path === 'BlogPost' ? `/${path}/:slug` : `/${path}`}
             element={element}
           />
         );

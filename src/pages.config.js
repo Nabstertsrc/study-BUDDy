@@ -16,6 +16,10 @@ const Login = lazyImport(() => import('./pages/Login'));
 const Signup = lazyImport(() => import('./pages/Signup'));
 const Landing = lazyImport(() => import('./pages/Landing'));
 const EULA = lazyImport(() => import('./pages/EULA'));
+const Blog = lazyImport(() => import('./pages/Blog'));
+const BlogPost = lazyImport(() => import('./pages/BlogPost'));
+const Privacy = lazyImport(() => import('./pages/Privacy'));
+const About = lazyImport(() => import('./pages/About'));
 import __Layout from './Layout.jsx';
 
 
@@ -37,6 +41,10 @@ export const PAGES = {
     "Signup": Signup,
     "Landing": Landing,
     "EULA": EULA,
+    "Blog": Blog,
+    "BlogPost": BlogPost,
+    "Privacy": Privacy,
+    "About": About,
 }
 
 export const pagesConfig = {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import { Button } from '@/components/ui/button';
+import AdBanner from '@/components/ads/AdBanner';
 import {
   BookOpen,
   Download,
@@ -106,7 +107,7 @@ const WHY_NOT_CHATBOT = [
 const FAQ = [
   {
     q: 'Is Study Buddy free to start?',
-    a: 'Yes. You can get started free. Some advanced AI features may show a short ad  -  no fake prices here, just try it.',
+    a: 'Yes. You can get started free. Some advanced AI features may show a short ad — no fake prices here, just try it.',
   },
   {
     q: 'Will it just give me the answer?',
@@ -114,11 +115,27 @@ const FAQ = [
   },
   {
     q: 'Is this the same as Profile Genius?',
-    a: 'No. This product is Study Buddy  -  AI homework help by Nabster Tsr. profilegenius.fun is simply the current web host domain.',
+    a: 'No. This product is Study Buddy — AI homework help by Nabster Tsr. profilegenius.fun is simply the current web host domain.',
   },
   {
     q: 'Where can I read the EULA?',
     a: 'Use the EULA link in the footer anytime. You will also be asked to accept it before using the core app for the first time.',
+  },
+  {
+    q: 'What subjects does Study Buddy cover?',
+    a: 'Study Buddy works with any subject — Mathematics, Sciences, Languages, History, and more. You upload your own materials and the AI adapts to whatever you are studying.',
+  },
+  {
+    q: 'Does it work on mobile?',
+    a: 'Yes. The web app is fully responsive and works on any smartphone browser. We also offer an Android APK download for a native mobile experience.',
+  },
+  {
+    q: 'How does the ad-supported model work?',
+    a: 'Core features are always free. Advanced AI generation (like deep summaries and quiz creation) may require watching a short rewarded advertisement. Read our How It Works page for a full explanation.',
+  },
+  {
+    q: 'Is my study data private?',
+    a: 'Yes. Your study materials and personal data are protected by Firebase security. We never sell your data. Read our Privacy Policy for full details.',
   },
 ];
 
@@ -293,6 +310,11 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* AdSense banner after How It Works */}
+      <section className="max-w-7xl mx-auto px-4 pb-4">
+        <AdBanner slot="8704764718" format="horizontal" className="rounded-2xl overflow-hidden" />
+      </section>
+
       <section className="bg-white border-y border-slate-100">
         <div className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
           <div className="grid lg:grid-cols-2 gap-8 items-center mb-10">
@@ -390,6 +412,9 @@ export default function Landing() {
           </div>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <Link to="/HowItWorks" className="hover:text-blue-600">How it works</Link>
+            <Link to="/Blog" className="hover:text-blue-600">Blog</Link>
+            <Link to="/About" className="hover:text-blue-600">About</Link>
+            <Link to="/Privacy" className="hover:text-blue-600">Privacy Policy</Link>
             <Link to="/Login" className="hover:text-blue-600">Log in</Link>
             <Link to="/Signup" className="hover:text-blue-600">Sign up</Link>
             <Link to="/EULA" className="hover:text-blue-600">EULA</Link>
