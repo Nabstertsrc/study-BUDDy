@@ -80,7 +80,7 @@ export default function Blog() {
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-2 min-w-0">
             <img src={logo} alt="Study Buddy" className="h-8 w-auto object-contain" />
             <span className="font-extrabold text-lg text-blue-600 truncate">Study Buddy</span>
@@ -97,7 +97,7 @@ export default function Blog() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-10 sm:py-14">
+      <main className="max-w-7xl mx-auto px-4 py-10 sm:py-14">
         {/* Page Title */}
         <div className="mb-10">
           <div className="inline-flex items-center gap-2 rounded-full bg-blue-100/80 text-blue-700 text-xs font-semibold px-3 py-1 mb-4">
@@ -185,7 +185,7 @@ export default function Blog() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white mt-10">
-        <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-slate-500">
           <div>
             <div className="font-bold text-slate-800">Study Buddy</div>
             <div>© {year} Nabster Tsr Study Buddy</div>

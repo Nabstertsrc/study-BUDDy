@@ -198,7 +198,7 @@ export default function BlogPost() {
 
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-2 min-w-0">
             <img src={logo} alt="Study Buddy" className="h-8 w-auto object-contain" />
             <span className="font-extrabold text-lg text-blue-600 hidden sm:block truncate">Study Buddy</span>
@@ -215,7 +215,7 @@ export default function BlogPost() {
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
         <div className="lg:grid lg:grid-cols-[1fr_280px] lg:gap-10 items-start">
           {/* ── Main article ── */}
           <article>
@@ -342,7 +342,7 @@ export default function BlogPost() {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white mt-10">
-        <div className="max-w-4xl mx-auto px-4 py-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-slate-500">
+        <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between text-sm text-slate-500">
           <div>
             <div className="font-bold text-slate-800">Study Buddy</div>
             <div>© {year} Nabster Tsr Study Buddy</div>

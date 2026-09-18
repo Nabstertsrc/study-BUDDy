@@ -993,6 +993,363 @@ export const blogPosts = [
     ],
     relatedSlugs: ["ultimate-guide-to-university-applications", "how-to-write-a-winning-personal-statement"],
   },
+
+  {
+    slug: "how-to-stop-fearing-math-grades-4-8",
+    title: "How to Stop Fearing Math: A Guide for Grades 4-8",
+    date: "2026-09-20",
+    readTime: "5 min read",
+    category: "K-12 Learning",
+    categoryColor: "teal",
+    excerpt:
+      "Math anxiety is real, but it is completely beatable. Learn how to break down complex problems like fractions and algebra without the stress, using clear visual steps.",
+    featureSection: {
+      label: "Math Mastery",
+      description: "Turn math anxiety into math confidence with step-by-step learning",
+      steps: [
+        { icon: "深", label: "Take a deep breath and read the problem twice" },
+        { icon: "✏️", label: "Write down exactly what you know and what you need to find" },
+        { icon: "🧩", label: "Break the problem into the smallest possible steps" },
+        { icon: "🤖", label: "Use Study Buddy to reveal just the next step, not the answer" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "For many students in upper elementary and middle school, math isn't just difficult—it is terrifying. Your hands sweat when the teacher calls on you, and staring at a blank worksheet feels like looking at a wall. This is called 'math anxiety,' and the good news is that it has nothing to do with how smart you are. It is just a reaction to the way math is sometimes taught.",
+      },
+      {
+        type: "h2",
+        text: "Why Do We Fear Math?",
+      },
+      {
+        type: "p",
+        text: "Math anxiety usually starts around 4th or 5th grade when subjects like fractions and long division are introduced. Unlike reading, where you can guess a word from context, math builds strictly on itself. If you miss a step in long division, every step after it feels impossible. This creates a cycle: you get confused, you get stressed, the stress blocks your brain from learning, and you get more confused.",
+      },
+      {
+        type: "h2",
+        text: "Step 1: The 'What Do I Know?' Rule",
+      },
+      {
+        type: "p",
+        text: "When you face a word problem that looks like a giant paragraph of text, do not try to solve it in your head. Immediately grab a pencil and write down two lists:",
+      },
+      {
+        type: "list",
+        items: [
+          "What do I know? (Write down the numbers and facts given in the problem)",
+          "What do they want me to find? (Usually the very last sentence with the question mark)",
+        ],
+      },
+      {
+        type: "p",
+        text: "Just doing this lowers your anxiety because you have taken action and organized the chaos.",
+      },
+      {
+        type: "tip",
+        text: "If a problem involves fractions (like 1/4 + 1/3), always draw a picture first. Draw a pizza cut into four slices, and another cut into three. Visualizing the problem makes the abstract numbers feel real.",
+      },
+      {
+        type: "h2",
+        text: "Step 2: Asking for the Right Kind of Help",
+      },
+      {
+        type: "p",
+        text: "When you are stuck on homework, looking at the answer key in the back of the book does not help you learn. It just makes you feel worse because you don't know how to get there.",
+      },
+      {
+        type: "p",
+        text: "Instead of asking for the answer, ask for the *next step*. If you are using Study Buddy's AI Study Lab, upload your math problem and specifically type: 'Explain the first step to solve this, but do not give me the final answer.' This gives your brain the tiny push it needs to keep going on its own.",
+      },
+      {
+        type: "conclusion",
+        text: "Math is not a talent you are born with; it is a skill you practice, like playing a video game or a sport. Every time you get a problem wrong, your brain actually grows stronger as it figures out why. Embrace the mistakes—they are the only way to learn.",
+      },
+    ],
+    relatedSlugs: ["mastering-high-school-math"],
+  },
+
+  {
+    slug: "mastering-high-school-math",
+    title: "Mastering High School Math: Exam Strategies for Grades 9-12",
+    date: "2026-09-21",
+    readTime: "6 min read",
+    category: "K-12 Learning",
+    categoryColor: "teal",
+    excerpt:
+      "High school math requires a completely different study approach than middle school. Discover how to tackle advanced algebra, trigonometry, and calculus effectively.",
+    featureSection: {
+      label: "Exam Prep",
+      description: "Strategies to ace your high school math finals",
+      steps: [
+        { icon: "📝", label: "Create a cheat sheet of formulas as you learn them" },
+        { icon: "🔄", label: "Identify patterns in how questions are asked" },
+        { icon: "⏱️", label: "Practice under timed exam conditions" },
+        { icon: "🧠", label: "Teach the concept to someone else (or the AI)" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "In high school, the shift from basic algebra to advanced trigonometry, functions, and calculus can feel like hitting a brick wall. The memorization tactics that worked in middle school will fail you here. High school math is about recognizing patterns and understanding underlying logical systems.",
+      },
+      {
+        type: "h2",
+        text: "The 'Pattern Recognition' Strategy",
+      },
+      {
+        type: "p",
+        text: "In an exam, a calculus optimization problem or a complex trigonometry identity will rarely look exactly like the one in your textbook. Examiners change the context to test if you understand the *concept* or if you just memorized the *procedure*.",
+      },
+      {
+        type: "p",
+        text: "To beat this, you need to study by categorizing problems. When doing past papers, do not just solve the problem; ask yourself: 'What type of trick are they trying to use here?' Are they hiding a quadratic equation inside a trigonometric function? Recognizing these patterns is the key to high-level math.",
+      },
+      {
+        type: "h2",
+        text: "How to Actually Use Past Papers",
+      },
+      {
+        type: "p",
+        text: "Doing past exam papers is the single most effective way to study math, but most students do it wrong. They do a paper while looking at the memo (answer key) at the same time. This creates a false sense of security.",
+      },
+      {
+        type: "list",
+        items: [
+          "Do the paper completely blind, under timed conditions.",
+          "Mark the paper strictly.",
+          "For every question you got wrong, figure out exactly *where* the error happened. Was it a silly arithmetic mistake (like dropping a negative sign), or a conceptual mistake (you didn't know the formula)?",
+        ],
+      },
+      {
+        type: "tip",
+        text: "If you get a conceptual mistake, upload the specific question to Study Buddy's AI Study Lab and ask: 'Explain the core mathematical concept behind this question.' Fix the foundation before trying another past paper.",
+      },
+      {
+        type: "h2",
+        text: "The Feynman Technique",
+      },
+      {
+        type: "p",
+        text: "The best way to know if you understand a complex math concept (like limits in calculus) is to try and explain it simply. Imagine you are trying to explain it to an 8th grader. If you find yourself using complicated jargon or getting confused, you have identified a gap in your own knowledge. Go back to the textbook and fill that gap.",
+      },
+      {
+        type: "conclusion",
+        text: "High school math is challenging, but it is deeply logical. Focus on understanding the 'why' rather than just the 'how', practice recognizing patterns, and treat past papers as diagnostic tools rather than just worksheets.",
+      },
+    ],
+    relatedSlugs: ["how-to-stop-fearing-math-grades-4-8"],
+  },
+
+  {
+    slug: "coding-for-kids-where-to-start",
+    title: "Coding for Kids: Where to Start and Why It Matters",
+    date: "2026-09-22",
+    readTime: "6 min read",
+    category: "K-12 Learning",
+    categoryColor: "teal",
+    excerpt:
+      "Coding isn't just about computers; it is about learning how to think logically. Learn the best platforms for kids to start coding, from Scratch to Python.",
+    featureSection: {
+      label: "Start Coding",
+      description: "The roadmap from absolute beginner to building your first app",
+      steps: [
+        { icon: "🧩", label: "Start with block-based coding (Scratch)" },
+        { icon: "🐍", label: "Move to a readable text language (Python)" },
+        { icon: "🎮", label: "Build simple games to keep motivation high" },
+        { icon: "🌐", label: "Explore HTML/CSS to build basic web pages" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "When we tell kids to 'learn to code,' we aren't necessarily trying to turn them all into software engineers. We teach coding for the same reason we teach math or music: it develops a specific, highly valuable way of thinking. Coding teaches logical progression, problem decomposition, and resilience in the face of failure.",
+      },
+      {
+        type: "h2",
+        text: "Why Coding is the Ultimate Puzzle",
+      },
+      {
+        type: "p",
+        text: "At its core, coding is just giving a computer a list of instructions. The challenge is that computers are incredibly literal. If you miss a comma, the whole program crashes. This teaches students that details matter and that 'bugs' (errors) are not failures—they are just puzzles waiting to be solved.",
+      },
+      {
+        type: "h2",
+        text: "A Roadmap for Beginners (Grades 4-7)",
+      },
+      {
+        type: "p",
+        text: "Do not start a 10-year-old on C++ or Java. Start with visual, block-based programming.",
+      },
+      {
+        type: "list",
+        items: [
+          "Scratch (MIT): The undisputed king of beginner coding. Kids snap blocks together like LEGOs to animate characters and build simple games. It teaches core concepts (loops, variables, conditionals) without the frustration of typing syntax.",
+          "Code.org: Excellent guided lessons featuring characters from Minecraft and Star Wars to teach coding concepts step-by-step.",
+        ],
+      },
+      {
+        type: "h2",
+        text: "Graduating to Text-Based Code (Grades 8-12)",
+      },
+      {
+        type: "p",
+        text: "Once a student understands the logic of coding via blocks, it is time to type. Python is universally recommended as the best first text language. Its syntax is incredibly clean and reads almost like plain English. Kids can use Python to build text-based adventure games, automate simple tasks, or draw shapes using the 'Turtle' graphics library.",
+      },
+      {
+        type: "tip",
+        text: "Never learn to code just by reading a book. You have to build things. If you are learning Python, challenge yourself to build a simple 'Rock, Paper, Scissors' game. If you get stuck, paste your code into Study Buddy and ask the AI for a hint!",
+      },
+      {
+        type: "conclusion",
+        text: "The most important skill a young coder can learn is how to search for answers when they are stuck. Coding teaches you how to learn, how to fail safely, and how to build something out of nothing. Grab a laptop, open Scratch, and start building.",
+      },
+    ],
+    relatedSlugs: ["ai-for-kids-explained", "homework-hacks-for-parents"],
+  },
+
+  {
+    slug: "ai-for-kids-explained",
+    title: "AI for Kids: How Computers Actually Learn",
+    date: "2026-09-23",
+    readTime: "5 min read",
+    category: "K-12 Learning",
+    categoryColor: "teal",
+    excerpt:
+      "Artificial Intelligence is everywhere, but how does it actually work? This guide explains machine learning and neural networks in a way that anyone can understand.",
+    featureSection: {
+      label: "AI Explained",
+      description: "Demystifying Artificial Intelligence for young minds",
+      steps: [
+        { icon: "🐶", label: "Understand pattern recognition (Cats vs. Dogs)" },
+        { icon: "🏋️", label: "Learn how training data makes the AI smarter" },
+        { icon: "🧠", label: "Discover what a 'neural network' is" },
+        { icon: "🛡️", label: "Discuss AI ethics and why humans are still in charge" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "When you hear 'Artificial Intelligence' (AI), you might picture a shiny robot from a sci-fi movie taking over the world. But the reality is much less scary and much more interesting. AI is just a type of computer program that is really, really good at finding patterns.",
+      },
+      {
+        type: "h2",
+        text: "How Do You Teach a Computer What a Dog Is?",
+      },
+      {
+        type: "p",
+        text: "Imagine trying to write traditional computer code to identify a picture of a dog. You might write: 'If it has four legs, fur, and a tail, it is a dog.' But what if the picture is a cat? What if it is a dog missing a leg? The traditional rules break down.",
+      },
+      {
+        type: "p",
+        text: "Instead of giving the computer strict rules, AI uses something called 'Machine Learning.' We show the computer 10,000 pictures of dogs and say 'These are dogs.' Then we show it 10,000 pictures of cats and say 'These are cats.' The computer looks at all the pixels and finds the invisible mathematical patterns that make a dog look like a dog. It learns by example, just like a human toddler!",
+      },
+      {
+        type: "h2",
+        text: "What is a Neural Network?",
+      },
+      {
+        type: "p",
+        text: "Many AIs (like the one that powers Study Buddy) use a system called a 'Neural Network.' It is inspired by the human brain. It is made of thousands of tiny digital 'neurons' connected in layers.",
+      },
+      {
+        type: "list",
+        items: [
+          "The first layer looks at basic shapes and edges.",
+          "The middle layers combine those shapes into complex patterns.",
+          "The final layer makes a guess based on the patterns.",
+        ],
+      },
+      {
+        type: "p",
+        text: "If the AI guesses wrong, it goes backward through the network and adjusts the connections so it is more likely to guess right next time. This is how it 'learns.'",
+      },
+      {
+        type: "tip",
+        text: "AI is a tool, like a calculator or a hammer. It cannot think or feel. When using AI for homework, remember that it is just generating text based on patterns. Always double-check its facts, because AI can confidently hallucinate answers that sound right but are actually wrong.",
+      },
+      {
+        type: "conclusion",
+        text: "Understanding AI is going to be a crucial skill for the future. By knowing that AI is simply a powerful pattern-matching tool, you can use it to help you brainstorm ideas, explain complex math, and learn faster than ever before.",
+      },
+    ],
+    relatedSlugs: ["coding-for-kids-where-to-start", "how-to-use-ai-study-lab"],
+  },
+
+  {
+    slug: "homework-hacks-for-parents",
+    title: "Homework Hacks for Parents: Helping Your Child Succeed",
+    date: "2026-09-24",
+    readTime: "7 min read",
+    category: "K-12 Learning",
+    categoryColor: "teal",
+    excerpt:
+      "Homework time shouldn't be a battleground. Learn how to guide your child, build healthy study habits, and use AI tools safely without doing the work for them.",
+    featureSection: {
+      label: "Parental Guide",
+      description: "Support your child's learning journey effectively",
+      steps: [
+        { icon: "⏰", label: "Establish a consistent, distraction-free routine" },
+        { icon: "🗣️", label: "Ask guiding questions instead of giving answers" },
+        { icon: "🛑", label: "Know when to step back and let them struggle safely" },
+        { icon: "💻", label: "Monitor AI usage to ensure it teaches, not cheats" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "If you have ever ended up doing your child's science project at 10 PM while they cry at the kitchen table, this guide is for you. As students move from elementary to middle school, the volume and complexity of homework increase dramatically. Your role as a parent must shift from 'homework enforcer' to 'study coach.'",
+      },
+      {
+        type: "h2",
+        text: "The Difference Between Helping and Doing",
+      },
+      {
+        type: "p",
+        text: "It is incredibly painful to watch your child struggle with a math problem when you know the answer. The instinct is to take the pencil and show them. Do not do it.",
+      },
+      {
+        type: "p",
+        text: "When you do the work for them, you send two dangerous messages: 1) They are not capable of figuring it out themselves, and 2) the final answer is more important than the learning process.",
+      },
+      {
+        type: "p",
+        text: "Instead of giving the answer, ask guiding questions: 'What did the teacher say about this today?' or 'Where in your textbook does it talk about this?' Make them do the heavy lifting.",
+      },
+      {
+        type: "h2",
+        text: "Using AI Tools Safely",
+      },
+      {
+        type: "p",
+        text: "AI is the reality of the modern classroom. Attempting to ban it completely will usually fail. Instead, teach your child how to use it as a tutor rather than an answer-machine.",
+      },
+      {
+        type: "list",
+        items: [
+          "Good AI Use: Uploading a confusing textbook chapter into Study Buddy and asking for a summary, or asking the AI to explain a specific math concept step-by-step.",
+          "Bad AI Use: Copying and pasting an entire essay prompt into the AI and submitting the result as their own work.",
+        ],
+      },
+      {
+        type: "tip",
+        text: "Sit down with your child and explore Study Buddy together. Show them how asking the AI 'explain how to solve this' is far more useful for their upcoming test than asking 'give me the answer.'",
+      },
+      {
+        type: "h2",
+        text: "Building the Routine",
+      },
+      {
+        type: "p",
+        text: "Motivation is unreliable; routine is bulletproof. Establish a specific time and place for homework. It should be an area with minimal distractions (no phones, no TV), but close enough to you that you can monitor progress. For younger kids, chunk the work into 20-minute focus blocks followed by a 5-minute break (the Pomodoro technique).",
+      },
+      {
+        type: "conclusion",
+        text: "Your goal is to eventually make yourself obsolete. By teaching your child how to organize their time, break down problems, and seek help effectively, you are giving them the tools they need to succeed in high school, university, and beyond.",
+      },
+    ],
+    relatedSlugs: ["coding-for-kids-where-to-start", "how-to-stop-fearing-math-grades-4-8"],
+  },
 ];
 
 export function getPostBySlug(slug) {
@@ -1012,4 +1369,5 @@ export const categoryColors = {
   violet: { bg: "bg-violet-100", text: "text-violet-700", border: "border-violet-200" },
   slate: { bg: "bg-slate-100", text: "text-slate-700", border: "border-slate-200" },
   rose: { bg: "bg-rose-100", text: "text-rose-700", border: "border-rose-200" },
+  teal: { bg: "bg-teal-100", text: "text-teal-700", border: "border-teal-200" },
 };
