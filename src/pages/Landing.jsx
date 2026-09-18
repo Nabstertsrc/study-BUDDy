@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Lottie from 'lottie-react';
 import { Button } from '@/components/ui/button';
 import AdBanner from '@/components/ads/AdBanner';
+import { blogPosts, categoryColors } from '@/lib/blogPosts';
 import {
   BookOpen,
   Download,
@@ -14,6 +15,9 @@ import {
   Shield,
   Sparkles,
   Users,
+  Clock,
+  Tag,
+  ArrowRight
 } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
@@ -158,6 +162,59 @@ function FaqItem({ item }) {
         </div>
       )}
     </div>
+  );
+}
+
+function BlogSlider() {
+  // Sort posts by date, latest first, take top 6
+  const latestPosts = [...blogPosts].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 6);
+
+  return (
+    <section className="bg-slate-900 py-12 sm:py-16 text-white border-y border-slate-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end justify-between mb-8">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">Latest Guides & Advice</h2>
+            <p className="text-slate-400">Everything from university prep to study techniques.</p>
+          </div>
+          <Link to="/Blog" className="inline-flex items-center gap-1.5 text-blue-400 font-semibold hover:text-blue-300 transition-colors text-sm">
+            View all guides <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+      
+      {/* Full width scroll container */}
+      <div className="w-full overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar">
+        <div className="flex gap-5 px-4 sm:px-6 w-max mx-auto max-w-7xl">
+          {latestPosts.map((post) => {
+            const colors = categoryColors[post.categoryColor] || categoryColors.blue;
+            return (
+              <Link
+                key={post.slug}
+                to={`/BlogPost/${post.slug}`}
+                className="group w-[280px] sm:w-[320px] bg-slate-800/50 border border-slate-700/50 rounded-3xl shrink-0 snap-center sm:snap-start hover:bg-slate-800 transition-colors flex flex-col overflow-hidden"
+              >
+                <div className="p-5 flex-1 flex flex-col">
+                  <div className={`inline-flex items-center gap-1.5 rounded-full ${colors.bg.replace('bg-', 'bg-').replace('100', '900/50')} ${colors.text.replace('700', '300')} border ${colors.border.replace('200', '700/50')} text-[10px] font-bold px-2.5 py-1 mb-4 w-fit`}>
+                    <Tag className="w-3 h-3" />
+                    {post.category}
+                  </div>
+                  <h3 className="font-bold text-lg leading-tight mb-3 group-hover:text-blue-400 transition-colors line-clamp-2 flex-1">
+                    {post.title}
+                  </h3>
+                  <div className="flex items-center gap-3 text-slate-400 text-xs mt-auto pt-4 border-t border-slate-700/50">
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5" />
+                      {post.readTime}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -379,6 +436,9 @@ export default function Landing() {
           ))}
         </div>
       </section>
+
+      {/* Full width blog slider */}
+      <BlogSlider />
 
       <section className="max-w-7xl mx-auto px-4 py-12 sm:py-16">
         <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-6">FAQ</h2>

@@ -723,6 +723,276 @@ export const blogPosts = [
     ],
     relatedSlugs: ["how-to-use-ai-study-lab", "organizing-studies-with-auto-organizer"],
   },
+
+  {
+    slug: "ultimate-guide-to-university-applications",
+    title: "The Ultimate Guide to University Applications (Step-by-Step)",
+    date: "2026-09-17",
+    readTime: "7 min read",
+    category: "University Prep",
+    categoryColor: "rose",
+    excerpt:
+      "Applying to university can feel overwhelming. This comprehensive guide breaks down the timeline, how to calculate your admission scores, and the exact steps to submit a winning application.",
+    featureSection: {
+      label: "Application Prep",
+      description: "From research to acceptance letter — master the application process",
+      steps: [
+        { icon: "🏫", label: "Research universities & specific course requirements" },
+        { icon: "🧮", label: "Calculate your admission score (APS/GPA)" },
+        { icon: "📄", label: "Gather documents (ID, transcripts, essays)" },
+        { icon: "✅", label: "Submit applications before the early deadlines" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Your final years of high school are stressful enough without the added pressure of figuring out how to get into university. Missing a deadline or misunderstanding an admission requirement can derail your plans. This guide breaks the university application process down into a clear, manageable timeline.",
+      },
+      {
+        type: "h2",
+        text: "Phase 1: Research and Shortlisting (12-18 Months Before Start)",
+      },
+      {
+        type: "p",
+        text: "The biggest mistake students make is applying blindly without checking if they meet the minimum requirements. Start by identifying 3 to 5 universities you are interested in. Go to their official websites and look for the faculty or department you want to study under (e.g., Faculty of Engineering, Faculty of Humanities).",
+      },
+      {
+        type: "p",
+        text: "Every degree has specific entry requirements. You need to look for two things: required subjects (e.g., Mathematics and Physical Sciences for Engineering) and the minimum admission score. Create a spreadsheet or a dedicated Study Buddy assignment to track these requirements for each university on your shortlist.",
+      },
+      {
+        type: "h2",
+        text: "Phase 2: Calculating Your Score (APS or GPA)",
+      },
+      {
+        type: "p",
+        text: "Universities use a standardized scoring system to evaluate applicants fairly. In many systems (like the South African APS), your high school grades are converted into points. For example, an 80%+ might equal 7 points, 70-79% equals 6 points, and so on. Your total score determines if you qualify for a specific degree.",
+      },
+      {
+        type: "tip",
+        text: "Always aim for a score at least 2-3 points higher than the published minimum. Minimum scores mean you qualify to be considered, not that you are guaranteed acceptance, as space is often limited.",
+      },
+      {
+        type: "h2",
+        text: "Phase 3: The Application Window (April - September)",
+      },
+      {
+        type: "p",
+        text: "Most universities open their applications early in your final year of high school. It is crucial to apply as early as possible. Many competitive programs (like Medicine, Engineering, or specialized Arts) close their applications much earlier than general degrees.",
+      },
+      {
+        type: "p",
+        text: "You will typically need to submit:",
+      },
+      {
+        type: "list",
+        items: [
+          "A certified copy of your ID or Passport",
+          "Your grade 11 final results and grade 12 mid-year results",
+          "Proof of application fee payment (if applicable)",
+          "A personal statement or admissions essay (for certain programs)",
+          "A portfolio of work (for creative degrees)",
+        ],
+      },
+      {
+        type: "h2",
+        text: "Phase 4: Tracking Your Status",
+      },
+      {
+        type: "p",
+        text: "After applying, you will usually receive a student number and a link to an applicant portal. Keep these login details safe! Check your portal every week. Universities may request additional documents, and if you miss the deadline to submit them, your application could be cancelled.",
+      },
+      {
+        type: "p",
+        text: "You may receive a 'Conditional Acceptance.' This is great news! It means you are accepted on the condition that your final high school exams meet the required standard. This is where Study Buddy becomes your secret weapon — use the Learning Path and Study Lab to ensure you hit those required grades.",
+      },
+      {
+        type: "conclusion",
+        text: "Applying to university is your first major adult project management task. Treat it seriously, track your deadlines in Study Buddy, and apply early. The peace of mind that comes from submitting a complete, early application is worth the effort.",
+      },
+    ],
+    relatedSlugs: ["how-to-write-a-winning-personal-statement", "understanding-university-funding-bursaries"],
+  },
+
+  {
+    slug: "how-to-write-a-winning-personal-statement",
+    title: "How to Write a Winning Personal Statement or Admissions Essay",
+    date: "2026-09-18",
+    readTime: "6 min read",
+    category: "University Prep",
+    categoryColor: "rose",
+    excerpt:
+      "Your grades get you in the door, but your personal statement gets you the offer. Learn how to structure your admissions essay and avoid the most common clichés.",
+    featureSection: {
+      label: "Admissions Essay",
+      description: "Tell your unique story and stand out to admissions officers",
+      steps: [
+        { icon: "💡", label: "Brainstorm unique experiences & genuine motivations" },
+        { icon: "📝", label: "Draft a strong opening hook to grab attention" },
+        { icon: "✂️", label: "Edit ruthlessly to remove clichés and fluff" },
+        { icon: "🤖", label: "Use Study Buddy AI to review and critique your draft" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "For highly competitive university programs and international applications, your grades are only half the battle. The personal statement (or admissions essay) is your opportunity to show the admissions committee who you are beyond the numbers. A great essay can push a borderline application into the 'accepted' pile.",
+      },
+      {
+        type: "h2",
+        text: "What Admissions Officers Are Actually Looking For",
+      },
+      {
+        type: "p",
+        text: "Admissions officers read thousands of essays every cycle. They are not looking for someone who has cured a disease at age 17. They are looking for authenticity, intellectual curiosity, resilience, and a clear reason why you want to study that specific course at their institution.",
+      },
+      {
+        type: "p",
+        text: "They want to answer three questions: Will this student succeed academically? Will they contribute positively to the campus community? Do they actually want to be here?",
+      },
+      {
+        type: "h2",
+        text: "The Structure of a Winning Essay",
+      },
+      {
+        type: "p",
+        text: "A strong personal statement generally follows a narrative arc:",
+      },
+      {
+        type: "list",
+        items: [
+          "The Hook: A compelling opening anecdote that drops the reader right into a specific moment of your life.",
+          "The Pivot: Connecting that anecdote to your academic interests or your desire to pursue a specific career.",
+          "The Evidence: Specific examples of how you have explored this interest (extracurriculars, independent reading, overcoming a challenge).",
+          "The Fit: Why this specific university is the perfect place for you to continue this journey.",
+        ],
+      },
+      {
+        type: "h2",
+        text: "Clichés You Must Avoid",
+      },
+      {
+        type: "p",
+        text: "Because admissions officers read so many essays, certain topics have become extremely tired. Try to avoid:",
+      },
+      {
+        type: "list",
+        items: [
+          "The 'Sports Injury' essay: 'I tore my ACL, realized I loved physical therapy, and now want to be a doctor.'",
+          "The 'Volunteer Trip' essay: 'I went to a developing country, realized how lucky I am, and now want to help people.'",
+          "The 'Dictionary Definition' opening: 'Webster’s dictionary defines success as...'",
+          "Listing your resume: Do not just repeat the achievements listed elsewhere in your application. Tell a story.",
+        ],
+      },
+      {
+        type: "tip",
+        text: "Use the Study Buddy AI Study Lab to review your draft. Paste your essay in and ask the AI: 'Act as a strict university admissions officer. Read this essay and tell me what clichés I have used, where the narrative is weak, and how I can make the tone more engaging.'",
+      },
+      {
+        type: "h2",
+        text: "Show, Don't Tell",
+      },
+      {
+        type: "p",
+        text: "This is the golden rule of essay writing. Anyone can write 'I am a very determined person.' A winning essay tells a story about a specific time you failed at something, analyzed why you failed, changed your approach, and tried again until you succeeded. The reader concludes you are determined without you ever having to use the word.",
+      },
+      {
+        type: "conclusion",
+        text: "Writing a personal statement takes time. Do not write it the night before the deadline. Write a terrible first draft, leave it for a week, and then ruthlessly edit it. Your voice is your biggest asset — make sure it comes through on the page.",
+      },
+    ],
+    relatedSlugs: ["ultimate-guide-to-university-applications", "understanding-university-funding-bursaries"],
+  },
+
+  {
+    slug: "understanding-university-funding-bursaries",
+    title: "Understanding University Funding, Bursaries, and Scholarships",
+    date: "2026-09-19",
+    readTime: "5 min read",
+    category: "University Prep",
+    categoryColor: "rose",
+    excerpt:
+      "Do not let the cost of tuition stop you from applying. Learn the difference between student loans, bursaries, and scholarships, and how to find funding for your degree.",
+    featureSection: {
+      label: "Funding Guide",
+      description: "Navigate the financial side of university education",
+      steps: [
+        { icon: "💰", label: "Understand the true cost of university (tuition + living)" },
+        { icon: "🏆", label: "Identify scholarships (merit-based) and bursaries (need-based)" },
+        { icon: "🏦", label: "Evaluate government and private student loans" },
+        { icon: "📝", label: "Apply for funding early (often before university acceptance)" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Getting accepted into university is an incredible achievement, but figuring out how to pay for it is often the most stressful part of the process. Higher education is expensive, but there is significant funding available if you know where to look and apply early enough.",
+      },
+      {
+        type: "h2",
+        text: "The Three Types of Funding",
+      },
+      {
+        type: "p",
+        text: "It is crucial to understand the difference between the three main types of financial aid:",
+      },
+      {
+        type: "list",
+        items: [
+          "Scholarships: These are merit-based. They are awarded based on academic excellence, sporting ability, or leadership skills. You do not have to pay them back.",
+          "Bursaries (or Grants): These are need-based. They are awarded based on your family's financial situation. Like scholarships, you generally do not have to pay them back, though some corporate bursaries require you to work for the company for a few years after graduation.",
+          "Student Loans: This is borrowed money that must be paid back with interest after you graduate. These can come from the government or private banks.",
+        ],
+      },
+      {
+        type: "h2",
+        text: "Where to Find Funding",
+      },
+      {
+        type: "p",
+        text: "Start with the university itself. Most universities have a Financial Aid office. When you apply for admission, there is often a checkbox to indicate you want to be considered for financial aid. Always check this box.",
+      },
+      {
+        type: "p",
+        text: "Next, look at government schemes. In many countries, there are massive national student financial aid schemes designed specifically to help lower-income students access higher education. These government portals usually open their applications late in the year.",
+      },
+      {
+        type: "p",
+        text: "Finally, look at corporate bursaries. Many large companies (especially in engineering, accounting, technology, and mining) sponsor students. In exchange for paying your tuition and living costs, you sign a contract agreeing to work for them for 1-4 years after you graduate. This is an excellent deal as it guarantees you a job straight out of university.",
+      },
+      {
+        type: "tip",
+        text: "Treat applying for funding like a part-time job. Use Study Buddy's Assignments page to track the deadlines for 10-15 different bursaries. Missing a funding deadline is just as critical as missing an application deadline.",
+      },
+      {
+        type: "h2",
+        text: "The True Cost of University",
+      },
+      {
+        type: "p",
+        text: "When calculating how much money you need, do not just look at the tuition fees. Tuition is often only half the total cost. You must also budget for:",
+      },
+      {
+        type: "list",
+        items: [
+          "Accommodation (residence or private renting)",
+          "Textbooks and a laptop",
+          "Food and groceries",
+          "Transport (if you are commuting)",
+          "Basic living expenses (toiletries, data, social life)",
+        ],
+      },
+      {
+        type: "p",
+        text: "A comprehensive bursary will cover all of these, while a partial bursary might only cover tuition. Make sure you understand exactly what is covered before you accept an offer.",
+      },
+      {
+        type: "conclusion",
+        text: "The biggest mistake students make is waiting until they are accepted into university before looking for funding. Many major bursaries close their applications long before universities issue acceptance letters. Start looking and applying for funding in the middle of your final high school year.",
+      },
+    ],
+    relatedSlugs: ["ultimate-guide-to-university-applications", "how-to-write-a-winning-personal-statement"],
+  },
 ];
 
 export function getPostBySlug(slug) {
@@ -741,4 +1011,5 @@ export const categoryColors = {
   emerald: { bg: "bg-emerald-100", text: "text-emerald-700", border: "border-emerald-200" },
   violet: { bg: "bg-violet-100", text: "text-violet-700", border: "border-violet-200" },
   slate: { bg: "bg-slate-100", text: "text-slate-700", border: "border-slate-200" },
+  rose: { bg: "bg-rose-100", text: "text-rose-700", border: "border-rose-200" },
 };
