@@ -22,6 +22,9 @@ function isAdminEmail(email) {
  * - Web: limited daily free; Soft daily free only if ad inventory does not fill
  */
 export async function ensureAiAccess(options = {}) {
+  // ADS DISABLED — ad inventory not yet live. Remove this line when ads go live.
+  return { allowed: true, adsDisabled: true };
+
   if (options.isBackground || options.skipAdGate) {
     return { allowed: true, skipped: true };
   }
