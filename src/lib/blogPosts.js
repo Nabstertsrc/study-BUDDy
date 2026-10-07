@@ -1350,6 +1350,795 @@ export const blogPosts = [
     ],
     relatedSlugs: ["coding-for-kids-where-to-start", "how-to-stop-fearing-math-grades-4-8"],
   },
+
+  {
+    slug: "how-to-study-effectively-for-unisa-exams",
+    title: "How to Study Effectively for UNISA Exams: A Complete Distance-Learning Guide",
+    date: "2026-10-01",
+    readTime: "7 min read",
+    category: "Study Tips",
+    categoryColor: "blue",
+    excerpt:
+      "UNISA's distance-learning model puts the responsibility of structuring your study entirely on you. Here is a proven system — from building your study schedule to mastering the exam format — that works specifically for UNISA students.",
+    featureSection: {
+      label: "UNISA Study System",
+      description: "Structured self-study that matches UNISA's exam style",
+      steps: [
+        { icon: "📅", label: "Map your semester from study guide to exam date" },
+        { icon: "📖", label: "Master the study guide chapter by chapter" },
+        { icon: "📝", label: "Practice with past papers under timed conditions" },
+        { icon: "🤖", label: "Use AI to explain difficult sections on demand" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Studying through UNISA is one of the most liberating — and most challenging — academic experiences available in South Africa. You have the flexibility to study at your own pace, from anywhere in the country, while working a job or raising a family. But that flexibility comes with a cost: there are no lectures to attend, no classmates to study with in person, and no professor to remind you about upcoming tests. Everything is on you. This guide gives you a structured, proven system for succeeding at UNISA exams.",
+      },
+      {
+        type: "h2",
+        text: "Understanding the UNISA Study Model",
+      },
+      {
+        type: "p",
+        text: "UNISA uses a study guide — not a textbook — as your primary learning resource. The study guide is specifically written for distance learners and contains all the content you need to pass the exam. Unlike a university lecture, which gives you a professor's interpretation and emphasis, the study guide requires you to do that interpretation yourself. This is why active reading strategies (annotating, summarizing, quizzing) are so much more effective than passive reading for UNISA students.",
+      },
+      {
+        type: "h2",
+        text: "Step 1: Build Your Semester Map on Day One",
+      },
+      {
+        type: "p",
+        text: "The moment you receive your study guide and myUnisa schedule, sit down and map the entire semester. Count the weeks between now and your exam. Count the study guide chapters. Divide the chapters across the available weeks, leaving the final two weeks purely for revision and past papers. This semester map becomes your navigation system — it tells you exactly what page you should be on every single week.",
+      },
+      {
+        type: "tip",
+        text: "Add every UNISA assignment submission deadline to Study Buddy's Assignments page before anything else. UNISA assignments count toward your year mark, which affects your exam pass requirements — missing them is one of the most avoidable mistakes UNISA students make.",
+      },
+      {
+        type: "h2",
+        text: "Step 2: Active Reading of Your Study Guide",
+      },
+      {
+        type: "p",
+        text: "Do not read the study guide like a novel. Instead, read each section with a specific question in your mind: 'What is the examinable concept here?' After each sub-section, close the book and write three bullet points summarizing what you just read. This forces your brain to encode the information rather than just process it passively. Use the Study Buddy Study Lab to upload your summaries and generate quizzes from them.",
+      },
+      {
+        type: "h2",
+        text: "Step 3: Past Papers Are Non-Negotiable",
+      },
+      {
+        type: "p",
+        text: "UNISA examiners follow predictable patterns. The same core concepts appear in different phrasing across multiple years. By working through the last five years of past papers for each module, you will start to see exactly which topics the examiners consider most important. Download past papers from myUnisa or the Study Buddy Community Hub, and attempt each one under timed, exam conditions — no notes, no internet.",
+      },
+      {
+        type: "h2",
+        text: "Step 4: Use AI to Fill Knowledge Gaps",
+      },
+      {
+        type: "p",
+        text: "When you encounter a concept in the study guide that you genuinely cannot understand — even after re-reading it three times — the old approach was to post on myUnisa forums and wait days for a response. With Study Buddy's AI, you can paste the confusing passage and ask for a plain-language explanation immediately. The AI can also give you analogy-based explanations, worked examples, and connections to concepts you already understand.",
+      },
+      {
+        type: "h2",
+        text: "Managing Isolation and Motivation",
+      },
+      {
+        type: "p",
+        text: "Distance learning is isolating by design. Many UNISA students struggle not with the content but with motivation. Combat this by joining or creating a study group — even a WhatsApp group of UNISA students in the same module is enough. Set a study streak goal in Study Buddy and aim to maintain it. The visual streak counter provides a small but surprisingly powerful daily motivator.",
+      },
+      {
+        type: "conclusion",
+        text: "UNISA gives you the qualification — but only if you take the study structure into your own hands. Semester map, active reading, past papers, and AI-assisted gap filling is the system. Start today, not the week before the exam.",
+      },
+    ],
+    relatedSlugs: ["building-a-personalized-learning-path", "creating-and-managing-assignments"],
+  },
+
+  {
+    slug: "overcoming-exam-anxiety-science-based-strategies",
+    title: "Overcoming Exam Anxiety: Science-Based Strategies That Actually Work",
+    date: "2026-10-03",
+    readTime: "6 min read",
+    category: "Study Tips",
+    categoryColor: "rose",
+    excerpt:
+      "Exam anxiety affects up to 40% of students and can sabotage even the most prepared learner. Discover the neuroscience behind test anxiety and the evidence-based techniques used by top performers to perform under pressure.",
+    featureSection: {
+      label: "Anxiety Management",
+      description: "Turn exam nerves into performance fuel with these techniques",
+      steps: [
+        { icon: "🧘", label: "Pre-exam breathing and grounding exercises" },
+        { icon: "📝", label: "Expressive writing to offload worry" },
+        { icon: "💪", label: "Reframe anxiety as excitement (works instantly)" },
+        { icon: "🎯", label: "Build confidence through deliberate practice" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "You have studied. You know the material. You walk into the exam hall and your mind goes completely blank. Your heart rate spikes, your palms sweat, and suddenly you cannot remember a single thing you revised. This is exam anxiety — and it is not a character flaw or a sign that you are not smart enough. It is a physiological response that can be managed, reduced, and in some cases, converted into a performance advantage.",
+      },
+      {
+        type: "h2",
+        text: "The Neuroscience of Exam Anxiety",
+      },
+      {
+        type: "p",
+        text: "Exam anxiety is your body's stress response system — the same system that evolved to help early humans escape predators — being triggered by a high-stakes academic situation. When you perceive the exam as a threat, your amygdala (the brain's alarm system) activates a cortisol and adrenaline response. This diverts mental resources from your prefrontal cortex — the part responsible for memory retrieval and complex reasoning — toward your fight-or-flight systems. That is why you cannot recall information you definitely know: the anxiety itself is interfering with retrieval.",
+      },
+      {
+        type: "h2",
+        text: "Technique 1: Expressive Writing Before the Exam",
+      },
+      {
+        type: "p",
+        text: "Research by Professor Sian Beilock at the University of Chicago found that students who spent 10 minutes writing freely about their exam fears before sitting the test scored significantly higher than students who did not. The act of offloading your worries onto paper reduces the mental overhead that anxiety creates, freeing up working memory for actual problem-solving. Try this in the 10 minutes before your next exam.",
+      },
+      {
+        type: "h2",
+        text: "Technique 2: Reframe Anxiety as Excitement",
+      },
+      {
+        type: "p",
+        text: "This sounds like a motivational poster trick, but the science is real. Anxiety and excitement are physiologically almost identical — both involve elevated heart rate and cortisol. The difference is purely cognitive framing. When you tell yourself 'I am excited' instead of 'I am anxious', you shift your mental state from avoidance to approach — which improves performance on cognitively demanding tasks. It takes about 10 seconds and works better than deep breathing in most studies.",
+      },
+      {
+        type: "tip",
+        text: "Say it out loud before you enter the exam: 'I am excited.' It sounds silly but the research on this is remarkably robust. Harvard Business School's Alison Wood Brooks has replicated this finding across multiple high-pressure contexts.",
+      },
+      {
+        type: "h2",
+        text: "Technique 3: Box Breathing for Immediate Calm",
+      },
+      {
+        type: "p",
+        text: "Box breathing is used by US Navy SEALs to manage acute stress. Inhale for 4 counts, hold for 4 counts, exhale for 4 counts, hold for 4 counts. Repeat 4 times. This activates your parasympathetic nervous system, which counters the fight-or-flight response and lowers cortisol. Use it when you first sit down in the exam hall before you open the paper.",
+      },
+      {
+        type: "h2",
+        text: "Technique 4: Build Genuine Confidence Through Practice",
+      },
+      {
+        type: "p",
+        text: "The most durable cure for exam anxiety is genuine preparedness. Students who have completed 10 or more past papers under timed conditions experience dramatically lower anxiety in real exams because the exam environment no longer feels threatening — it feels familiar. Use Study Buddy to generate quiz sessions that simulate exam conditions: no notes, timer running, one attempt. The more your study sessions feel like exams, the less your exams will feel like exams.",
+      },
+      {
+        type: "h2",
+        text: "Long-Term Strategies: Sleep, Exercise, and Nutrition",
+      },
+      {
+        type: "p",
+        text: "Anxiety is significantly worsened by sleep deprivation. Studies show that a single night of poor sleep increases amygdala reactivity by up to 60%, making you far more prone to anxious responses the next day. Regular aerobic exercise (even 20 minutes of brisk walking) reduces baseline cortisol levels. Avoid excessive caffeine before exams — it mimics the physiological symptoms of anxiety and can trigger or worsen it.",
+      },
+      {
+        type: "conclusion",
+        text: "Exam anxiety is manageable with the right tools. Start with expressive writing and the excitement reframe — both work immediately with zero preparation. Then build the deeper confidence that comes from genuine practice under exam-like conditions. You have got this.",
+      },
+    ],
+    relatedSlugs: ["how-to-study-effectively-for-unisa-exams", "mastering-high-school-math"],
+  },
+
+  {
+    slug: "pomodoro-technique-complete-guide-for-students",
+    title: "The Pomodoro Technique: A Complete Guide for Students",
+    date: "2026-10-05",
+    readTime: "5 min read",
+    category: "Study Tips",
+    categoryColor: "amber",
+    excerpt:
+      "The Pomodoro Technique is the most widely used productivity system among students and professionals worldwide. Learn how it works, why it works, and how to adapt it to your specific study style.",
+    featureSection: {
+      label: "Pomodoro System",
+      description: "25-minute focused sessions with strategic breaks",
+      steps: [
+        { icon: "⏱️", label: "Set a 25-minute focus timer (one Pomodoro)" },
+        { icon: "🚫", label: "Zero distractions for the full 25 minutes" },
+        { icon: "☕", label: "5-minute break after each Pomodoro" },
+        { icon: "🔁", label: "Long break (15-30 min) after every 4 sessions" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "The Pomodoro Technique was invented in the late 1980s by Francesco Cirillo, who named it after the tomato-shaped kitchen timer he used as a university student. Pomodoro is Italian for tomato. The system is beautifully simple: work for 25 minutes without any interruption, then take a 5-minute break. After four of these sessions, take a longer break of 15 to 30 minutes. Despite its simplicity — or perhaps because of it — the Pomodoro Technique has become one of the most studied and most effective productivity methods in the world.",
+      },
+      {
+        type: "h2",
+        text: "Why 25 Minutes?",
+      },
+      {
+        type: "p",
+        text: "The 25-minute interval is not arbitrary. Research on human attention span shows that focused cognitive effort tends to degrade significantly after 20-30 minutes without a break. By working in 25-minute blocks followed by a deliberate pause, you are working with your brain's natural rhythm rather than against it. The break also allows your hippocampus — the brain's memory consolidation hub — to begin processing and storing what you just studied, which is why students who use spaced sessions often remember more than those who study in long uninterrupted blocks.",
+      },
+      {
+        type: "h2",
+        text: "The Four Rules of the Pomodoro Technique",
+      },
+      {
+        type: "list",
+        items: [
+          "One Pomodoro is indivisible: if you are interrupted during a Pomodoro, the session is void and you must restart. This forces you to actively protect your focus window.",
+          "If a task takes more than five to seven Pomodoros, break it into smaller sub-tasks. Large tasks need to be chunked to make progress measurable.",
+          "If a task takes less than one Pomodoro, combine it with another small task. Never 'waste' a full 25-minute block on a 5-minute job.",
+          "Track every Pomodoro you complete. The data about how many sessions different tasks require is genuinely valuable for planning future study sessions.",
+        ],
+      },
+      {
+        type: "h2",
+        text: "Adapting Pomodoro for Different Subjects",
+      },
+      {
+        type: "p",
+        text: "The classic 25/5 structure works well for most subjects, but creative and analytical subjects sometimes benefit from modified intervals. For mathematics and problem-solving subjects, some students find that 45 minutes with a 10-minute break (sometimes called a 'Long Pomodoro') produces better flow states. For language learning or memorization tasks (vocabulary, dates, formulas), the classic 25/5 is generally optimal because the shorter intervals align well with the spaced repetition principle.",
+      },
+      {
+        type: "tip",
+        text: "Use Study Buddy's Study Session tracker to log your Pomodoro sessions. Record which module you worked on during each session and you will build a week-by-week picture of where your study time actually goes — which is often very different from where you think it goes.",
+      },
+      {
+        type: "h2",
+        text: "What to Do During Breaks",
+      },
+      {
+        type: "p",
+        text: "The break is not optional — it is a core part of the system. A break spent scrolling social media is significantly less restorative than a break spent walking, stretching, making tea, or simply sitting quietly. The goal of the break is to let your mind disengage from the study content completely. Paradoxically, this disengagement is when your subconscious continues to process what you just studied — a phenomenon cognitive scientists call the 'incubation effect'.",
+      },
+      {
+        type: "h2",
+        text: "Common Mistakes and How to Avoid Them",
+      },
+      {
+        type: "p",
+        text: "The most common mistake is treating the timer as optional — checking your phone 'just for a second', extending the work session because you are 'in the zone', or skipping breaks because you feel guilty. Each of these undermines the system. The second most common mistake is not planning what to work on before starting the timer. Sit down, decide exactly which task and exactly which part of that task you will tackle, then start the timer.",
+      },
+      {
+        type: "conclusion",
+        text: "The Pomodoro Technique works not because 25 minutes is magic, but because it forces you to make two commitments every session: full focus for a defined period, and intentional rest afterward. Start your next study session with a timer and notice the difference.",
+      },
+    ],
+    relatedSlugs: ["overcoming-exam-anxiety-science-based-strategies", "how-to-use-ai-study-lab"],
+  },
+
+  {
+    slug: "ai-tutoring-ethics-what-students-should-know",
+    title: "AI Tutoring and Academic Integrity: What Every Student Should Know",
+    date: "2026-10-06",
+    readTime: "5 min read",
+    category: "AI & Learning",
+    categoryColor: "violet",
+    excerpt:
+      "AI tutoring tools like Study Buddy are powerful learning accelerators — but students need to understand the difference between using AI to learn and using AI to cheat. This guide draws the line clearly.",
+    featureSection: {
+      label: "Ethical AI Use",
+      description: "How to use AI tools to enhance learning without crossing the line",
+      steps: [
+        { icon: "✅", label: "Use AI to explain concepts you don't understand" },
+        { icon: "✅", label: "Generate practice questions and test yourself" },
+        { icon: "❌", label: "Don't submit AI-generated work as your own" },
+        { icon: "❌", label: "Don't use AI during closed-book exams" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Artificial intelligence is the most powerful educational tool to emerge in a generation. Tools like Study Buddy can explain a concept ten different ways until it clicks, generate unlimited practice questions, and give instant feedback on your work at any hour of the day. But with this power comes a responsibility that every student needs to understand: using AI to learn is fundamentally different from using AI to cheat, and the difference matters enormously for your long-term development.",
+      },
+      {
+        type: "h2",
+        text: "What Counts as Legitimate AI Use in Learning",
+      },
+      {
+        type: "p",
+        text: "Using AI as a tutor — to explain, clarify, question, and challenge your understanding — is not only legitimate but is one of the most effective learning strategies available. When you ask the Study Buddy AI to explain the causes of World War One in simpler terms, you are using it the same way you would use a private tutor or a very patient lecturer. When you upload your chemistry notes and ask it to generate a quiz, you are using active recall — one of the most research-backed study techniques. These uses make you smarter.",
+      },
+      {
+        type: "h2",
+        text: "Where the Line Is",
+      },
+      {
+        type: "p",
+        text: "The line is crossed when you use AI to produce work that you then represent as your own thinking or effort. Submitting an AI-generated essay, copying AI-generated answers into an assignment, or using AI during a closed-book exam are all forms of academic dishonesty — regardless of whether your institution's policy explicitly mentions AI. The underlying principle is not new: you are claiming credit for work that is not yours.",
+      },
+      {
+        type: "tip",
+        text: "A simple test: if you could explain and defend every idea in your submitted work in a verbal examination without AI assistance, you have used AI ethically. If you could not, you have crossed the line.",
+      },
+      {
+        type: "h2",
+        text: "Why Cheating With AI Hurts You Most",
+      },
+      {
+        type: "p",
+        text: "Beyond the risk of disciplinary action, using AI to do your work instead of doing it yourself creates a dangerous knowledge gap. Your degree or qualification ultimately promises employers and the world that you have mastered a set of skills. If you bypass the hard work of actually learning those skills, you will eventually be exposed — in job interviews, in workplace performance, or in professional examinations that have no AI assistance available.",
+      },
+      {
+        type: "h2",
+        text: "How Study Buddy Is Designed for Ethical Learning",
+      },
+      {
+        type: "p",
+        text: "Study Buddy's AI features are deliberately oriented toward learning rather than answer generation. The quiz feature tests you rather than answering for you. The summarizer condenses your material so you can engage with it more efficiently. The Deep Dive explains concepts at length so you understand them. The Essay Assessment gives feedback on your own writing rather than generating writing for you. Every feature is built around the principle that the AI should make your thinking better, not replace it.",
+      },
+      {
+        type: "h2",
+        text: "Having Conversations With Your Institution",
+      },
+      {
+        type: "p",
+        text: "Many educational institutions are still developing their AI policies, and guidelines vary significantly. If you are unsure whether a specific use of AI is acceptable for a particular assignment, ask your lecturer or tutor directly. Most educators welcome proactive questions about AI use — it shows intellectual honesty and gives them the opportunity to give you clear guidance. Do not assume that because AI is not explicitly banned, all uses are permitted.",
+      },
+      {
+        type: "conclusion",
+        text: "AI tutoring is one of the greatest equalizers in education — giving every student access to personalized, patient, always-available academic support. Use it to become smarter, not to appear smarter. The difference shapes your entire career.",
+      },
+    ],
+    relatedSlugs: ["how-to-use-ai-study-lab", "how-the-ad-supported-free-model-works"],
+  },
+
+  {
+    slug: "the-science-of-memory-how-to-remember-what-you-study",
+    title: "The Science of Memory: How to Remember What You Study",
+    date: "2026-10-07",
+    readTime: "6 min read",
+    category: "Study Science",
+    categoryColor: "teal",
+    excerpt:
+      "Understanding how memory actually works transforms the way you study. Discover the research behind spaced repetition, active recall, the forgetting curve, and interleaving — and how to apply them today.",
+    featureSection: {
+      label: "Memory Science",
+      description: "Study smarter by working with your brain's memory system",
+      steps: [
+        { icon: "🧠", label: "Spaced repetition fights the forgetting curve" },
+        { icon: "🔁", label: "Active recall outperforms passive re-reading" },
+        { icon: "🔀", label: "Interleaving multiple topics boosts long-term retention" },
+        { icon: "😴", label: "Sleep is when memories are consolidated" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Most students study by reading and re-reading their notes. It feels productive — but the research is clear: re-reading is one of the least effective study strategies available. Understanding how memory actually works gives you a decisive advantage, because you can then align your study methods with how your brain is designed to learn rather than fighting against it.",
+      },
+      {
+        type: "h2",
+        text: "The Forgetting Curve",
+      },
+      {
+        type: "p",
+        text: "In the 1880s, German psychologist Hermann Ebbinghaus conducted the first systematic study of memory and discovered what we now call the forgetting curve. Within 24 hours of learning new information, the average person forgets roughly 70% of it. Within a week, this rises to about 90%. The implication is stark: studying something once and moving on is almost entirely wasted effort. What matters is what you do after the initial study session.",
+      },
+      {
+        type: "h2",
+        text: "Spaced Repetition: The Most Evidence-Backed Study Technique",
+      },
+      {
+        type: "p",
+        text: "Spaced repetition exploits the forgetting curve deliberately. Instead of reviewing material the day after you learned it, you review it at increasing intervals — 1 day later, then 3 days, then 7 days, then 14 days, then 30 days. Each review at the moment just before you would have forgotten it strengthens the memory trace more than any other timing. The same total study time produces dramatically better long-term retention when distributed this way versus concentrated in one session.",
+      },
+      {
+        type: "tip",
+        text: "Use Study Buddy's quiz feature as a spaced repetition tool. Generate a quiz on a topic immediately after studying it, then again three days later, then a week later. This built-in review cycle is one of the most effective things you can do with the app.",
+      },
+      {
+        type: "h2",
+        text: "Active Recall vs Passive Review",
+      },
+      {
+        type: "p",
+        text: "Active recall means retrieving information from memory rather than reading it. When you close your textbook and try to write down everything you remember from the chapter you just read, you are using active recall. When you answer quiz questions without looking at your notes, you are using active recall. The research shows that active recall produces roughly 50% better long-term retention than the same amount of time spent re-reading — even when the re-reading feels more thorough.",
+      },
+      {
+        type: "h2",
+        text: "Interleaving: Why Mixing Topics Works",
+      },
+      {
+        type: "p",
+        text: "Most students study one subject in a solid block, then move to the next — a technique called 'blocking'. Research consistently shows that interleaving — mixing multiple subjects or topics within a single study session — produces better long-term retention despite feeling less efficient in the moment. This is because switching topics forces your brain to actively retrieve and reconstruct context each time, which strengthens the memory encoding. Try alternating between two modules in each study session rather than dedicating entire sessions to one.",
+      },
+      {
+        type: "h2",
+        text: "Sleep and Memory Consolidation",
+      },
+      {
+        type: "p",
+        text: "During deep sleep, your hippocampus replays the events and information of the day and transfers them to long-term storage in the cortex. This process — called memory consolidation — is not optional and cannot be replaced by additional study time. Students who sleep 7-9 hours after a study session retain significantly more than those who sleep fewer than 6 hours, even if the sleep-deprived student studied longer. Pulling an all-nighter before an exam is one of the most counterproductive things you can do.",
+      },
+      {
+        type: "conclusion",
+        text: "Studying smarter starts with understanding your brain. Space out your study sessions. Test yourself instead of re-reading. Mix topics. Sleep adequately. These four principles, grounded in decades of cognitive science research, will transform your academic performance.",
+      },
+    ],
+    relatedSlugs: ["pomodoro-technique-complete-guide-for-students", "overcoming-exam-anxiety-science-based-strategies"],
+  },
+
+  {
+    slug: "best-note-taking-methods-compared",
+    title: "The 5 Best Note-Taking Methods for Students — Compared",
+    date: "2026-10-08",
+    readTime: "5 min read",
+    category: "Study Tips",
+    categoryColor: "emerald",
+    excerpt:
+      "Cornell notes, mind maps, the outline method, the boxing method, and the charting method — which note-taking system is best for your subject and your learning style? Here is the definitive comparison.",
+    featureSection: {
+      label: "Note-Taking Systems",
+      description: "Find the method that fits your subjects and your brain",
+      steps: [
+        { icon: "📋", label: "Cornell: best for lecture-heavy subjects" },
+        { icon: "🕸️", label: "Mind map: best for creative and concept-heavy topics" },
+        { icon: "📑", label: "Outline: best for structured, hierarchical content" },
+        { icon: "📊", label: "Charting: best for comparison-heavy subjects" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Your notes are the foundation of your entire study system. No matter how good your memory or how powerful your AI study tools, the quality of your notes determines the quality of your study sessions. Yet most students use whatever method they stumbled into in high school without ever questioning whether it is the best approach for their subjects or learning style. This guide compares the five most researched and widely used note-taking systems so you can make an informed choice.",
+      },
+      {
+        type: "h2",
+        text: "Method 1: The Cornell Note-Taking System",
+      },
+      {
+        type: "p",
+        text: "Developed at Cornell University in the 1950s, the Cornell method divides your page into three sections: a narrow left column (the 'Cue' column), a wide right column (the 'Notes' column), and a summary box at the bottom of the page. During a lecture or reading session, you take notes in the right column. Afterward, you write keywords or questions in the left column that correspond to each section of notes. At the end of the session you write a 2-3 sentence summary in the bottom box. This structure is particularly effective because it builds review directly into the note-taking process.",
+      },
+      {
+        type: "h2",
+        text: "Method 2: Mind Mapping",
+      },
+      {
+        type: "p",
+        text: "Mind mapping places the central topic at the center of the page and radiates outward into branches representing key themes, which then branch further into sub-topics and details. Mind maps are non-linear, visually rich, and excellent for seeing connections between concepts. They work exceptionally well for subjects like History, Biology, Psychology, and any topic where understanding relationships between ideas is as important as understanding the ideas themselves. They work less well for subjects requiring precise sequential information (e.g., mathematical proofs or legal procedure).",
+      },
+      {
+        type: "h2",
+        text: "Method 3: The Outline Method",
+      },
+      {
+        type: "p",
+        text: "The Outline method organizes notes hierarchically: main topics at the top level, sub-topics indented one level, specific details indented further. This mirrors the structure of most textbooks and academic articles, making it the easiest method to adopt for students who primarily learn from written sources. It is particularly effective for literature, history, philosophy, and any subject with a clear hierarchical structure of ideas. The main limitation is that it does not capture cross-topic connections well.",
+      },
+      {
+        type: "tip",
+        text: "Upload your outlined notes directly to the Study Buddy Study Lab. The hierarchical structure makes it especially easy for the AI to identify main concepts versus supporting details, which results in more accurate and focused quiz generation.",
+      },
+      {
+        type: "h2",
+        text: "Method 4: The Boxing Method",
+      },
+      {
+        type: "p",
+        text: "The Boxing method groups related information inside drawn boxes on the page. Each box represents a distinct topic, concept, or category. This visual separation makes it immediately clear where one topic ends and another begins, which aids both initial organization during note-taking and later review. It is particularly popular among visual learners and is effective for subjects with clearly distinct topic areas, such as Accounting (debtors vs creditors), Biology (different organ systems), or Chemistry (different reaction types).",
+      },
+      {
+        type: "h2",
+        text: "Method 5: The Charting Method",
+      },
+      {
+        type: "p",
+        text: "The Charting method uses a table or grid structure where columns represent categories and rows represent individual items or events. It is the gold standard for comparison-heavy content: comparing political parties, comparing historical figures, comparing chemical properties, comparing legal principles. If your exam regularly asks you to 'compare and contrast', the Charting method turns your notes directly into exam prep material.",
+      },
+      {
+        type: "h2",
+        text: "Which Method Should You Choose?",
+      },
+      {
+        type: "p",
+        text: "The answer depends on both your subject and your learning style. Visual learners benefit from Mind Maps and Boxing. Sequential, logical learners often prefer Cornell or Outline. Students with comparison-heavy content should master Charting. The best approach for many students is to mix methods: Outline for lecture content, Mind Map for revision summaries, Charting for comparison topics. Experiment with each for one study week and measure which method produces the best quiz scores when you test yourself afterward.",
+      },
+      {
+        type: "conclusion",
+        text: "Your notes are an investment. A little thought about which system fits your subject and your brain will pay dividends every time you sit down to revise. Try a new method this week — you might be surprised which one clicks.",
+      },
+    ],
+    relatedSlugs: ["the-science-of-memory-how-to-remember-what-you-study", "how-to-use-ai-study-lab"],
+  },
+
+  {
+    slug: "time-management-for-students-full-system",
+    title: "The Complete Time Management System for Students",
+    date: "2026-10-09",
+    readTime: "6 min read",
+    category: "Study Tips",
+    categoryColor: "indigo",
+    excerpt:
+      "Time management is the skill that separates students who are always stressed from those who perform consistently well. This guide gives you a complete, practical system — from weekly planning to daily execution.",
+    featureSection: {
+      label: "Time Management",
+      description: "A weekly-to-daily planning system built for student life",
+      steps: [
+        { icon: "🗓️", label: "Weekly planning session every Sunday" },
+        { icon: "📋", label: "Daily task list with three priority levels" },
+        { icon: "⏱️", label: "Time-blocked study sessions in your calendar" },
+        { icon: "📊", label: "Weekly review to adapt and improve" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Every student has the same 24 hours. Yet some students consistently submit work on time, maintain their grades, exercise regularly, and still have time for a social life — while others are perpetually stressed, always behind, and never seem to have enough time for anything. The difference is almost never intelligence or work ethic. It is almost always time management. This guide gives you a complete, practical system that you can start using this week.",
+      },
+      {
+        type: "h2",
+        text: "The Weekly Planning Session",
+      },
+      {
+        type: "p",
+        text: "Set aside 30 minutes every Sunday to plan the week ahead. This is the most important habit in the entire system. During this session, you review all upcoming deadlines (check your Study Buddy Assignments page), estimate how long each task will take, and assign specific time blocks in your calendar for each task. The act of translating abstract deadlines into specific calendar appointments is the single most powerful thing you can do for your time management.",
+      },
+      {
+        type: "h2",
+        text: "The Three-Priority Daily List",
+      },
+      {
+        type: "p",
+        text: "Each morning, write three categories of tasks: Must Do Today (non-negotiable — missing these has consequences), Should Do Today (important but flexible if something urgent comes up), and Could Do If Time Allows (would be good to do, but genuinely optional today). Limit yourself to a maximum of three 'Must Do' tasks. More than three 'must-dos' in a single day is usually the result of poor earlier planning rather than a genuine daily requirement.",
+      },
+      {
+        type: "tip",
+        text: "Treat your study time blocks in your calendar the same way you treat lecture times or work shifts. They are fixed commitments. Do not schedule other activities during your blocked study time, and do not cancel them.",
+      },
+      {
+        type: "h2",
+        text: "Time Estimation: The Skill Most Students Never Develop",
+      },
+      {
+        type: "p",
+        text: "Most students significantly underestimate how long tasks take — a cognitive bias called the Planning Fallacy. Research shows that even experienced professionals consistently predict their task completion times to be two to three times faster than actual completion. The fix is simple: track your actual time on tasks for two weeks and compare it to your estimates. You will quickly build a personal database of accurate time estimates that makes your planning far more reliable.",
+      },
+      {
+        type: "h2",
+        text: "Managing Procrastination",
+      },
+      {
+        type: "p",
+        text: "Procrastination is not a time management problem — it is an emotional regulation problem. We avoid tasks because they feel uncomfortable (boring, difficult, anxiety-provoking) rather than because we don't know when to do them. The most effective anti-procrastination technique is the 2-Minute Rule: if you are resisting starting a task, commit only to working on it for 2 minutes. Once started, the psychological discomfort drops dramatically and most people continue working. The hardest part is always the first two minutes.",
+      },
+      {
+        type: "h2",
+        text: "The Weekly Review",
+      },
+      {
+        type: "p",
+        text: "End each week with a 15-minute review. What did you complete? What did you not get to, and why? What recurring pattern is emerging in your week that you need to plan around? The weekly review converts your planning system from a static schedule into a dynamic, self-improving system. Most students skip this step — which is exactly why most students keep making the same time management mistakes week after week.",
+      },
+      {
+        type: "conclusion",
+        text: "Time management is a skill, not a personality trait — which means it can be learned. Start with the Sunday planning session this week. Just that one habit will change your experience of the week that follows.",
+      },
+    ],
+    relatedSlugs: ["pomodoro-technique-complete-guide-for-students", "creating-and-managing-assignments"],
+  },
+
+  {
+    slug: "how-to-ace-multiple-choice-exams",
+    title: "How to Ace Multiple-Choice Exams: 10 Strategies From Test-Taking Research",
+    date: "2026-10-10",
+    readTime: "5 min read",
+    category: "Exam Strategies",
+    categoryColor: "amber",
+    excerpt:
+      "Multiple-choice exams are a skill in themselves. These 10 research-backed strategies will help you avoid common traps, eliminate wrong answers systematically, and improve your scores even when you are unsure.",
+    featureSection: {
+      label: "MCQ Strategy",
+      description: "Systematic techniques for multiple-choice mastery",
+      steps: [
+        { icon: "🔍", label: "Read every option before answering" },
+        { icon: "❌", label: "Eliminate clearly wrong options first" },
+        { icon: "⚠️", label: "Watch for absolute language (always, never)" },
+        { icon: "🔄", label: "Flag and return to uncertain questions" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Multiple-choice exams are often dismissed as 'easier' than essay exams, but experienced students know better. A well-designed multiple-choice paper is a sophisticated test of both knowledge and reasoning, with carefully constructed distractors designed to trap students who have superficial understanding. Mastering the skill of multiple-choice test-taking — separate from mastering the content — can meaningfully improve your scores.",
+      },
+      {
+        type: "h2",
+        text: "Strategy 1: Read the Stem Completely Before Looking at Options",
+      },
+      {
+        type: "p",
+        text: "The 'stem' is the question part of a multiple-choice item. Read it fully before looking at any of the answer options. Many students glance at the first word of each option and jump to a conclusion, missing the precise meaning of the question. A question about 'which factor does NOT contribute to...' or 'which is LEAST likely to...' can be completely misread if you skim.",
+      },
+      {
+        type: "h2",
+        text: "Strategy 2: Answer in Your Head First",
+      },
+      {
+        type: "p",
+        text: "Before reading the options, formulate your own answer to the question. Then look for the option that matches what you already had in mind. This prevents the answer options from contaminating your thinking — a well-documented phenomenon where plausible-sounding wrong answers can override correct knowledge if you read them before thinking independently.",
+      },
+      {
+        type: "h2",
+        text: "Strategy 3: Use Elimination Aggressively",
+      },
+      {
+        type: "p",
+        text: "Even if you cannot identify the correct answer immediately, you can almost always identify one or two clearly wrong options. Eliminating wrong options improves your probability of selecting the correct one dramatically. Going from 4 options to 2 options converts a 25% chance to a 50% chance. Cross out eliminated options clearly and do not second-guess their elimination.",
+      },
+      {
+        type: "tip",
+        text: "Generate multiple-choice practice questions in Study Buddy for your exam topics. The AI creates distractors that simulate the type of traps your real examiner is likely to use, giving you practice not just with the content but with the thinking strategy.",
+      },
+      {
+        type: "h2",
+        text: "Strategy 4: Watch Absolute Language",
+      },
+      {
+        type: "p",
+        text: "Options containing absolute language — 'always', 'never', 'all', 'none', 'completely', 'only' — are usually wrong because they claim a universality that rarely exists in complex subjects. Options with qualified language — 'usually', 'often', 'in most cases', 'may' — are more frequently correct. This is not a guarantee, but it is a statistically useful heuristic when you are unsure.",
+      },
+      {
+        type: "h2",
+        text: "Strategy 5: Use All Your Time",
+      },
+      {
+        type: "p",
+        text: "Research on test-taking shows that students who finish early and leave are not outperforming those who stay until the end — they are simply more impulsive. Use every minute available. Review every flagged question. Re-read every question where you felt uncertain. Check that you have answered every question. Late catches of errors or additional insights are common among students who use their full time.",
+      },
+      {
+        type: "h2",
+        text: "Strategy 6: Only Change Answers for Good Reason",
+      },
+      {
+        type: "p",
+        text: "The common advice 'go with your first instinct' has partial truth: research shows that students who change answers from wrong to right outnumber those who change answers from right to wrong, but only when the change is driven by reasoning, not anxiety. Change an answer if you realize you misread the question, if you recall a specific piece of information that changes your analysis, or if a later question provided a relevant clue. Do not change an answer simply because you are nervous about your original choice.",
+      },
+      {
+        type: "conclusion",
+        text: "Multiple-choice strategy is a learnable skill that complements subject knowledge. Practice it deliberately using Study Buddy's quiz feature, and approach every MCQ exam with a systematic technique rather than intuition alone.",
+      },
+    ],
+    relatedSlugs: ["overcoming-exam-anxiety-science-based-strategies", "how-to-study-effectively-for-unisa-exams"],
+  },
+
+  {
+    slug: "group-study-how-to-make-it-work",
+    title: "Group Study: How to Make It Actually Work (And When to Study Alone)",
+    date: "2026-10-12",
+    readTime: "5 min read",
+    category: "Study Tips",
+    categoryColor: "emerald",
+    excerpt:
+      "Group study can be the most productive — or least productive — session of your week depending on how it is run. These rules and structures turn social study sessions into genuine learning experiences.",
+    featureSection: {
+      label: "Group Study",
+      description: "Structures that turn study groups into high-performance teams",
+      steps: [
+        { icon: "👥", label: "Keep groups small: 3-5 people maximum" },
+        { icon: "📋", label: "Set a specific agenda before meeting" },
+        { icon: "🔄", label: "Teach each other: explaining = deepest learning" },
+        { icon: "🚫", label: "Strict no-phone rule during the session" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Ask ten students about their group study experiences and you will hear two very different stories: those who found it invaluable — where concepts clicked, motivation surged, and everyone left having learned something — and those who found it a complete waste of time, drifting into conversation and accomplishing nothing in three hours. The difference between these two experiences is almost entirely about structure. Group study without structure is socializing with textbooks present.",
+      },
+      {
+        type: "h2",
+        text: "The Ideal Group Study Structure",
+      },
+      {
+        type: "p",
+        text: "An effective group study session has three phases. Phase one (15-20 minutes): each person arrives having already done individual study on the session's topic, and briefly shares two or three questions they could not answer on their own. These become the session's agenda. Phase two (60-90 minutes): the group works through each question together, with different members taking the lead on explaining what they know. Phase three (15 minutes): each person summarizes what they learned and what they still need to review individually. This structure ensures that everyone arrives prepared and that the collective time is spent on genuine gaps rather than reviewing material everyone already knows.",
+      },
+      {
+        type: "h2",
+        text: "The Power of Teaching",
+      },
+      {
+        type: "p",
+        text: "The single most valuable activity in a well-run study group is teaching. When you explain a concept to someone else, you are forced to organize your knowledge, identify gaps in your own understanding, and find language that makes the concept accessible. Research on the 'protégé effect' shows that students who teach material to peers score significantly higher on subsequent tests of that material than students who only reviewed it themselves. Rotate who explains each topic so everyone gets the teaching benefit.",
+      },
+      {
+        type: "tip",
+        text: "Use Study Buddy's quiz feature in your group session. Generate questions on the topic you are studying and take turns answering them aloud. The combination of social pressure and active recall makes group quizzing one of the most effective revision techniques available.",
+      },
+      {
+        type: "h2",
+        text: "When Individual Study Beats Group Study",
+      },
+      {
+        type: "p",
+        text: "Group study is not always superior to individual study. When you are learning fundamentally new material for the first time, individual study is usually more efficient — you can move at your own pace without accommodating others. When you need deep concentration for complex problem-solving (long mathematical proofs, detailed essay planning), the social dynamics of a group actually impair performance. Group study is most valuable for consolidation and review of material you have already encountered individually.",
+      },
+      {
+        type: "h2",
+        text: "Dealing With Free-Riders",
+      },
+      {
+        type: "p",
+        text: "Every study group eventually encounters the free-rider problem: a member who shows up unprepared, contributes little, but benefits from everyone else's work. The most effective solution is the 'arrive prepared' rule enforced from the first session. Before each meeting, agree on a specific amount of individual preparation each person must complete (e.g., read Chapter 4 and attempt all the self-test questions). When everyone arrives having done the same preparation, there is much less scope for free-riding.",
+      },
+      {
+        type: "conclusion",
+        text: "A well-structured study group is one of the most powerful academic tools available. The keyword is 'structured'. Set the agenda before you meet, arrive prepared, teach each other, and enforce the no-phone rule. The difference between a good session and a wasted afternoon is almost entirely in the setup.",
+      },
+    ],
+    relatedSlugs: ["the-science-of-memory-how-to-remember-what-you-study", "pomodoro-technique-complete-guide-for-students"],
+  },
+
+  {
+    slug: "studying-during-school-holidays-balance-guide",
+    title: "Studying During School Holidays: How to Rest AND Stay Ahead",
+    date: "2026-10-14",
+    readTime: "5 min read",
+    category: "Study Tips",
+    categoryColor: "rose",
+    excerpt:
+      "Should you study during the holidays? The honest answer is: it depends. This guide helps you make a smart decision about holiday study, build a balanced plan, and avoid both burnout and the dreaded 'holiday slump'.",
+    featureSection: {
+      label: "Holiday Study",
+      description: "Balance rest and preparation for the term ahead",
+      steps: [
+        { icon: "😴", label: "First 3 days: genuine rest — no study guilt" },
+        { icon: "📅", label: "Plan light revision sessions for week 2 onwards" },
+        { icon: "📚", label: "Focus on weak areas only — not everything at once" },
+        { icon: "🌟", label: "Preview upcoming term content for a head start" },
+      ],
+    },
+    content: [
+      {
+        type: "intro",
+        text: "Holidays are supposed to be a break. But for students with upcoming exams, heavy workloads, or subjects they are struggling with, the holiday period sits uncomfortably between two competing needs: genuine rest (which the brain genuinely requires) and continued progress (which falling behind makes harder). This guide helps you navigate that tension intelligently rather than defaulting to either extreme — studying yourself to exhaustion or doing nothing and paying for it in week one of the new term.",
+      },
+      {
+        type: "h2",
+        text: "Why Rest is Not Optional",
+      },
+      {
+        type: "p",
+        text: "Cognitive fatigue is real, and the end-of-term period is typically when it peaks. During a hard term, your prefrontal cortex — responsible for planning, decision-making, and self-control — becomes progressively depleted. Rest genuinely restores these functions in a way that additional study cannot. Research on student performance consistently shows that students who take proper breaks outperform those who never stop studying, because their cognitive resources are replenished when they need them most.",
+      },
+      {
+        type: "h2",
+        text: "The First Three Days: Full Rest",
+      },
+      {
+        type: "p",
+        text: "Give yourself at least the first three days of any holiday as genuine, guilt-free rest. This means no study, no planning, and no stressing about how much you have to do. Sleep in. See friends. Watch films. Exercise. Eat well. This is not laziness — it is the physiological recovery period your brain needs before the next productive learning phase begins. Students who start studying immediately after a demanding term often find their performance in those sessions poor anyway.",
+      },
+      {
+        type: "h2",
+        text: "Planning Your Holiday Study (If You Need It)",
+      },
+      {
+        type: "p",
+        text: "If your holiday is longer than a week and you have upcoming exams or a demanding new term ahead, build a light study plan for the second half of the holiday. 'Light' means a maximum of 2-3 hours per day, focused on two activities: reviewing weak areas from the previous term (where your quiz scores in Study Buddy will show you exactly what those are), and previewing the first chapter or two of the upcoming term's material (which gives you a cognitive head start that pays dividends for weeks).",
+      },
+      {
+        type: "tip",
+        text: "Check your Study Buddy quiz history before the holiday to identify your lowest-scoring topics. These are your priority areas for any holiday revision — not the topics you already know well and find comfortable to review.",
+      },
+      {
+        type: "h2",
+        text: "The Holiday Study Schedule That Actually Works",
+      },
+      {
+        type: "p",
+        text: "Study in the morning during holidays, not the afternoon or evening. Motivation and cognitive performance are typically highest in the morning for most people, and studying in the morning means your afternoon and evening are genuinely free without lingering guilt. Keep sessions short — 45 minutes maximum with a proper break. Do not study every day. Take at least two full rest days per week throughout the holiday period.",
+      },
+      {
+        type: "h2",
+        text: "Avoiding the Holiday Slump",
+      },
+      {
+        type: "p",
+        text: "The 'holiday slump' is the productivity dip many students experience in the first week of a new term after completely switching off during the break. The cure is simple: keep your brain engaged during the holiday through light reading, puzzles, creative activities, or gentle study preview — not necessarily academic content, but anything that keeps your cognitive habits active. Students who read even for pleasure during holidays return to term in better academic shape than those who do nothing mentally stimulating for three weeks.",
+      },
+      {
+        type: "conclusion",
+        text: "A good holiday strategy is not about studying as much as possible or resting as much as possible — it is about doing both intelligently. Rest first and fully. Then, if needed, add light, targeted study sessions in the second half of the break. You will return to term restored, prepared, and ahead of most of your classmates.",
+      },
+    ],
+    relatedSlugs: ["overcoming-exam-anxiety-science-based-strategies", "time-management-for-students-full-system"],
+  },
 ];
 
 export function getPostBySlug(slug) {
