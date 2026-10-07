@@ -7,6 +7,9 @@ const AuthContext = createContext(null);
 // Admin access is tied to email, not UID (UIDs can change across Firebase projects)
 const ADMIN_EMAILS = ['nabstertsr@gmail.com'];
 
+// Users in this list can use the app in local mode without Firebase authentication
+const NO_AUTH_BYPASS_EMAILS = ['khanya@profilegenius.fun'];
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,6 +18,23 @@ export const AuthProvider = ({ children }) => {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+
+  // On first ever load, seed a local profile for bypass users so they can enter the app
+  useEffect(() => {
+    const existing = localStorage.getItem('user_profile');
+    if (!existing) {
+      // Default to the bypass user so they get in without Firebase login
+      const seedEmail = NO_AUTH_BYPASS_EMAILS[0];
+      const seedProfile = {
+        id: 'local_' + seedEmail.replace(/[^a-z0-9]/g, '_'),
+        email: seedEmail,
+        full_name: 'Khanya',
+        role: 'Learner',
+        created_at: new Date().toISOString()
+      };
+      localStorage.setItem('user_profile', JSON.stringify(seedProfile));
+    }
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -86,6 +106,24 @@ export const AuthProvider = ({ children }) => {
           }
         }
       } else {
+        // Check if a bypass user is already saved locally (no Firebase auth needed)
+        const bypassCached = localStorage.getItem('user_profile');
+        if (bypassCached) {
+          try {
+            const bypassProfile = JSON.parse(bypassCached);
+            const bypassEmail = (bypassProfile?.email || '').toLowerCase();
+            if (NO_AUTH_BYPASS_EMAILS.includes(bypassEmail)) {
+              // Treat this local profile as authenticated without requiring Firebase sign-in
+              setUser(bypassProfile);
+              setIsAuthenticated(true);
+              setIsEmailVerified(true);
+              setIsAdmin(ADMIN_EMAILS.includes(bypassEmail));
+              setUserProfile(bypassProfile);
+              setIsLoadingAuth(false);
+              return;
+            }
+          } catch { /* malformed cache — fall through to unauthenticated state */ }
+        }
         setUser(null);
         setIsAuthenticated(false);
         setIsEmailVerified(false);
