@@ -193,6 +193,18 @@ export const AuthProvider = ({ children }) => {
     window.location.href = `${base}Login`.replace('//', '/');
   };
 
+  const loginWithGoogle = async () => {
+    try {
+      const { signInWithPopup } = await import('firebase/auth');
+      const { auth: fbAuth, googleProvider } = await import('@/lib/firebase');
+      const result = await signInWithPopup(fbAuth, googleProvider);
+      return { success: true, user: result.user };
+    } catch (e) {
+      console.error('Google Sign In error:', e);
+      return { success: false, message: e.message };
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -205,7 +217,8 @@ export const AuthProvider = ({ children }) => {
       logout,
       navigateToLogin,
       sendVerification,
-      updateProfile
+      updateProfile,
+      loginWithGoogle
     }}>
       {children}
     </AuthContext.Provider>

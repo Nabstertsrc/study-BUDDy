@@ -25,7 +25,7 @@ export const BackendBridge = {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
             
-            const res = await fetch(`${BASE_URLS.PYTHON}/health`, { 
+            const res = await fetch(`${BASE_URLS.PYTHON}/status`, { 
                 method: 'GET', 
                 signal: controller.signal,
                 headers: { 'Accept': 'application/json' }
@@ -34,11 +34,13 @@ export const BackendBridge = {
             
             if (!res.ok) {
                 console.warn("BackendBridge: Health check returned status", res.status);
+                return { ready: false, keys: {} };
             }
-            return res.ok;
+            const data = await res.json();
+            return { ready: true, keys: data.keys || {} };
         } catch (e) {
             console.error("BackendBridge: Health check failed completely:", e.message || e);
-            return false;
+            return { ready: false, keys: {} };
         }
     },
 

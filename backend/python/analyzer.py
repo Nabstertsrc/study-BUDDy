@@ -470,6 +470,19 @@ def call_gemini(prompt, system_prompt=SYSTEM_PROMPT, image_data=None, mime_type=
 def health():
     return jsonify({"status": "healthy"})
 
+@app.route('/status', methods=['GET'])
+def status():
+    return jsonify({
+        "status": "healthy",
+        "keys": {
+            "gemini": bool(GEMINI_API_KEY),
+            "openai": bool(OPENAI_API_KEY),
+            "deepseek": bool(DEEPSEEK_API_KEY),
+            "mistral": bool(MISTRAL_API_KEY),
+            "groq": bool(GROQ_API_KEY)
+        }
+    })
+
 @app.route('/', methods=['GET'])
 def root():
     return jsonify({"status": "ok", "service": "study-BUDDy backend"})

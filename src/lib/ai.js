@@ -48,20 +48,27 @@ export const getAIStatus = async () => {
 
     // Web build: check if Python backend (Render) is alive — this is the primary AI source
     try {
-        const backendOnline = await BackendBridge.isPythonReady();
-        if (backendOnline) {
+        const backendStatus = await BackendBridge.isPythonReady();
+        if (backendStatus.ready) {
+            // Merge local keys with server keys
+            const hasGemini = !!keys.gemini || backendStatus.keys.gemini;
+            const hasDeepseek = !!keys.deepseek || backendStatus.keys.deepseek;
+            const hasMistral = !!keys.mistral || backendStatus.keys.mistral;
+            const hasGroq = !!keys.groq || backendStatus.keys.groq;
+            
             return {
-                gemini: true,
-                deepseek: true,
+                gemini: hasGemini,
+                deepseek: hasDeepseek,
                 grok: false,
-                openai: false,
-                mistral: !!keys.mistral,
+                openai: backendStatus.keys.openai,
+                mistral: hasMistral,
+                groq: hasGroq,
                 details: {
-                    gemini: { status: true, model: 'gemini-2.0-flash (via backend)' },
-                    deepseek: { status: true, model: 'deepseek-chat (via backend)' },
-                    mistral: { status: !!keys.mistral, model: keys.mistral ? DEFAULT_MISTRAL_MODEL : undefined },
+                    gemini: { status: hasGemini, model: 'gemini-2.0-flash (via backend)' },
+                    deepseek: { status: hasDeepseek, model: 'deepseek-chat (via backend)' },
+                    mistral: { status: hasMistral, model: hasMistral ? DEFAULT_MISTRAL_MODEL : undefined },
                     grok: { status: false },
-                    openai: { status: false }
+                    openai: { status: backendStatus.keys.openai }
                 }
             };
         }
