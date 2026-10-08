@@ -34,10 +34,12 @@ def configure_api_keys(request_data):
     # Get keys from request if present
     req_keys = request_data.get('keys', {})
     
-    # Prioritize Request Key -> Env Key -> Hardcoded User Key
+    # Prioritize Request Key -> Env Key
     gemini_key = req_keys.get('gemini') or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    openai_key = req_keys.get('openai') or os.getenv("OPENAI_API_KEY")
+    openai_key = req_keys.get('openai') or OPENAI_API_KEY
     deepseek_key = req_keys.get('deepseek') or DEEPSEEK_API_KEY
+    mistral_key = req_keys.get('mistral') or MISTRAL_API_KEY
+    groq_key = req_keys.get('groq') or GROQ_API_KEY
     
     if gemini_key:
         try:
@@ -46,11 +48,30 @@ def configure_api_keys(request_data):
         except Exception as e:
             print(f"DEBUG: Error configuring Gemini: {e}")
     
-    return gemini_key, openai_key, deepseek_key
+    return gemini_key, openai_key, deepseek_key, mistral_key, groq_key
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
+MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+# Groq model priority — best quality first, fastest last
+GROQ_MODELS = [
+    "llama-3.1-70b-versatile",   # Meta Llama 3.1 70B — most capable
+    "llama-3.1-8b-instant",      # Meta Llama 3.1 8B — fast and efficient
+    "mixtral-8x7b-32768",        # Mixtral 8x7B via Groq
+    "gemma2-9b-it",              # Google Gemma 2 9B
+    "llama3-70b-8192",           # Llama 3 70B (legacy)
+]
+
+# Mistral model priority — best quality first
+MISTRAL_MODELS = [
+    "mistral-large-latest",
+    "mistral-small-latest",
+    "open-mistral-nemo",
+    "open-mixtral-8x7b",
+]
 
 SYSTEM_PROMPT = """
 You are an intelligent academic assistant. Your goal is to understand the context of the document.
@@ -290,6 +311,103 @@ def call_deepseek(prompt, system_prompt=SYSTEM_PROMPT, api_key=None):
         sys.stdout.flush()
         return None, f"DeepSeek failed: {e}"
 
+
+def call_mistral(prompt, system_prompt=SYSTEM_PROMPT, api_key=None):
+    """
+    Call Mistral AI via their OpenAI-compatible API.
+    Tries models from best quality to fastest.
+    """
+    current_key = api_key or MISTRAL_API_KEY
+    if not current_key:
+        return None, "Mistral API key not configured"
+
+    try:
+        client = OpenAI(api_key=current_key, base_url="https://api.mistral.ai/v1")
+
+        for model_id in MISTRAL_MODELS:
+            try:
+                print(f"DEBUG: Trying Mistral model: {model_id}")
+                sys.stdout.flush()
+
+                messages = []
+                if system_prompt:
+                    messages.append({"role": "system", "content": system_prompt})
+                messages.append({"role": "user", "content": prompt})
+
+                response = client.chat.completions.create(
+                    model=model_id,
+                    messages=messages,
+                    max_tokens=4096,
+                    timeout=60
+                )
+
+                if response.choices and len(response.choices) > 0:
+                    print(f"DEBUG: Mistral {model_id} responded successfully.")
+                    return response.choices[0].message.content, None
+            except Exception as model_err:
+                err_str = str(model_err)
+                if '422' in err_str or '404' in err_str or 'not found' in err_str.lower():
+                    print(f"DEBUG: Mistral model {model_id} unavailable, trying next...")
+                    continue
+                print(f"DEBUG: Mistral {model_id} error: {model_err}")
+                break
+
+        return None, "All Mistral models failed"
+    except Exception as e:
+        print(f"DEBUG: Mistral outer error: {e}")
+        sys.stdout.flush()
+        return None, f"Mistral failed: {e}"
+
+
+def call_groq(prompt, system_prompt=SYSTEM_PROMPT, api_key=None):
+    """
+    Call Groq API — runs Meta Llama 3.1, Mixtral, and Gemma at extreme speed.
+    Free tier available at console.groq.com
+    Groq uses an OpenAI-compatible API.
+    """
+    current_key = api_key or GROQ_API_KEY
+    if not current_key:
+        return None, "Groq API key not configured"
+
+    try:
+        client = OpenAI(api_key=current_key, base_url="https://api.groq.com/openai/v1")
+
+        for model_id in GROQ_MODELS:
+            try:
+                print(f"DEBUG: Trying Groq/Llama model: {model_id}")
+                sys.stdout.flush()
+
+                messages = []
+                if system_prompt:
+                    messages.append({"role": "system", "content": system_prompt})
+                messages.append({"role": "user", "content": prompt})
+
+                response = client.chat.completions.create(
+                    model=model_id,
+                    messages=messages,
+                    max_tokens=4096,
+                    temperature=0.7,
+                    timeout=30   # Groq is fast — short timeout
+                )
+
+                if response.choices and len(response.choices) > 0:
+                    print(f"DEBUG: Groq {model_id} (Llama/Mixtral/Gemma) responded successfully.")
+                    return response.choices[0].message.content, None
+            except Exception as model_err:
+                err_str = str(model_err)
+                # Model decommissioned or rate limited — try next
+                if '404' in err_str or 'model_not_found' in err_str.lower() or 'rate_limit' in err_str.lower():
+                    print(f"DEBUG: Groq model {model_id} unavailable or rate limited, trying next...")
+                    continue
+                print(f"DEBUG: Groq {model_id} error: {model_err}")
+                break
+
+        return None, "All Groq/Llama models failed"
+    except Exception as e:
+        print(f"DEBUG: Groq outer error: {e}")
+        sys.stdout.flush()
+        return None, f"Groq failed: {e}"
+
 def call_gemini(prompt, system_prompt=SYSTEM_PROMPT, image_data=None, mime_type=None, api_key=None):
     current_key = api_key or GEMINI_API_KEY
     if not current_key:
@@ -497,48 +615,66 @@ def generate():
         print(f"DEBUG: Generating text for prompt: {prompt[:50]}...")
         sys.stdout.flush()
         
-        gemini_key, openai_key, deepseek_key = configure_api_keys(data)
+        gemini_key, openai_key, deepseek_key, mistral_key, groq_key = configure_api_keys(data)
         
         if not prompt:
             return jsonify({"error": "Missing prompt"}), 400
 
-        # Try Gemini first
+        # ── 1. Gemini (primary) ────────────────────────────────────────────
         res_text, err = call_gemini(prompt, system_prompt=system_prompt, api_key=gemini_key)
-        
         if res_text is not None:
             return jsonify({"text": res_text})
-        
-        print(f"DEBUG: Gemini failed, attempting OpenAI fallback: {err}")
+        print(f"DEBUG: Gemini failed → {err}")
         sys.stdout.flush()
-        
-        # Try OpenAI fallback
-        res_text, err_oa = call_openai(prompt, system_prompt=system_prompt, api_key=openai_key)
-        
+
+        # ── 2. Mistral (fast, free tier) ───────────────────────────────────
+        res_text, err_mistral = call_mistral(prompt, system_prompt=system_prompt, api_key=mistral_key)
         if res_text is not None:
+            print("DEBUG: Responded via Mistral AI.")
             return jsonify({"text": res_text})
-            
-        # Try DeepSeek fallback
+        print(f"DEBUG: Mistral failed → {err_mistral}")
+        sys.stdout.flush()
+
+        # ── 3. Groq / Meta Llama (extremely fast, free tier) ───────────────
+        res_text, err_groq = call_groq(prompt, system_prompt=system_prompt, api_key=groq_key)
+        if res_text is not None:
+            print("DEBUG: Responded via Groq / Meta Llama.")
+            return jsonify({"text": res_text})
+        print(f"DEBUG: Groq failed → {err_groq}")
+        sys.stdout.flush()
+
+        # ── 4. DeepSeek ────────────────────────────────────────────────────
         res_text, err_ds = call_deepseek(prompt, system_prompt=system_prompt, api_key=deepseek_key)
-        
         if res_text is not None:
+            print("DEBUG: Responded via DeepSeek.")
             return jsonify({"text": res_text})
-
-        print(f"DEBUG: Gemini, OpenAI, and DeepSeek failed. Trying Pollinations free fallback.")
+        print(f"DEBUG: DeepSeek failed → {err_ds}")
         sys.stdout.flush()
 
-        # Try Pollinations AI (free, no key needed)
+        # ── 5. OpenAI ──────────────────────────────────────────────────────
+        res_text, err_oa = call_openai(prompt, system_prompt=system_prompt, api_key=openai_key)
+        if res_text is not None:
+            print("DEBUG: Responded via OpenAI.")
+            return jsonify({"text": res_text})
+        print(f"DEBUG: OpenAI failed → {err_oa}")
+        sys.stdout.flush()
+
+        # ── 6. Pollinations (free, no key) ─────────────────────────────────
         res_text, err_pol = call_pollinations(prompt, system_prompt=system_prompt)
         if res_text is not None:
+            print("DEBUG: Responded via Pollinations AI (free fallback).")
             return jsonify({"text": res_text})
 
-        print(f"DEBUG: All AI providers failed.")
+        print("DEBUG: All AI providers exhausted.")
         sys.stdout.flush()
         return jsonify({
             "error": "All AI models failed",
             "details": {
                 "gemini": str(err),
-                "openai": str(err_oa),
+                "mistral": str(err_mistral),
+                "groq_llama": str(err_groq),
                 "deepseek": str(err_ds),
+                "openai": str(err_oa),
                 "pollinations": str(err_pol)
             }
         }), 500
