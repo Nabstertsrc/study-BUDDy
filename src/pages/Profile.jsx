@@ -2,14 +2,14 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '@/lib/AuthContext';
 import { storage } from '@/lib/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { Camera, Save, Loader2, User, BookOpen, Building, Hash } from 'lucide-react';
+import { Camera, Save, Loader2, User, BookOpen, Building, Hash, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 
 export default function Profile() {
-  const { user, userProfile, updateProfile } = useAuth();
+  const { user, userProfile, updateProfile, logout } = useAuth();
   
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -83,9 +83,19 @@ export default function Profile() {
 
   return (
     <div className="max-w-3xl mx-auto py-10 px-4 sm:px-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-black text-slate-900">Your Profile</h1>
-        <p className="text-slate-500 mt-2">Manage your personal information and academic details.</p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-black text-slate-900">Your Profile</h1>
+          <p className="text-slate-500 mt-2">Manage your personal information and academic details.</p>
+        </div>
+        <Button 
+          variant="outline" 
+          onClick={logout}
+          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          Logout
+        </Button>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">

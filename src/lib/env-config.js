@@ -11,6 +11,7 @@ const ENV_KEYS = {
     openai: import.meta.env.VITE_OPENAI_API_KEY || null,
     xai: import.meta.env.VITE_XAI_API_KEY || null,
     mistral: import.meta.env.VITE_MISTRAL_API_KEY || null,
+    groq: import.meta.env.VITE_GROQ_API_KEY || null,
     supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
     supabaseKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 }
@@ -30,6 +31,7 @@ export function getAPIKeys() {
         openai: validateKey(localStorage.getItem('openai_key')) || ENV_KEYS.openai || null,
         xai: validateKey(localStorage.getItem('xai_key')) || ENV_KEYS.xai || null,
         mistral: validateKey(localStorage.getItem('mistral_key')) || ENV_KEYS.mistral || null,
+        groq: validateKey(localStorage.getItem('groq_key')) || ENV_KEYS.groq || null,
     }
 }
 
