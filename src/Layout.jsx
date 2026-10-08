@@ -250,6 +250,30 @@ export default function Layout({ children, currentPageName }) {
                       <span>{item.name}</span>
                     </Link>
                   ))}
+                  
+                  <div className="mt-8 mb-4 border-t border-slate-100 pt-4">
+                    <Link
+                      to={createPageUrl("Settings")}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-black transition-all",
+                        currentPageName === "Settings" ? "active-link text-white shadow-lg" : "text-slate-600 hover:bg-slate-50"
+                      )}
+                    >
+                      <Settings className="w-6 h-6" />
+                      <span>Settings</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        logout();
+                      }}
+                      className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-lg font-black text-red-500 hover:bg-red-50 transition-all mt-2"
+                    >
+                      <LogOut className="w-6 h-6" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
                 </nav>
               </motion.div>
             </div>
@@ -264,7 +288,7 @@ export default function Layout({ children, currentPageName }) {
               { name: namingPref === "Subjects" ? "Subjects" : "Modules", page: "Modules", icon: BookOpen },
               { name: "Lab", page: "StudyLab", icon: Brain },
               { name: "Tasks", page: "Assignments", icon: ClipboardList },
-              { name: "More", page: "__more__", icon: Menu },
+              { name: "Profile", page: "Profile", icon: UserIcon },
             ].map((item) => {
               const active = item.page !== "__more__" && currentPageName === item.page;
               if (item.page === "__more__") {
