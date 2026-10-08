@@ -4,6 +4,18 @@ import { BackendBridge } from './backend-bridge';
 import { getAPIKeys } from './env-config';
 import { safeJsonParse, safeJsonParseArray, safeJsonParseObject } from './safeJsonParser';
 
+// Mistral models available via free tier (api.mistral.ai)
+// Sorted: best quality first, fastest last
+export const MISTRAL_MODELS = [
+    { id: 'mistral-large-latest',   label: 'Mistral Large',   description: 'Most capable — great for essays, deep analysis' },
+    { id: 'mistral-small-latest',   label: 'Mistral Small',   description: 'Balanced speed and quality for study tasks' },
+    { id: 'open-mistral-nemo',      label: 'Mistral Nemo',    description: 'Fast, lightweight — quick Q&A and summaries' },
+    { id: 'codestral-latest',       label: 'Codestral',       description: 'Specialised for coding and STEM subjects' },
+    { id: 'open-mixtral-8x7b',      label: 'Mixtral 8x7B',   description: 'Mixture-of-Experts: powerful and efficient' },
+];
+
+export const DEFAULT_MISTRAL_MODEL = 'mistral-small-latest';
+
 
 const checkOpenAI = async (apiKey) => {
     // Replaced by Electron Main Process Check
@@ -29,6 +41,7 @@ export const getAIStatus = async () => {
             deepseek: results.deepseek.status,
             grok: results.grok.status,
             openai: results.openai.status,
+            mistral: !!keys.mistral,
             details: results
         };
     }
@@ -42,9 +55,11 @@ export const getAIStatus = async () => {
                 deepseek: true,
                 grok: false,
                 openai: false,
+                mistral: !!keys.mistral,
                 details: {
                     gemini: { status: true, model: 'gemini-2.0-flash (via backend)' },
                     deepseek: { status: true, model: 'deepseek-chat (via backend)' },
+                    mistral: { status: !!keys.mistral, model: keys.mistral ? DEFAULT_MISTRAL_MODEL : undefined },
                     grok: { status: false },
                     openai: { status: false }
                 }
@@ -60,11 +75,13 @@ export const getAIStatus = async () => {
         deepseek: !!keys.deepseek,
         grok: !!keys.xai,
         openai: !!keys.openai,
+        mistral: !!keys.mistral,
         details: {
             gemini: { status: !!keys.gemini, model: keys.gemini ? 'gemini-2.0-flash (local key)' : undefined, error: !keys.gemini ? 'No API key' : undefined },
             deepseek: { status: !!keys.deepseek, model: keys.deepseek ? 'deepseek-chat (local key)' : undefined, error: !keys.deepseek ? 'No API key' : undefined },
             grok: { status: !!keys.xai, error: !keys.xai ? 'No API key' : undefined },
-            openai: { status: !!keys.openai, error: !keys.openai ? 'No API key' : undefined }
+            openai: { status: !!keys.openai, error: !keys.openai ? 'No API key' : undefined },
+            mistral: { status: !!keys.mistral, model: keys.mistral ? DEFAULT_MISTRAL_MODEL : undefined, error: !keys.mistral ? 'No API key' : undefined }
         }
     };
 };
@@ -114,6 +131,67 @@ export const generateWithGrok = async (prompt, systemPrompt = "") => {
     return generateWithGemini(prompt, systemPrompt);
 };
 
+/**
+ * Generate text using Mistral AI (api.mistral.ai — free tier available).
+ * Supports model selection; falls back through Mistral model tiers then to Gemini.
+ * @param {string} prompt
+ * @param {string} systemPrompt
+ * @param {Object} options - { model?: string }
+ */
+export const generateWithMistral = async (prompt, systemPrompt = "", options = {}) => {
+    const { mistral: apiKey } = getAPIKeys();
+    
+    if (!apiKey) {
+        console.warn("Mistral API Key not configured, falling back to Gemini backend...");
+        return generateWithGemini(prompt, systemPrompt, options);
+    }
+
+    const model = options.model || DEFAULT_MISTRAL_MODEL;
+    console.log(`AI: Calling Mistral API with model ${model}...`);
+
+    // Mistral uses an OpenAI-compatible API — we can use the openai SDK
+    const mistralClient = new OpenAI({
+        apiKey,
+        baseURL: 'https://api.mistral.ai/v1',
+        dangerouslyAllowBrowser: true,
+    });
+
+    // Try the requested model, then fall back through smaller Mistral models
+    const modelsToTry = [
+        model,
+        ...MISTRAL_MODELS.map(m => m.id).filter(id => id !== model)
+    ];
+
+    for (const modelId of modelsToTry) {
+        try {
+            const response = await mistralClient.chat.completions.create({
+                model: modelId,
+                messages: [
+                    ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
+                    { role: 'user', content: prompt }
+                ],
+                max_tokens: 4096,
+                temperature: 0.7,
+            });
+            console.log(`AI: Mistral ${modelId} responded successfully.`);
+            return response.choices[0].message.content;
+        } catch (err) {
+            // Model unavailable or quota hit — try next one
+            if (err?.status === 422 || err?.status === 404 || err?.message?.includes('not found')) {
+                console.warn(`Mistral model ${modelId} unavailable, trying next...`);
+                continue;
+            }
+            // Rate limit or auth error — fall through to Gemini
+            console.error(`Mistral API error (${modelId}):`, err.message);
+            break;
+        }
+    }
+
+    // All Mistral models failed — fall back to Gemini backend
+    console.warn('All Mistral models exhausted, falling back to Gemini...');
+    return generateWithGemini(prompt, systemPrompt, options);
+};
+
 export const generateWithOpenAI = async (prompt, systemPrompt = "", options = {}) => {
     if (options.imageBase64) {
         // We'll add vision support to Python later if needed
@@ -130,12 +208,12 @@ export const studyBuddyAI = {
             if (provider === "gemini") return await generateWithGemini(prompt);
             if (provider === "openai") return await generateWithOpenAI(prompt);
             if (provider === "grok") return await generateWithGrok(prompt);
+            if (provider === "mistral") return await generateWithMistral(prompt);
             return await generateWithDeepSeek(prompt);
         } catch (err) {
             console.warn(`Summarize with ${provider} failed, trying fallback...`);
-            // Fallback chain: OpenAI -> Grok -> DeepSeek
-            return await generateWithOpenAI(prompt)
-                .catch(() => generateWithGrok(prompt))
+            return await generateWithGemini(prompt)
+                .catch(() => generateWithMistral(prompt))
                 .catch(() => generateWithDeepSeek(prompt));
         }
     },

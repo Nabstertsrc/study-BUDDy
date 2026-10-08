@@ -10,6 +10,7 @@ const ENV_KEYS = {
     deepseek: import.meta.env.VITE_DEEPSEEK_API_KEY || null,
     openai: import.meta.env.VITE_OPENAI_API_KEY || null,
     xai: import.meta.env.VITE_XAI_API_KEY || null,
+    mistral: import.meta.env.VITE_MISTRAL_API_KEY || null,
     supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
     supabaseKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
 }
@@ -28,6 +29,7 @@ export function getAPIKeys() {
         deepseek: validateKey(localStorage.getItem('deepseek_key')) || ENV_KEYS.deepseek || null,
         openai: validateKey(localStorage.getItem('openai_key')) || ENV_KEYS.openai || null,
         xai: validateKey(localStorage.getItem('xai_key')) || ENV_KEYS.xai || null,
+        mistral: validateKey(localStorage.getItem('mistral_key')) || ENV_KEYS.mistral || null,
     }
 }
 
@@ -48,7 +50,7 @@ function validateKey(key) {
  */
 export function hasAnyAPIKey() {
     const keys = getAPIKeys()
-    return !!(keys.gemini || keys.deepseek || keys.openai || keys.xai)
+    return !!(keys.gemini || keys.deepseek || keys.openai || keys.xai || keys.mistral)
 }
 
 /**
@@ -57,7 +59,7 @@ export function hasAnyAPIKey() {
  */
 export function getFirstAvailableKey() {
     const keys = getAPIKeys()
-    return keys.gemini || keys.openai || keys.xai || keys.deepseek || null
+    return keys.gemini || keys.openai || keys.mistral || keys.xai || keys.deepseek || null
 }
 
 /**
@@ -82,18 +84,21 @@ export function debugKeys() {
             deepseek: !!ENV_KEYS.deepseek,
             openai: !!ENV_KEYS.openai,
             xai: !!ENV_KEYS.xai,
+            mistral: !!ENV_KEYS.mistral,
         },
         localStorage: {
             gemini: !!localStorage.getItem('gemini_key'),
             deepseek: !!localStorage.getItem('deepseek_key'),
             openai: !!localStorage.getItem('openai_key'),
             xai: !!localStorage.getItem('xai_key'),
+            mistral: !!localStorage.getItem('mistral_key'),
         },
         final: {
             gemini: !!getAPIKeys().gemini,
             deepseek: !!getAPIKeys().deepseek,
             openai: !!getAPIKeys().openai,
             xai: !!getAPIKeys().xai,
+            mistral: !!getAPIKeys().mistral,
         }
     }
 }

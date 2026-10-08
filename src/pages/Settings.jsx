@@ -43,7 +43,9 @@ export default function Settings() {
   const [aiKeys, setAiKeys] = useState({
     gemini: localStorage.getItem('gemini_key') || "",
     deepseek: localStorage.getItem('deepseek_key') || "",
+    mistral: localStorage.getItem('mistral_key') || "",
   });
+  const [mistralModel, setMistralModel] = useState(localStorage.getItem('mistral_model') || 'mistral-small-latest');
 
   const [namingPref, setNamingPref] = useState(localStorage.getItem('naming_pref') || 'Modules');
   const [backendReady, setBackendReady] = useState(false);
@@ -99,6 +101,8 @@ export default function Settings() {
   const saveAiKeys = () => {
     localStorage.setItem('gemini_key', aiKeys.gemini);
     localStorage.setItem('deepseek_key', aiKeys.deepseek);
+    localStorage.setItem('mistral_key', aiKeys.mistral);
+    localStorage.setItem('mistral_model', mistralModel);
     localStorage.setItem('naming_pref', namingPref);
     toast.success("Preferences saved successfully!");
   };
@@ -282,6 +286,57 @@ export default function Settings() {
                   className="rounded-xl border-2"
                 />
                 <p className="text-xs text-slate-400">Stored only in this browser. Overrides the server key when set.</p>
+              </div>
+
+              {/* Mistral Section */}
+              <div className="border-t border-dashed border-violet-200 pt-5 mt-2">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-orange-400 to-rose-500 flex items-center justify-center">
+                    <Sparkles className="w-3 h-3 text-white" />
+                  </div>
+                  <h4 className="font-bold text-slate-800 text-sm">Mistral AI — Free Tier Available</h4>
+                  <a
+                    href="https://console.mistral.ai/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] ml-auto text-violet-600 font-bold underline hover:text-violet-800"
+                  >
+                    Get Free Key →
+                  </a>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <Key className="w-4 h-4 text-orange-400" />
+                      Mistral API Key
+                    </Label>
+                    <Input
+                      type="password"
+                      placeholder="e.g. xxxxxxxxxxxxxxxxxxx..."
+                      value={aiKeys.mistral}
+                      onChange={(e) => setAiKeys({ ...aiKeys, mistral: e.target.value })}
+                      className="rounded-xl border-2 focus-visible:ring-orange-400"
+                    />
+                    <p className="text-xs text-slate-400">Free tier: get a key at <strong>console.mistral.ai</strong> — no billing required.</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Preferred Mistral Model</Label>
+                    <select
+                      value={mistralModel}
+                      onChange={(e) => setMistralModel(e.target.value)}
+                      className="w-full bg-white border-2 border-slate-100 rounded-xl p-2 text-sm font-bold text-slate-700 outline-none focus:border-orange-400 transition-all"
+                    >
+                      <option value="mistral-large-latest">Mistral Large — Most capable, essays &amp; deep analysis</option>
+                      <option value="mistral-small-latest">Mistral Small — Balanced speed &amp; quality (Recommended)</option>
+                      <option value="open-mistral-nemo">Mistral Nemo — Fast &amp; lightweight, quick Q&amp;A</option>
+                      <option value="codestral-latest">Codestral — STEM &amp; coding specialist</option>
+                      <option value="open-mixtral-8x7b">Mixtral 8×7B — Mixture-of-Experts, powerful &amp; efficient</option>
+                    </select>
+                    <p className="text-xs text-slate-400">If your key hits a rate limit, the app auto-falls back to the next model then Gemini.</p>
+                  </div>
+                </div>
               </div>
             </div>
 
