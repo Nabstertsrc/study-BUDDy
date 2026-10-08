@@ -42,6 +42,7 @@ const getNavigation = (isAdmin, namingPref) => [
   { name: "Assignments", icon: ClipboardList, page: "Assignments" },
   { name: "Games", icon: Gamepad2, page: "BrainGames" },
   { name: "Community", icon: Users, page: "CommunityHub" },
+  { name: "Profile", icon: UserIcon, page: "Profile" },
 ];
 
 export default function Layout({ children, currentPageName }) {
