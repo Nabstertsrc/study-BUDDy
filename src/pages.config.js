@@ -20,6 +20,7 @@ const Blog = lazyImport(() => import('./pages/Blog'));
 const BlogPost = lazyImport(() => import('./pages/BlogPost'));
 const Privacy = lazyImport(() => import('./pages/Privacy'));
 const About = lazyImport(() => import('./pages/About'));
+const BrainGames = lazyImport(() => import('./pages/BrainGames'));
 const BlogPostGenerator = lazyImport(() => import('./pages/BlogPostGenerator'));
 const Profile = lazyImport(() => import('./pages/Profile'));
 import __Layout from './Layout.jsx';
