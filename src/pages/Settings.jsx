@@ -44,8 +44,10 @@ export default function Settings() {
     gemini: localStorage.getItem('gemini_key') || "",
     deepseek: localStorage.getItem('deepseek_key') || "",
     mistral: localStorage.getItem('mistral_key') || "",
+    groq: localStorage.getItem('groq_key') || "",
   });
   const [mistralModel, setMistralModel] = useState(localStorage.getItem('mistral_model') || 'mistral-small-latest');
+  const [groqModel, setGroqModel] = useState(localStorage.getItem('groq_model') || 'llama-3.1-70b-versatile');
 
   const [namingPref, setNamingPref] = useState(localStorage.getItem('naming_pref') || 'Modules');
   const [backendReady, setBackendReady] = useState(false);
@@ -70,8 +72,8 @@ export default function Settings() {
       // Check Render availability
       try {
         const { BackendBridge } = await import('@/lib/backend-bridge');
-        const ready = await BackendBridge.isPythonReady();
-        setBackendReady(ready);
+        const status = await BackendBridge.isPythonReady();
+        setBackendReady(status.ready ? status : false);
       } catch (e) {
         setBackendReady(false);
       }
@@ -103,6 +105,8 @@ export default function Settings() {
     localStorage.setItem('deepseek_key', aiKeys.deepseek);
     localStorage.setItem('mistral_key', aiKeys.mistral);
     localStorage.setItem('mistral_model', mistralModel);
+    localStorage.setItem('groq_key', aiKeys.groq);
+    localStorage.setItem('groq_model', groqModel);
     localStorage.setItem('naming_pref', namingPref);
     toast.success("Preferences saved successfully!");
   };
@@ -233,6 +237,13 @@ export default function Settings() {
                       <p className="text-[10px] text-indigo-400 font-black">
                         {backendReady ? "ONLINE & READY" : "WAKING UP (may take ~30s)"}
                       </p>
+                      {backendReady && backendReady.keys && (
+                        <div className="flex gap-2 mt-2">
+                            {backendReady.keys.gemini && <span className="text-[9px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded border border-slate-700">Gemini</span>}
+                            {backendReady.keys.mistral && <span className="text-[9px] bg-orange-900/40 text-orange-400 px-1.5 py-0.5 rounded border border-orange-500/30">Mistral</span>}
+                            {backendReady.keys.groq && <span className="text-[9px] bg-red-900/40 text-red-400 px-1.5 py-0.5 rounded border border-red-500/30">Groq/Llama</span>}
+                        </div>
+                      )}
                     </div>
                   </div>
                   {backendReady && (
@@ -309,16 +320,15 @@ export default function Settings() {
                   <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <Key className="w-4 h-4 text-orange-400" />
-                      Mistral API Key
+                      Mistral API Key (Optional Override)
                     </Label>
                     <Input
                       type="password"
-                      placeholder="e.g. xxxxxxxxxxxxxxxxxxx..."
+                      placeholder="Leave empty to use server default..."
                       value={aiKeys.mistral}
                       onChange={(e) => setAiKeys({ ...aiKeys, mistral: e.target.value })}
                       className="rounded-xl border-2 focus-visible:ring-orange-400"
                     />
-                    <p className="text-xs text-slate-400">Free tier: get a key at <strong>console.mistral.ai</strong> — no billing required.</p>
                   </div>
 
                   <div className="space-y-2">
@@ -328,13 +338,59 @@ export default function Settings() {
                       onChange={(e) => setMistralModel(e.target.value)}
                       className="w-full bg-white border-2 border-slate-100 rounded-xl p-2 text-sm font-bold text-slate-700 outline-none focus:border-orange-400 transition-all"
                     >
-                      <option value="mistral-large-latest">Mistral Large — Most capable, essays &amp; deep analysis</option>
-                      <option value="mistral-small-latest">Mistral Small — Balanced speed &amp; quality (Recommended)</option>
-                      <option value="open-mistral-nemo">Mistral Nemo — Fast &amp; lightweight, quick Q&amp;A</option>
+                      <option value="mistral-large-latest">Mistral Large — Most capable</option>
+                      <option value="mistral-small-latest">Mistral Small — Balanced speed &amp; quality</option>
+                      <option value="open-mistral-nemo">Mistral Nemo — Fast &amp; lightweight</option>
                       <option value="codestral-latest">Codestral — STEM &amp; coding specialist</option>
-                      <option value="open-mixtral-8x7b">Mixtral 8×7B — Mixture-of-Experts, powerful &amp; efficient</option>
                     </select>
-                    <p className="text-xs text-slate-400">If your key hits a rate limit, the app auto-falls back to the next model then Gemini.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Groq / Llama Section */}
+              <div className="border-t border-dashed border-violet-200 pt-5 mt-2">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center">
+                    <Sparkles className="w-3 h-3 text-white" />
+                  </div>
+                  <h4 className="font-bold text-slate-800 text-sm">Groq / Meta Llama 3.1 — Extremely Fast</h4>
+                  <a
+                    href="https://console.groq.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] ml-auto text-violet-600 font-bold underline hover:text-violet-800"
+                  >
+                    Get Free Key →
+                  </a>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <Key className="w-4 h-4 text-red-500" />
+                      Groq API Key (Optional Override)
+                    </Label>
+                    <Input
+                      type="password"
+                      placeholder="Leave empty to use server default..."
+                      value={aiKeys.groq}
+                      onChange={(e) => setAiKeys({ ...aiKeys, groq: e.target.value })}
+                      className="rounded-xl border-2 focus-visible:ring-red-400"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Preferred Groq Model</Label>
+                    <select
+                      value={groqModel}
+                      onChange={(e) => setGroqModel(e.target.value)}
+                      className="w-full bg-white border-2 border-slate-100 rounded-xl p-2 text-sm font-bold text-slate-700 outline-none focus:border-red-400 transition-all"
+                    >
+                      <option value="llama-3.1-70b-versatile">Meta Llama 3.1 70B — Most capable (Recommended)</option>
+                      <option value="llama-3.1-8b-instant">Meta Llama 3.1 8B — Fast and efficient</option>
+                      <option value="mixtral-8x7b-32768">Mixtral 8x7B — Powerful MoE</option>
+                      <option value="gemma2-9b-it">Google Gemma 2 9B</option>
+                    </select>
                   </div>
                 </div>
               </div>
