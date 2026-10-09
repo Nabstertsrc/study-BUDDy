@@ -371,6 +371,10 @@ export default function CommunityHub() {
                                     </Card>
                                 ))}
                             </div>
+                        )}
+                    </div>
+                </div>
+            </div>
             )}
             
             {activeTab === "rooms" && (
