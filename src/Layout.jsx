@@ -77,12 +77,16 @@ export default function Layout({ children, currentPageName }) {
               <span className="font-black text-lg tracking-tight">STUDY BUDDY</span>
             </div>
 
-            <div className="flex items-center gap-1 xl:gap-2 overflow-x-auto no-scrollbar max-w-[min(720px,50vw)]">
+            <div className="flex items-center gap-1 xl:gap-2 overflow-x-auto no-scrollbar max-w-[min(900px,60vw)]">
               <Link to={createPageUrl("Dashboard")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "Dashboard" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Feed</Link>
               <Link to={createPageUrl("Modules")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "Modules" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>{namingPref}</Link>
               <Link to={createPageUrl("AutoOrganizer")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "AutoOrganizer" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Organizer</Link>
               <Link to={createPageUrl("Assignments")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "Assignments" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Tasks</Link>
               <Link to={createPageUrl("StudyLab")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "StudyLab" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Lab</Link>
+              <Link to={createPageUrl("LearningPath")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "LearningPath" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Learning</Link>
+              <Link to={createPageUrl("PrescribedBooks")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "PrescribedBooks" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Books</Link>
+              <Link to={createPageUrl("BrainGames")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "BrainGames" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Games</Link>
+              <Link to={createPageUrl("CommunityHub")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "CommunityHub" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Community</Link>
               {isAdmin && (
                 <Link to={createPageUrl("Monitoring")} className={cn("whitespace-nowrap px-3 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-colors", currentPageName === "Monitoring" ? "text-indigo-700 bg-indigo-50" : "text-slate-500 hover:text-slate-900 hover:bg-slate-50")}>Admin</Link>
               )}
@@ -113,6 +117,12 @@ export default function Layout({ children, currentPageName }) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to={createPageUrl("Profile")} className="cursor-pointer flex items-center">
+                    <UserIcon className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to={createPageUrl("Settings")} className="cursor-pointer flex items-center">
                     <Settings className="mr-2 h-4 w-4" />
