@@ -210,7 +210,7 @@ export default function CommunityHub() {
                 </button>
             </div>
 
-            {activeTab === "resources" ? (
+            {activeTab === "resources" && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4">
 
                     {/* Upload Column */}
