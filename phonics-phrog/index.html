@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phonics Phrog</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
+    body, body * { color: #000 !important; text-shadow: none !important; }
+    
+    body, html {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      background: linear-gradient(to bottom, #4FC3F7, #E1F5FE 60%, #81C784 60%, #388E3C);
+      font-family: 'Comic Neue', cursive, sans-serif;
+      overflow: hidden; touch-action: none;
+    }
+
+    #game-container {
+      position: relative; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    #hud {
+      display: flex; justify-content: space-between; width: 90%; max-width: 800px;
+      margin-top: 20px; color: #1E88E5; font-size: 28px; font-weight: bold;
+      text-shadow: 2px 2px 0 white; z-index: 10;
+    }
+
+    #prompt {
+      font-size: 48px; color: #D84315; text-shadow: 3px 3px 0 white;
+      margin-top: 20px; text-align: center;
+    }
+
+    #frog {
+      position: absolute; bottom: 10%; width: 200px; height: 150px;
+      transition: transform 0.1s; z-index: 5;
+    }
+
+    .tongue {
+      position: absolute; background: #FF5252; width: 10px; height: 0;
+      bottom: 25%; left: 50%; transform: translateX(-50%); transform-origin: bottom;
+      z-index: 4; border-radius: 5px;
+    }
+
+    .fly {
+      position: absolute; width: 80px; height: 80px;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 24px; font-weight: bold; color: white;
+      background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="50" rx="30" ry="20" fill="%23212121"/><ellipse cx="30" cy="30" rx="20" ry="10" fill="rgba(255,255,255,0.7)" transform="rotate(-30 30 30)"/><ellipse cx="70" cy="30" rx="20" ry="10" fill="rgba(255,255,255,0.7)" transform="rotate(30 70 30)"/></svg>');
+      background-size: contain; background-repeat: no-repeat; background-position: center;
+      cursor: pointer; transition: transform 0.2s;
+    }
+    .fly span { position: absolute; top: 40px; text-shadow: 1px 1px 0 black; }
+    .fly:active { transform: scale(0.9); }
+
+    .lilypad {
+      position: absolute; bottom: 5%; width: 300px; height: 100px;
+      background: #4CAF50; border-radius: 50%; border: 5px solid #2E7D32;
+      box-shadow: inset -10px -10px 0 rgba(0,0,0,0.2); z-index: 3;
+    }
+    
+    .overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); display: none; flex-direction: column;
+      justify-content: center; align-items: center; z-index: 100;
+    }
+    .overlay h1 { font-size: 60px; color: #FFF; text-shadow: 3px 3px 0 #4CAF50; margin: 0; }
+    .overlay button {
+      margin-top: 20px; padding: 15px 40px; font-size: 28px; font-family: 'Comic Neue';
+      background: #4CAF50; color: white; border: none; border-radius: 30px;
+      cursor: pointer; box-shadow: 0 8px 0 #2E7D32; font-weight: bold;
+    }
+    .overlay button:active { transform: translateY(8px); box-shadow: 0 0 0 #2E7D32; }
+
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="hud">
+      <div>Score: <span id="score">0</span></div>
+      <div>Phonics: Vowels</div>
+    </div>
+    <div id="prompt">Find the word with '<span id="target-sound">a</span>'</div>
+    
+    <div class="lilypad"></div>
+    <div id="frog">
+      <svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="90" rx="80" ry="50" fill="#66BB6A"/>
+        <circle cx="60" cy="40" r="25" fill="#66BB6A"/>
+        <circle cx="140" cy="40" r="25" fill="#66BB6A"/>
+        <circle cx="60" cy="40" r="15" fill="white"/>
+        <circle cx="140" cy="40" r="15" fill="white"/>
+        <circle cx="60" cy="40" r="8" fill="black" id="eye-left"/>
+        <circle cx="140" cy="40" r="8" fill="black" id="eye-right"/>
+        <path d="M 50 100 Q 100 130 150 100" fill="none" stroke="#2E7D32" stroke-width="5" stroke-linecap="round"/>
+        <!-- Legs -->
+        <path d="M 30 100 Q 10 120 20 140" fill="none" stroke="#66BB6A" stroke-width="15" stroke-linecap="round"/>
+        <path d="M 170 100 Q 190 120 180 140" fill="none" stroke="#66BB6A" stroke-width="15" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="tongue" id="tongue"></div>
+
+    <div id="flies-container"></div>
+    
+    <div id="win-screen" class="overlay">
+      <h1>Ribbit! Great Job!</h1>
+      <button onclick="nextRound()">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    const WORDS = {
+      'a': ['cat', 'bat', 'hat', 'map'],
+      'e': ['bed', 'red', 'pen', 'ten'],
+      'i': ['pig', 'dig', 'sit', 'lip'],
+      'o': ['dog', 'log', 'pot', 'hop'],
+      'u': ['sun', 'run', 'cup', 'bug']
+    };
+
+    let score = 0;
+    let currentTarget = '';
+    let flies = [];
+    let isEating = false;
+
+    const container = document.getElementById('flies-container');
+    const tongue = document.getElementById('tongue');
+    const frog = document.getElementById('frog');
+
+    function spawnFlies() {
+      container.innerHTML = '';
+      flies = [];
+      
+      const vowels = Object.keys(WORDS);
+      currentTarget = vowels[Math.floor(Math.random() * vowels.length)];
+      document.getElementById('target-sound').innerText = currentTarget;
+
+      let options = [currentTarget];
+      while(options.length < 4) {
+        let randomVowel = vowels[Math.floor(Math.random() * vowels.length)];
+        if(!options.includes(randomVowel)) options.push(randomVowel);
+      }
+      options.sort(() => 0.5 - Math.random());
+
+      options.forEach((vowel, i) => {
+        let wordList = WORDS[vowel];
+        let word = wordList[Math.floor(Math.random() * wordList.length)];
+        
+        let fly = document.createElement('div');
+        fly.className = 'fly';
+        fly.innerHTML = `<span>${word}</span>`;
+        fly.dataset.isCorrect = vowel === currentTarget;
+        
+        // Random position top half
+        const x = 10 + Math.random() * 80;
+        const y = 10 + Math.random() * 30;
+        fly.style.left = `${x}%`;
+        fly.style.top = `${y}%`;
+        
+        // Float animation
+        fly.animate([
+          { transform: 'translateY(0px)' },
+          { transform: `translateY(${Math.random() * 20 - 10}px) translateX(${Math.random() * 20 - 10}px)` },
+          { transform: 'translateY(0px)' }
+        ], { duration: 2000 + Math.random()*1000, iterations: Infinity, direction: 'alternate' });
+
+        fly.addEventListener('mousedown', () => catchFly(fly, fly.getBoundingClientRect()));
+        fly.addEventListener('touchstart', (e) => { e.preventDefault(); catchFly(fly, fly.getBoundingClientRect()); });
+
+        container.appendChild(fly);
+        flies.push(fly);
+      });
+    }
+
+    function catchFly(fly, rect) {
+      if(isEating) return;
+      isEating = true;
+
+      const flyX = rect.left + rect.width/2;
+      const flyY = rect.top + rect.height/2;
+      
+      const frogRect = frog.getBoundingClientRect();
+      const frogX = frogRect.left + frogRect.width/2;
+      const frogY = frogRect.top + frogRect.height/2;
+
+      // Calculate tongue angle and length
+      const dx = flyX - frogX;
+      const dy = frogY - flyY; // inverted Y
+      const angle = Math.atan2(dx, dy) * 180 / Math.PI;
+      const length = Math.sqrt(dx*dx + dy*dy);
+
+      tongue.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+      
+      // Animate tongue
+      tongue.animate([
+        { height: '0px' },
+        { height: `${length}px` },
+        { height: '0px' }
+      ], { duration: 400, easing: 'ease-in-out' }).onfinish = () => {
+        isEating = false;
+        tongue.style.height = '0';
+        
+        if(fly.dataset.isCorrect === 'true') {
+          fly.remove();
+          score += 10;
+          document.getElementById('score').innerText = score;
+          frog.animate([{transform:'scale(1)'}, {transform:'scale(1.2)'}, {transform:'scale(1)'}], {duration:300});
+          setTimeout(() => document.getElementById('win-screen').style.display = 'flex', 500);
+        } else {
+          score = Math.max(0, score - 5);
+          document.getElementById('score').innerText = score;
+          // Shake head
+          frog.animate([{transform:'translateX(0)'}, {transform:'translateX(-10px)'}, {transform:'translateX(10px)'}, {transform:'translateX(0)'}], {duration:300});
+        }
+      };
+    }
+
+    function nextRound() {
+      document.getElementById('win-screen').style.display = 'none';
+      spawnFlies();
+    }
+
+    // Eye tracking
+    document.addEventListener('mousemove', (e) => {
+      const mouseX = e.clientX;
+      const mouseY = e.clientY;
+      const updateEye = (eyeId, cx, cy) => {
+        const eye = document.getElementById(eyeId);
+        const rect = eye.getBoundingClientRect();
+        const eyeCenterX = rect.left + rect.width/2;
+        const eyeCenterY = rect.top + rect.height/2;
+        const angle = Math.atan2(mouseY - eyeCenterY, mouseX - eyeCenterX);
+        const distance = Math.min(5, Math.hypot(mouseX - eyeCenterX, mouseY - eyeCenterY) * 0.1);
+        eye.setAttribute('cx', cx + Math.cos(angle) * distance);
+        eye.setAttribute('cy', cy + Math.sin(angle) * distance);
+      };
+      updateEye('eye-left', 60, 40);
+      updateEye('eye-right', 140, 40);
+    });
+
+    spawnFlies();
+  </script>
+</body>
+</html>

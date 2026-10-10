@@ -1,0 +1,32 @@
+{
+  "name": "fluffy-jump",
+  "version": "1.0.0",
+  "description": "Fluffy Jump Redux for Android",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "dev": "vite",
+    "build:android": "set EAS_NO_VCS=1 && eas build --platform android",
+    "build:apk": "set EAS_NO_VCS=1 && cd fluffy-run && eas build --platform android --profile preview",
+    "build:local": "set EAS_NO_VCS=1 && cd fluffy-run && eas build --platform android --profile preview --local"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "expo": "~50.0.0",
+    "expo-status-bar": "~1.11.1",
+    "react": "18.2.0",
+    "react-native": "0.73.4",
+    "react-native-webview": "13.6.4",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1",
+    "eas-cli": "^7.1.1"
+  }
+}

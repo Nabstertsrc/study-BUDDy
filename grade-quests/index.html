@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade SVG Quest</title>
+  <style>
+    body, body * { color: #000 !important; text-shadow: none !important; }
+    :root {
+      --bg1: #0ea5e9;
+      --bg2: #0284c7;
+      --panel: rgba(255, 255, 255, 0.9);
+      --ink: #0f172a;
+      --muted: #475569;
+      --accent: #f97316;
+      --good: #22c55e;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(160deg, var(--bg1), var(--bg2));
+      color: var(--ink);
+      overflow: hidden;
+    }
+    #app {
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+      padding: 10px;
+    }
+    .topbar, .footer {
+      background: var(--panel);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.2);
+    }
+    .title {
+      font-size: clamp(1rem, 2.4vw, 1.4rem);
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .stat {
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    #stage {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 10px;
+      min-height: 0;
+    }
+    .panel {
+      background: var(--panel);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 24px rgba(2, 6, 23, 0.2);
+      min-height: 0;
+    }
+    #scene {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: linear-gradient(180deg, #e0f2fe, #f8fafc);
+    }
+    #promptWrap {
+      padding: 16px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 12px;
+      height: 100%;
+    }
+    #prompt {
+      font-size: clamp(1rem, 2.2vw, 1.3rem);
+      font-weight: 800;
+      line-height: 1.4;
+    }
+    #hint {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    #choices {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      overflow: auto;
+      padding-right: 2px;
+    }
+    .choice {
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      background: white;
+      cursor: pointer;
+      text-align: left;
+    }
+    .choice:hover { border-color: var(--accent); }
+    .choice.correct { border-color: var(--good); background: #dcfce7; }
+    .choice.wrong { border-color: var(--bad); background: #fee2e2; }
+    button {
+      border: none;
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    #nextBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+    @media (max-width: 980px) {
+      #stage { grid-template-columns: 1fr; grid-template-rows: 42vh 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="topbar">
+      <div class="title" id="title">SVG Quest</div>
+      <div class="stat">Grade: <span id="gradeStat"></span></div>
+      <div class="stat">Level: <span id="levelStat">Core</span></div>
+      <div class="stat">Mode: <span id="modeStat">Practice</span></div>
+      <div class="stat">Timer: <span id="timerStat">--</span></div>
+      <div class="stat">Round: <span id="roundStat">1</span>/10</div>
+      <div class="stat">Score: <span id="scoreStat">0</span></div>
+      <div class="stat">Streak: <span id="streakStat">0</span></div>
+    </div>
+
+    <div id="stage">
+      <div class="panel">
+        <svg id="scene" viewBox="0 0 900 520" aria-label="Interactive SVG quest scene"></svg>
+      </div>
+      <div class="panel" id="promptWrap">
+        <div id="prompt"></div>
+        <div id="hint"></div>
+        <div id="choices"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div id="feedback" class="stat">Choose an answer to begin.</div>
+      <button id="nextBtn" disabled>Next Round</button>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search)
+    const grade = Math.min(12, Math.max(1, Number(params.get('grade') || 4)))
+    const subject = (params.get('subject') || 'maths').toLowerCase()
+    const mode = (params.get('mode') || 'math').toLowerCase()
+    const sessionLevel = (params.get('level') || 'core').toLowerCase()
+    const sessionMode = (params.get('sessionMode') || 'practice').toLowerCase()
+    const totalRounds = sessionMode === 'mastery' ? 12 : sessionMode === 'sprint' ? 8 : 10
+    const roundTime = sessionMode === 'mastery' ? (sessionLevel === 'advanced' ? 10 : 12) : sessionMode === 'sprint' ? 9 : 18
+
+    const titleEl = document.getElementById('title')
+    const gradeStatEl = document.getElementById('gradeStat')
+    const levelStatEl = document.getElementById('levelStat')
+    const modeStatEl = document.getElementById('modeStat')
+    const timerStatEl = document.getElementById('timerStat')
+    const roundStatEl = document.getElementById('roundStat')
+    const scoreStatEl = document.getElementById('scoreStat')
+    const streakStatEl = document.getElementById('streakStat')
+    const promptEl = document.getElementById('prompt')
+    const hintEl = document.getElementById('hint')
+    const choicesEl = document.getElementById('choices')
+    const feedbackEl = document.getElementById('feedback')
+    const scene = document.getElementById('scene')
+    const nextBtn = document.getElementById('nextBtn')
+
+    const subjectThemes = {
+      maths: { icon: '➗', accent: '#3b82f6' },
+      english: { icon: '📝', accent: '#22c55e' },
+      science: { icon: '🔬', accent: '#a855f7' },
+      geography: { icon: '🌍', accent: '#eab308' },
+      history: { icon: '🏛️', accent: '#f97316' },
+      art: { icon: '🎨', accent: '#ec4899' },
+      coding: { icon: '💻', accent: '#06b6d4' },
+      'life-skills': { icon: '❤️', accent: '#ef4444' },
+      economics: { icon: '💰', accent: '#84cc16' },
+      technology: { icon: '⚙️', accent: '#6366f1' },
+    }
+
+    const theme = subjectThemes[subject] || { icon: '🎯', accent: '#f97316' }
+    document.documentElement.style.setProperty('--accent', theme.accent)
+    titleEl.textContent = `${theme.icon} Grade ${grade} ${subject.replace('-', ' ')} SVG Quest`
+    gradeStatEl.textContent = String(grade)
+
+    const cacheKey = `grade-quest-cache:v3:${grade}:${subject}:${mode}:${sessionLevel}:${sessionMode}`
+    let round = 1
+    let score = 0
+    let streak = 0
+    let current = null
+    let answered = false
+    let roundSet = []
+    let timerId = null
+    let timeLeft = roundTime
+
+    function randint(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min
+    }
+
+    function shuffle(list) {
+      return [...list].sort(() => Math.random() - 0.5)
+    }
+
+    function updateHud() {
+      levelStatEl.textContent = sessionLevel[0].toUpperCase() + sessionLevel.slice(1)
+      modeStatEl.textContent = sessionMode[0].toUpperCase() + sessionMode.slice(1)
+      timerStatEl.textContent = String(timeLeft)
+      roundStatEl.textContent = String(round)
+      scoreStatEl.textContent = String(score)
+      streakStatEl.textContent = String(streak)
+    }
+
+    function clearScene() {
+      while (scene.firstChild) scene.removeChild(scene.firstChild)
+    }
+
+    function addSvg(tag, attrs) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag)
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v))
+      scene.appendChild(el)
+      return el
+    }
+
+    function drawBackdrop() {
+      addSvg('rect', { x: 0, y: 0, width: 900, height: 520, fill: '#f8fafc' })
+      for (let i = 0; i < 18; i += 1) {
+        const cx = randint(20, 880)
+        const cy = randint(20, 500)
+        addSvg('circle', { cx, cy, r: randint(5, 16), fill: `${theme.accent}22` })
+      }
+    }
+
+    function buildMathRound() {
+      const baseMax = grade <= 3 ? 12 : grade <= 6 ? 40 : 90
+      const max = sessionLevel === 'support' ? baseMax : sessionLevel === 'advanced' ? Math.round(baseMax * 1.8) : Math.round(baseMax * 1.25)
+      const a = randint(2, max)
+      const b = randint(2, max)
+      const ops = sessionLevel === 'advanced' ? ['+', '-', 'x'] : ['+', '-']
+      const op = ops[randint(0, ops.length - 1)]
+      const answer = op === '+' ? a + b : op === '-' ? a - b : a * b
+      const options = shuffle([answer, answer + randint(1, 9), answer - randint(1, 9), answer + randint(10, 20)])
+      drawBackdrop()
+      addSvg('text', { x: 450, y: 180, 'text-anchor': 'middle', 'font-size': '72', 'font-weight': '800', fill: '#0f172a' }).textContent = `${a} ${op} ${b}`
+      addSvg('text', { x: 450, y: 240, 'text-anchor': 'middle', 'font-size': '22', 'font-weight': '700', fill: '#475569' }).textContent = sessionMode === 'sprint' ? 'Solve before the timer expires' : 'Solve the equation'
+      return { prompt: `What is ${a} ${op} ${b}?`, hint: sessionLevel === 'advanced' ? 'Estimate first, then verify.' : 'Look at place values before choosing.', answer, options }
+    }
+
+    function buildWordsRound() {
+      const roots = ['predict', 'observe', 'adapt', 'analyze', 'create', 'compare', 'design', 'reflect']
+      const words = ['careful', 'rapid', 'ancient', 'modern', 'silent', 'brave', 'vivid', 'gentle']
+      const root = roots[randint(0, roots.length - 1)]
+      const answer = `${root}ion`
+      const options = shuffle([answer, `${root}ed`, `${root}ly`, `${root}ing`])
+      drawBackdrop()
+      addSvg('rect', { x: 230, y: 120, width: 440, height: 220, rx: 24, fill: `${theme.accent}22`, stroke: theme.accent, 'stroke-width': 3 })
+      addSvg('text', { x: 450, y: 210, 'text-anchor': 'middle', 'font-size': '58', 'font-weight': '800', fill: '#0f172a' }).textContent = root
+      addSvg('text', { x: 450, y: 260, 'text-anchor': 'middle', 'font-size': '24', 'font-weight': '700', fill: '#475569' }).textContent = `Build a noun form`
+      return { prompt: `Choose the noun form of "${root}".`, hint: `Think about common suffixes.`, answer, options: shuffle(options.concat(words[randint(0, words.length - 1)]).slice(0, 4)) }
+    }
+
+    function buildTopicRound(topicLabel, pairs) {
+      const pair = pairs[randint(0, pairs.length - 1)]
+      const answer = pair[1]
+      const wrongCount = sessionLevel === 'support' ? 2 : 3
+      const wrong = shuffle(pairs.filter((p) => p[1] !== answer).map((p) => p[1])).slice(0, wrongCount)
+      const options = shuffle([answer, ...wrong])
+      drawBackdrop()
+      addSvg('text', { x: 450, y: 150, 'text-anchor': 'middle', 'font-size': '28', 'font-weight': '700', fill: '#475569' }).textContent = topicLabel
+      addSvg('rect', { x: 140, y: 190, width: 620, height: 170, rx: 22, fill: '#ffffff', stroke: theme.accent, 'stroke-width': 4 })
+      addSvg('text', { x: 450, y: 280, 'text-anchor': 'middle', 'font-size': '50', 'font-weight': '800', fill: '#0f172a' }).textContent = pair[0]
+      return { prompt: `Best match for "${pair[0]}"?`, hint: sessionLevel === 'advanced' ? 'Eliminate near-miss distractors first.' : 'Pick the most accurate concept match.', answer, options }
+    }
+
+    function buildRound() {
+      const sciencePairs = [['evaporation', 'water to vapor'], ['photosynthesis', 'plants make food'], ['gravity', 'pull force'], ['ecosystem', 'living community'], ['atom', 'smallest unit']]
+      const geoPairs = [['Nile', 'Africa'], ['Andes', 'South America'], ['Sahara', 'Africa'], ['Himalayas', 'Asia'], ['Danube', 'Europe']]
+      const historyPairs = [['Industrial Revolution', 'factory growth'], ['Renaissance', 'cultural rebirth'], ['World War II', '1939-1945'], ['democracy', 'people vote'], ['constitution', 'supreme law']]
+      const artPairs = [['warm colors', 'red orange yellow'], ['horizon line', 'eye-level line'], ['texture', 'surface feel'], ['contrast', 'strong difference'], ['symmetry', 'balanced halves']]
+      const codingPairs = [['loop', 'repeat steps'], ['bug', 'coding error'], ['algorithm', 'step plan'], ['variable', 'stored value'], ['debug', 'find and fix']]
+      const lifePairs = [['hydration', 'drink water'], ['empathy', 'understand others'], ['consent', 'clear permission'], ['hygiene', 'keep clean'], ['resilience', 'bounce back']]
+      const ecoPairs = [['budget', 'spending plan'], ['savings', 'money set aside'], ['needs', 'essential items'], ['wants', 'nice extras'], ['income', 'money earned']]
+      const techPairs = [['prototype', 'first model'], ['input', 'data entered'], ['output', 'result produced'], ['mechanism', 'moving parts'], ['constraint', 'design limit']]
+
+      if (mode === 'math') return buildMathRound()
+      if (mode === 'words') return buildWordsRound()
+      if (mode === 'science') return buildTopicRound('Science Lab Match', sciencePairs)
+      if (mode === 'geo') return buildTopicRound('Geography Link', geoPairs)
+      if (mode === 'history') return buildTopicRound('History Match', historyPairs)
+      if (mode === 'art') return buildTopicRound('Art Concepts', artPairs)
+      if (mode === 'coding') return buildTopicRound('Coding Concepts', codingPairs)
+      if (mode === 'life') return buildTopicRound('Life Skills', lifePairs)
+      if (mode === 'economics') return buildTopicRound('Economics Basics', ecoPairs)
+      return buildTopicRound('Technology Concepts', techPairs)
+    }
+
+    function buildRoundSet() {
+      const set = []
+      const usedPrompts = new Set()
+      let guard = 0
+      while (set.length < totalRounds && guard < 120) {
+        const next = buildRound()
+        const key = `${next.prompt}|${next.answer}`
+        if (!usedPrompts.has(key)) {
+          usedPrompts.add(key)
+          set.push(next)
+        }
+        guard += 1
+      }
+      return set
+    }
+
+    function saveCache(completed = false) {
+      const payload = {
+        round,
+        score,
+        streak,
+        roundSet,
+        completed,
+        updatedAt: Date.now(),
+      }
+      localStorage.setItem(cacheKey, JSON.stringify(payload))
+    }
+
+    function loadCache() {
+      try {
+        const raw = localStorage.getItem(cacheKey)
+        if (!raw) return false
+        const cached = JSON.parse(raw)
+        if (!Array.isArray(cached.roundSet) || cached.roundSet.length !== totalRounds) return false
+        roundSet = cached.roundSet
+        round = Math.min(totalRounds, Math.max(1, Number(cached.round || 1)))
+        score = Number(cached.score || 0)
+        streak = Number(cached.streak || 0)
+        updateHud()
+        return true
+      } catch {
+        return false
+      }
+    }
+
+    function renderChoices(options) {
+      choicesEl.innerHTML = ''
+      options.forEach((text) => {
+        const btn = document.createElement('button')
+        btn.className = 'choice'
+        btn.type = 'button'
+        btn.textContent = text
+        btn.addEventListener('click', () => choose(btn, text))
+        choicesEl.appendChild(btn)
+      })
+    }
+
+    function stopTimer() {
+      if (timerId) window.clearInterval(timerId)
+      timerId = null
+    }
+
+    function handleTimeout() {
+      if (answered) return
+      answered = true
+      streak = 0
+      score = Math.max(0, score - 3)
+      feedbackEl.textContent = `Time up. Correct answer: ${current.answer}`
+      ;[...choicesEl.children].forEach((el) => {
+        if (el.textContent === current.answer) el.classList.add('correct')
+      })
+      nextBtn.disabled = false
+      updateHud()
+      saveCache(false)
+    }
+
+    function startTimer() {
+      stopTimer()
+      timeLeft = roundTime
+      updateHud()
+      timerId = window.setInterval(() => {
+        timeLeft -= 1
+        updateHud()
+        if (timeLeft <= 0) {
+          stopTimer()
+          handleTimeout()
+        }
+      }, 1000)
+    }
+
+    function choose(button, selected) {
+      if (answered) return
+      stopTimer()
+      answered = true
+      const isCorrect = selected === current.answer
+      if (isCorrect) {
+        streak += 1
+        const modeBonus = sessionMode === 'mastery' ? 8 : sessionMode === 'sprint' ? 5 : 0
+        score += 10 + Math.min(20, streak * 2) + modeBonus
+        button.classList.add('correct')
+        feedbackEl.textContent = `Correct. Nice work.`
+      } else {
+        streak = 0
+        score = Math.max(0, score - 2)
+        button.classList.add('wrong')
+        feedbackEl.textContent = `Not quite. Correct answer: ${current.answer}`
+        ;[...choicesEl.children].forEach((el) => {
+          if (el.textContent === current.answer) el.classList.add('correct')
+        })
+      }
+      nextBtn.disabled = false
+      updateHud()
+      saveCache(false)
+    }
+
+    function loadRound() {
+      stopTimer()
+      answered = false
+      nextBtn.disabled = true
+      current = roundSet[round - 1]
+      if (!current) {
+        feedbackEl.textContent = 'No more rounds available.'
+        nextBtn.disabled = true
+        return
+      }
+      promptEl.textContent = current.prompt
+      hintEl.textContent = current.hint
+      renderChoices(current.options)
+      updateHud()
+      feedbackEl.textContent = 'Choose the best answer.'
+      startTimer()
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (round >= totalRounds) {
+        stopTimer()
+        feedbackEl.textContent = `Quest complete. Final score: ${score}`
+        nextBtn.disabled = true
+        promptEl.textContent = `Completed Grade ${grade} ${subject.replace('-', ' ')} SVG Quest`
+        hintEl.textContent = 'Refresh to play again with new rounds.'
+        saveCache(true)
+        return
+      }
+      round += 1
+      saveCache(false)
+      loadRound()
+    })
+
+    if (!loadCache()) {
+      roundSet = buildRoundSet()
+      saveCache(false)
+    }
+    loadRound()
+  </script>
+</body>
+</html>

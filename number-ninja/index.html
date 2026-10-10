@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Ninja</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b1a;
+      --panel: rgba(10, 15, 31, 0.88);
+      --line: rgba(148, 163, 184, 0.18);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --purple: #8b5cf6;
+      --cyan: #22d3ee;
+      --good: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    body, body * { color: #000 !important; text-shadow: none !important; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #241250, #070b1a 48%, #020617);
+    }
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 16px;
+      padding: 16px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(16px);
+    }
+    .sidebar, .main {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    h1, h2, p { margin: 0; }
+    .muted { color: var(--muted); line-height: 1.55; }
+    .stats, .modes, .answers, .powers {
+      display: grid;
+      gap: 10px;
+    }
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .modes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .answers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .powers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid var(--line);
+    }
+    .card small { color: var(--muted); display: block; margin-bottom: 6px; }
+    .card strong { font-size: 1.2rem; }
+    button {
+      font: inherit;
+      cursor: pointer;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(30, 41, 59, 0.9);
+      color: var(--text);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    button:hover, button.active {
+      transform: translateY(-1px);
+      background: rgba(139, 92, 246, 0.18);
+    }
+    .primary {
+      background: linear-gradient(135deg, var(--purple), #a855f7);
+      color: white;
+      font-weight: 700;
+    }
+    .arena {
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 18px;
+      align-items: center;
+      text-align: center;
+    }
+    .question {
+      font-size: clamp(2rem, 6vw, 4rem);
+      font-weight: 800;
+      color: #ddd6fe;
+    }
+    .feedback {
+      min-height: 24px;
+      text-align: center;
+    }
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 700px) {
+      .shell { padding: 10px; gap: 10px; }
+      .sidebar, .main { padding: 14px; }
+      .stats, .modes, .answers, .powers { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="panel sidebar">
+      <div>
+        <h1>Number Ninja</h1>
+        <p class="muted">A fast arithmetic dojo with adaptive difficulty, keyboard shortcuts, and power boosts for freeze, skip, and combo recovery.</p>
+      </div>
+      <div class="stats">
+        <div class="card"><small>Score</small><strong id="scoreValue">0</strong></div>
+        <div class="card"><small>Best</small><strong id="bestValue">0</strong></div>
+        <div class="card"><small>Timer</small><strong id="timerValue">60s</strong></div>
+        <div class="card"><small>Streak</small><strong id="streakValue">0</strong></div>
+        <div class="card"><small>Level</small><strong id="levelValue">1</strong></div>
+        <div class="card"><small>Mode</small><strong id="modeValue">Mixed</strong></div>
+      </div>
+      <div>
+        <h2 style="font-size:1rem; margin-bottom:10px;">Training Mode</h2>
+        <div class="modes">
+          <button data-mode="mixed" class="active">Mixed</button>
+          <button data-mode="add">Add/Subtract</button>
+          <button data-mode="times">Multiply</button>
+          <button data-mode="logic">Patterns</button>
+        </div>
+      </div>
+      <div class="powers">
+        <button id="freezeBtn">Freeze +5s</button>
+        <button id="skipBtn">Skip</button>
+        <button id="focusBtn">Focus</button>
+      </div>
+      <p class="muted">Tip: answer with your mouse or press `1`, `2`, `3`, or `4` to pick an option instantly.</p>
+    </aside>
+
+    <main class="panel main">
+      <div class="card arena">
+        <p class="muted" id="roundLabel">Start a dojo session to begin.</p>
+        <div class="question" id="questionValue">0 + 0</div>
+        <div class="muted" id="promptValue">Build a streak to level up.</div>
+      </div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback"></div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="primary" id="startBtn">Start Session</button>
+        <button id="nextBtn">Next Question</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const scoreValue = document.getElementById('scoreValue');
+    const bestValue = document.getElementById('bestValue');
+    const timerValue = document.getElementById('timerValue');
+    const streakValue = document.getElementById('streakValue');
+    const levelValue = document.getElementById('levelValue');
+    const modeValue = document.getElementById('modeValue');
+    const questionValue = document.getElementById('questionValue');
+    const promptValue = document.getElementById('promptValue');
+    const answers = document.getElementById('answers');
+    const feedback = document.getElementById('feedback');
+    const roundLabel = document.getElementById('roundLabel');
+
+    const bestKey = 'number_ninja_best';
+    let bestScore = Number(localStorage.getItem(bestKey) || 0);
+    let score = 0;
+    let timer = 60;
+    let streak = 0;
+    let level = 1;
+    let mode = 'mixed';
+    let running = false;
+    let currentAnswer = null;
+    let freezeUses = 2;
+    let skipUses = 2;
+    let focusUses = 1;
+    let intervalId = null;
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function updateHud() {
+      scoreValue.textContent = score;
+      bestValue.textContent = bestScore;
+      timerValue.textContent = `${timer}s`;
+      streakValue.textContent = streak;
+      levelValue.textContent = level;
+      modeValue.textContent = mode === 'mixed' ? 'Mixed' : mode === 'add' ? 'Add/Subtract' : mode === 'times' ? 'Multiply' : 'Patterns';
+      document.getElementById('freezeBtn').textContent = `Freeze ${freezeUses}`;
+      document.getElementById('skipBtn').textContent = `Skip ${skipUses}`;
+      document.getElementById('focusBtn').textContent = `Focus ${focusUses}`;
+    }
+
+    function makeQuestion() {
+      const activeMode = mode === 'mixed'
+        ? ['add', 'times', 'logic'][rand(0, 2)]
+        : mode;
+
+      let text = '';
+      let answer = 0;
+
+      if (activeMode === 'add') {
+        const a = rand(level, level * 8 + 4);
+        const b = rand(level, level * 7 + 3);
+        if (Math.random() > 0.5) {
+          text = `${a} + ${b}`;
+          answer = a + b;
+        } else {
+          text = `${a + b} - ${a}`;
+          answer = b;
+        }
+      } else if (activeMode === 'times') {
+        const a = rand(2, Math.min(12, level + 3));
+        const b = rand(2, Math.min(12, level + 4));
+        text = `${a} × ${b}`;
+        answer = a * b;
+      } else {
+        const start = rand(2, 10 + level);
+        const step = rand(2, Math.min(8, level + 2));
+        text = `${start}, ${start + step}, ${start + step * 2}, ?`;
+        answer = start + step * 3;
+      }
+
+      const optionSet = new Set([answer]);
+      while (optionSet.size < 4) optionSet.add(answer + rand(-8, 8) || answer + optionSet.size);
+      const options = [...optionSet].sort(() => Math.random() - 0.5);
+      currentAnswer = answer;
+      questionValue.textContent = text;
+      roundLabel.textContent = `Level ${level} ${modeValue.textContent} challenge`;
+      promptValue.textContent = 'Choose the correct answer as quickly as you can.';
+      answers.innerHTML = '';
+      options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.textContent = `${index + 1}. ${option}`;
+        button.addEventListener('click', () => checkAnswer(option));
+        answers.appendChild(button);
+      });
+    }
+
+    function reward() {
+      const points = 12 + Math.min(streak * 3, 24);
+      score += points;
+      streak += 1;
+      if (streak > 0 && streak % 5 === 0) level += 1;
+      bestScore = Math.max(bestScore, score);
+      localStorage.setItem(bestKey, String(bestScore));
+      feedback.textContent = `Correct. +${points} points.`;
+      feedback.style.color = '#86efac';
+      updateHud();
+      makeQuestion();
+    }
+
+    function punish() {
+      streak = 0;
+      feedback.textContent = `Wrong. The answer was ${currentAnswer}.`;
+      feedback.style.color = '#fca5a5';
+      updateHud();
+      makeQuestion();
+    }
+
+    function checkAnswer(choice) {
+      if (!running) return;
+      if (choice === currentAnswer) reward();
+      else punish();
+    }
+
+    function startSession() {
+      score = 0;
+      timer = 60;
+      streak = 0;
+      level = 1;
+      freezeUses = 2;
+      skipUses = 2;
+      focusUses = 1;
+      running = true;
+      feedback.textContent = 'Session started.';
+      feedback.style.color = '#7dd3fc';
+      updateHud();
+      makeQuestion();
+      clearInterval(intervalId);
+      intervalId = setInterval(() => {
+        timer -= 1;
+        updateHud();
+        if (timer <= 0) {
+          clearInterval(intervalId);
+          running = false;
+          feedback.textContent = `Dojo closed. Final score: ${score}.`;
+          feedback.style.color = '#fcd34d';
+          questionValue.textContent = 'SESSION COMPLETE';
+          promptValue.textContent = 'Start another session to keep sharpening your mental maths.';
+          answers.innerHTML = '';
+        }
+      }, 1000);
+    }
+
+    document.getElementById('startBtn').addEventListener('click', startSession);
+    document.getElementById('nextBtn').addEventListener('click', () => { if (running) makeQuestion(); });
+    document.getElementById('freezeBtn').addEventListener('click', () => {
+      if (!running || freezeUses <= 0) return;
+      freezeUses -= 1;
+      timer += 5;
+      feedback.textContent = 'Freeze used. +5 seconds.';
+      feedback.style.color = '#7dd3fc';
+      updateHud();
+    });
+    document.getElementById('skipBtn').addEventListener('click', () => {
+      if (!running || skipUses <= 0) return;
+      skipUses -= 1;
+      streak = 0;
+      feedback.textContent = 'Question skipped. Streak reset.';
+      feedback.style.color = '#fcd34d';
+      updateHud();
+      makeQuestion();
+    });
+    document.getElementById('focusBtn').addEventListener('click', () => {
+      if (!running || focusUses <= 0) return;
+      focusUses -= 1;
+      feedback.textContent = `Focus used. The answer is between ${currentAnswer - 2} and ${currentAnswer + 2}.`;
+      feedback.style.color = '#7dd3fc';
+      updateHud();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const index = Number(event.key) - 1;
+      if (index >= 0 && index < answers.children.length) {
+        const text = answers.children[index].textContent.split('. ')[1];
+        checkAnswer(Number(text));
+      }
+    });
+
+    [...document.querySelectorAll('[data-mode]')].forEach((button) => {
+      button.addEventListener('click', () => {
+        mode = button.dataset.mode;
+        document.querySelectorAll('[data-mode]').forEach((item) => item.classList.toggle('active', item === button));
+        updateHud();
+        if (running) makeQuestion();
+      });
+    });
+
+    updateHud();
+  </script>
+</body>
+</html>

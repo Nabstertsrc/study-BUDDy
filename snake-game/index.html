@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Mix Snake - Premium Edition</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#38bdf8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="game-container">
+        <header>
+            <h1>COLOR MIX SNAKE</h1>
+            <div id="hud">
+                <div class="stat">LEVEL: <span id="level-val">1</span></div>
+                <div class="stat">SCORE: <span id="score-val">0</span></div>
+                <div class="stat">HI SCORE: <span id="high-score-val">0</span></div>
+                <div class="stat">TIMER: <span id="timer-val">30</span>s</div>
+                <div class="target-container">
+                    TARGET: <div id="target-color-display"></div>
+                </div>
+                <button id="mute-btn" title="Toggle Sound">🔊</button>
+            </div>
+            <div id="goal-hint">GOAL: Guess the ingredients for the target color!</div>
+        </header>
+
+        <main>
+            <canvas id="gameCanvas"></canvas>
+            <div id="ready-overlay" class="hidden"></div>
+
+            <div id="overlay" class="hidden">
+                <div id="menu-content">
+                    <h2 id="overlay-title">GAME OVER</h2>
+                    <p id="overlay-msg">Score: 0</p>
+                    <button id="start-btn">PLAY AGAIN</button>
+
+                    <div class="category-selector">
+                        <h3>SELECT CATEGORY</h3>
+                        <div class="category-options">
+                            <button class="cat-btn active" data-start="1">COLORS</button>
+                            <button class="cat-btn" data-start="21">MATH</button>
+                            <button class="cat-btn" data-start="41">WORDS</button>
+                            <button class="cat-btn" data-start="61">SCIENCE</button>
+                            <button class="cat-btn" data-start="81">TRIVIA</button>
+                        </div>
+                    </div>
+
+                    <div class="skin-selector">
+                        <h3>SELECT SKIN</h3>
+                        <div class="skin-options">
+                            <button class="skin-btn active" data-skin="neon">NEON NIGHT</button>
+                            <button class="skin-btn" data-skin="classic">CLASSIC</button>
+                            <button class="skin-btn" data-skin="pastel">PASTEL SOFT</button>
+                        </div>
+                    </div>
+
+                    <div class="speed-selector">
+                        <h3>GAME SPEED</h3>
+                        <div class="speed-control">
+                            <label for="speed-slider">
+                                <span class="speed-label">Speed:</span>
+                                <span id="speed-value">3</span>
+                            </label>
+                            <input type="range" id="speed-slider" min="1" max="5" value="3" step="1">
+                            <div class="speed-marks">
+                                <span>Slow</span>
+                                <span>Fast</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Use arrow keys to move. Eat primary colors to mix the target!</p>
+        </footer>
+    </div>
+    <script src="game.js"></script>
+    <script>
+        if ('serviceWorker' in navigator && (window.location.protocol === 'http:' || window.location.protocol === 'https:')) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW Registered', reg))
+                    .catch(err => console.log('SW Registration Failed', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+{
+    "name": "color-mix-snake",
+    "version": "1.0.0",
+    "description": "Educational color mixing snake game.",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder",
+        "dist:win": "electron-builder --win"
+    },
+    "author": "Antigravity",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^28.0.0",
+        "electron-builder": "^24.9.1"
+    },
+    "build": {
+        "appId": "com.antigravity.colormixsnake",
+        "productName": "Color Mix Snake",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "index.html",
+            "game.js",
+            "style.css",
+            "main.js",
+            "icon.png",
+            "manifest.json",
+            "sw.js"
+        ],
+        "win": {
+            "target": [
+                "portable"
+            ],
+            "icon": "icon.png"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true
+        }
+    }
+}

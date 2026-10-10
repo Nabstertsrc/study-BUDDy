@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map Explorer - Accurate World Map</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap');
+    body, body * { color: #000 !important; text-shadow: none !important; }
+    :root {
+      --ocean: #8ad9ff;
+      --land: #b8e6a4;
+      --land-border: #2c7a47;
+      --highlight: #ffca28;
+      --found: #8b5cf6;
+      --text: #2d3748;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Baloo 2', Arial, sans-serif;
+      background: linear-gradient(180deg, #b8ecff 0%, var(--ocean) 100%);
+      color: var(--text);
+    }
+    #app {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+      padding: 12px;
+    }
+    .top {
+      display: grid;
+      grid-template-columns: 1fr auto auto auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .pill {
+      background: #fff;
+      border: 3px solid #ffd166;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      font-weight: 700;
+    }
+    #target {
+      color: #d9480f;
+      font-weight: 800;
+    }
+    #mapWrap {
+      background: rgba(255, 255, 255, 0.5);
+      border: 4px solid #fff;
+      border-radius: 24px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      min-height: 0;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: linear-gradient(180deg, #9be7ff 0%, #77d6ff 100%);
+    }
+    .country {
+      fill: var(--land);
+      stroke: var(--land-border);
+      stroke-width: 0.8;
+      cursor: pointer;
+      transition: fill 0.15s ease, transform 0.15s ease;
+      transform-origin: center center;
+    }
+    .country:hover {
+      fill: var(--highlight);
+    }
+    .country.correct {
+      fill: var(--found);
+      stroke: #5b21b6;
+      pointer-events: none;
+    }
+    .country.wrong {
+      fill: #f87171;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 14px;
+      padding: 8px 14px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      background: #22c55e;
+      color: white;
+      font-family: inherit;
+      font-weight: 800;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    #overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: none;
+      place-items: center;
+      z-index: 20;
+    }
+    #overlay .card {
+      background: white;
+      border-radius: 24px;
+      padding: 28px;
+      width: min(520px, 92vw);
+      text-align: center;
+    }
+    #overlay h1 { margin: 0 0 8px; color: #7c3aed; }
+    #overlay p { margin: 6px 0 16px; font-size: 1.1rem; }
+    @media (max-width: 900px) {
+      .top { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="top">
+      <div class="pill">Find this country: <span id="target">Loading...</span></div>
+      <div class="pill">Score: <span id="score">0</span></div>
+      <div class="pill">Round: <span id="round">0</span>/<span id="maxRound">12</span></div>
+      <button id="skipBtn" type="button">Skip</button>
+    </div>
+    <div id="mapWrap">
+      <svg id="map" viewBox="0 0 1000 520" aria-label="Accurate world country map"></svg>
+    </div>
+    <div class="footer">
+      <span id="status">Loading accurate world boundaries...</span>
+      <button id="restartBtn" type="button">Restart</button>
+    </div>
+  </div>
+
+  <div id="overlay">
+    <div class="card">
+      <h1>World Explorer Complete</h1>
+      <p id="summary"></p>
+      <button id="playAgain" type="button">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    const svg = document.getElementById('map')
+    const statusEl = document.getElementById('status')
+    const targetEl = document.getElementById('target')
+    const scoreEl = document.getElementById('score')
+    const roundEl = document.getElementById('round')
+    const maxRoundEl = document.getElementById('maxRound')
+    const summaryEl = document.getElementById('summary')
+    const overlay = document.getElementById('overlay')
+    const MAX_ROUNDS = 12
+    maxRoundEl.textContent = String(MAX_ROUNDS)
+
+    let countries = []
+    let currentTarget = null
+    let round = 0
+    let score = 0
+    let used = new Set()
+
+    function project(lon, lat, minLon, maxLon, minLat, maxLat, width, height, padding) {
+      const x = ((lon - minLon) / (maxLon - minLon)) * (width - padding * 2) + padding
+      const y = ((maxLat - lat) / (maxLat - minLat)) * (height - padding * 2) + padding
+      return [x, y]
+    }
+
+    function ringToPath(ring, bounds, width, height, padding) {
+      let d = ''
+      for (let i = 0; i < ring.length; i += 1) {
+        const [lon, lat] = ring[i]
+        const [x, y] = project(lon, lat, bounds.minLon, bounds.maxLon, bounds.minLat, bounds.maxLat, width, height, padding)
+        d += `${i === 0 ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)} `
+      }
+      return `${d}Z`
+    }
+
+    function geometryToPath(geometry, bounds, width, height, padding) {
+      if (geometry.type === 'Polygon') {
+        return geometry.coordinates.map((ring) => ringToPath(ring, bounds, width, height, padding)).join(' ')
+      }
+      if (geometry.type === 'MultiPolygon') {
+        return geometry.coordinates.flat().map((ring) => ringToPath(ring, bounds, width, height, padding)).join(' ')
+      }
+      return ''
+    }
+
+    function updateHud() {
+      scoreEl.textContent = String(score)
+      roundEl.textContent = String(round)
+      targetEl.textContent = currentTarget ? currentTarget.properties.name : 'Done'
+    }
+
+    function nextTarget() {
+      if (round >= MAX_ROUNDS) {
+        targetEl.textContent = 'Completed'
+        summaryEl.textContent = `You scored ${score} points across ${MAX_ROUNDS} rounds on an accurate country map.`
+        overlay.style.display = 'grid'
+        statusEl.textContent = 'Great work. You completed the map challenge.'
+        return
+      }
+      const pool = countries.filter((c) => !used.has(c.properties.name))
+      if (!pool.length) {
+        round = MAX_ROUNDS
+        nextTarget()
+        return
+      }
+      currentTarget = pool[Math.floor(Math.random() * pool.length)]
+      used.add(currentTarget.properties.name)
+      round += 1
+      statusEl.textContent = `Round ${round}: find ${currentTarget.properties.name}.`
+      updateHud()
+    }
+
+    function setTemporaryWrong(path) {
+      path.classList.add('wrong')
+      setTimeout(() => path.classList.remove('wrong'), 220)
+    }
+
+    function handleCountryClick(path, countryName) {
+      if (!currentTarget) return
+      if (countryName === currentTarget.properties.name) {
+        path.classList.add('correct')
+        score += 10
+        statusEl.textContent = `Correct: ${countryName}`
+        nextTarget()
+      } else {
+        score = Math.max(0, score - 2)
+        statusEl.textContent = `${countryName} is not the target. Try again.`
+        setTemporaryWrong(path)
+        updateHud()
+      }
+    }
+
+    async function init() {
+      try {
+        const res = await fetch('./data/countries.geojson')
+        if (!res.ok) throw new Error(`Failed to load map data (${res.status})`)
+        const geo = await res.json()
+
+        const features = geo.features.filter((f) => f.geometry && (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon'))
+        countries = features
+
+        const allCoords = []
+        features.forEach((f) => {
+          const geom = f.geometry
+          if (geom.type === 'Polygon') {
+            geom.coordinates.forEach((ring) => ring.forEach((pt) => allCoords.push(pt)))
+          } else {
+            geom.coordinates.forEach((poly) => poly.forEach((ring) => ring.forEach((pt) => allCoords.push(pt))))
+          }
+        })
+
+        const bounds = {
+          minLon: Math.min(...allCoords.map((pt) => pt[0])),
+          maxLon: Math.max(...allCoords.map((pt) => pt[0])),
+          minLat: Math.min(...allCoords.map((pt) => pt[1])),
+          maxLat: Math.max(...allCoords.map((pt) => pt[1])),
+        }
+
+        const width = 1000
+        const height = 520
+        const padding = 12
+
+        features.forEach((feature) => {
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+          path.setAttribute('class', 'country')
+          path.setAttribute('d', geometryToPath(feature.geometry, bounds, width, height, padding))
+          path.setAttribute('data-name', feature.properties.name)
+          path.setAttribute('aria-label', feature.properties.name)
+          path.addEventListener('click', () => handleCountryClick(path, feature.properties.name))
+          svg.appendChild(path)
+        })
+
+        statusEl.textContent = 'Accurate country map loaded. Start finding countries.'
+        nextTarget()
+      } catch (err) {
+        statusEl.textContent = `Map load error: ${err.message}`
+      }
+    }
+
+    document.getElementById('skipBtn').addEventListener('click', () => {
+      if (!currentTarget) return
+      statusEl.textContent = `Skipped: ${currentTarget.properties.name}`
+      nextTarget()
+    })
+
+    function resetGame() {
+      used = new Set()
+      round = 0
+      score = 0
+      currentTarget = null
+      svg.querySelectorAll('.country').forEach((p) => p.classList.remove('correct', 'wrong'))
+      overlay.style.display = 'none'
+      nextTarget()
+    }
+
+    document.getElementById('restartBtn').addEventListener('click', resetGame)
+    document.getElementById('playAgain').addEventListener('click', resetGame)
+
+    init()
+  </script>
+</body>
+</html>

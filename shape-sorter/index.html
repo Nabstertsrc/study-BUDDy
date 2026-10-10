@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shape Sorter</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    body, body * { color: #000 !important; text-shadow: none !important; }
+    
+    body, html {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      background: #87CEEB; /* Sky blue */
+      font-family: 'Fredoka One', cursive, sans-serif;
+      overflow: hidden;
+      touch-action: none;
+    }
+    
+    #game-container {
+      position: relative; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    #hud {
+      display: flex; justify-content: space-between; width: 90%; max-width: 800px;
+      margin-top: 20px; color: white; text-shadow: 2px 2px 0 #333;
+      font-size: 24px; z-index: 10;
+    }
+
+    .cloud {
+      position: absolute; background: white; border-radius: 50px;
+      opacity: 0.8; z-index: 1;
+    }
+    .cloud::before, .cloud::after {
+      content: ''; position: absolute; background: white; border-radius: 50%;
+    }
+
+    #targets-container {
+      display: flex; gap: 30px; margin-top: 50px; z-index: 10;
+    }
+
+    .target {
+      width: 120px; height: 120px;
+      border: 6px dashed rgba(255,255,255,0.6);
+      border-radius: 20px; display: flex; justify-content: center; align-items: center;
+      transition: all 0.3s;
+    }
+    .target.hover {
+      background: rgba(255,255,255,0.3); transform: scale(1.1);
+    }
+    
+    #draggables-container {
+      position: absolute; bottom: 50px; width: 100%; height: 200px;
+      z-index: 20;
+    }
+
+    .shape {
+      position: absolute; width: 100px; height: 100px; cursor: grab;
+      filter: drop-shadow(0 10px 5px rgba(0,0,0,0.2));
+      transition: transform 0.1s;
+    }
+    .shape:active { cursor: grabbing; transform: scale(1.1); }
+    
+    .overlay {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7); display: none; flex-direction: column;
+      justify-content: center; align-items: center; z-index: 100;
+      color: white;
+    }
+    .overlay h1 { font-size: 60px; margin: 0; color: #FFD700; text-shadow: 3px 3px 0 #D2691E; }
+    .overlay button {
+      margin-top: 20px; padding: 15px 40px; font-size: 24px; font-family: 'Fredoka One';
+      background: #FF4500; color: white; border: none; border-radius: 30px;
+      cursor: pointer; box-shadow: 0 8px 0 #B22222; transition: all 0.1s;
+    }
+    .overlay button:active { transform: translateY(8px); box-shadow: 0 0 0 #B22222; }
+
+    /* Target outlines */
+    .target-circle { border-radius: 50%; }
+    .target-square { border-radius: 10px; }
+    .target-triangle {
+      border: none; width: 0; height: 0;
+      border-left: 60px solid transparent; border-right: 60px solid transparent;
+      border-bottom: 103px dashed rgba(255,255,255,0.6);
+    }
+    .target-star {
+      border: none; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      background: rgba(255,255,255,0.3); width: 120px; height: 120px;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="hud">
+      <div>Score: <span id="score">0</span></div>
+      <div>Level: <span id="level">1</span></div>
+    </div>
+    
+    <div id="targets-container"></div>
+    <div id="draggables-container"></div>
+    
+    <div id="win-screen" class="overlay">
+      <h1>Awesome!</h1>
+      <p style="font-size: 24px;">You sorted all the shapes!</p>
+      <button onclick="nextLevel()">Next Level</button>
+    </div>
+  </div>
+
+  <script>
+    const SHAPES = [
+      { id: 'circle', svg: '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#FF5722" stroke="#E64A19" stroke-width="5"/></svg>' },
+      { id: 'square', svg: '<svg viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" rx="10" fill="#4CAF50" stroke="#388E3C" stroke-width="5"/></svg>' },
+      { id: 'triangle', svg: '<svg viewBox="0 0 100 100"><polygon points="50,10 90,85 10,85" fill="#FFC107" stroke="#FFA000" stroke-width="5"/></svg>' },
+      { id: 'star', svg: '<svg viewBox="0 0 100 100"><polygon points="50,5 61,40 98,40 68,62 79,95 50,75 21,95 32,62 2,40 39,40" fill="#E91E63" stroke="#C2185B" stroke-width="5"/></svg>' }
+    ];
+
+    let score = 0;
+    let level = 1;
+    let draggedElement = null;
+    let shapesPlaced = 0;
+    let targetsData = [];
+
+    const targetsContainer = document.getElementById('targets-container');
+    const draggablesContainer = document.getElementById('draggables-container');
+
+    function initLevel() {
+      targetsContainer.innerHTML = '';
+      draggablesContainer.innerHTML = '';
+      shapesPlaced = 0;
+      document.getElementById('level').innerText = level;
+      
+      const numShapes = Math.min(2 + level, 4);
+      let selectedShapes = [...SHAPES].sort(() => 0.5 - Math.random()).slice(0, numShapes);
+      targetsData = [];
+
+      selectedShapes.forEach(shape => {
+        // Create target
+        const target = document.createElement('div');
+        target.className = `target target-${shape.id}`;
+        target.dataset.id = shape.id;
+        targetsContainer.appendChild(target);
+        targetsData.push(target);
+      });
+
+      // Create draggables
+      let draggables = [...selectedShapes].sort(() => 0.5 - Math.random());
+      const containerWidth = window.innerWidth;
+      
+      draggables.forEach((shape, index) => {
+        const el = document.createElement('div');
+        el.className = 'shape';
+        el.innerHTML = shape.svg;
+        el.dataset.id = shape.id;
+        
+        // Randomize initial position
+        const spacing = containerWidth / numShapes;
+        const x = (index * spacing) + (spacing / 2) - 50 + (Math.random() * 40 - 20);
+        const y = Math.random() * 60 + 20;
+        
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        
+        // Interaction events
+        el.addEventListener('mousedown', startDrag);
+        el.addEventListener('touchstart', startDrag, {passive: false});
+        
+        draggablesContainer.appendChild(el);
+      });
+    }
+
+    let startX, startY, initialLeft, initialTop;
+
+    function startDrag(e) {
+      if (e.type === 'touchstart') e.preventDefault();
+      draggedElement = this;
+      
+      const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+      
+      startX = clientX;
+      startY = clientY;
+      initialLeft = parseFloat(draggedElement.style.left) || 0;
+      initialTop = parseFloat(draggedElement.style.top) || 0;
+      
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('touchmove', drag, {passive: false});
+      document.addEventListener('mouseup', stopDrag);
+      document.addEventListener('touchend', stopDrag);
+      
+      draggedElement.style.zIndex = 1000;
+    }
+
+    function drag(e) {
+      if (!draggedElement) return;
+      if (e.type === 'touchmove') e.preventDefault();
+      
+      const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+      const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+      
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+      
+      draggedElement.style.left = `${initialLeft + dx}px`;
+      draggedElement.style.top = `${initialTop + dy}px`;
+      
+      // Check hover
+      const rect = draggedElement.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      targetsData.forEach(target => {
+        const tRect = target.getBoundingClientRect();
+        if (centerX > tRect.left && centerX < tRect.right &&
+            centerY > tRect.top && centerY < tRect.bottom) {
+          target.classList.add('hover');
+        } else {
+          target.classList.remove('hover');
+        }
+      });
+    }
+
+    function stopDrag(e) {
+      if (!draggedElement) return;
+      
+      const rect = draggedElement.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      let matched = false;
+      
+      for (let target of targetsData) {
+        target.classList.remove('hover');
+        const tRect = target.getBoundingClientRect();
+        
+        if (centerX > tRect.left && centerX < tRect.right &&
+            centerY > tRect.top && centerY < tRect.bottom) {
+          if (target.dataset.id === draggedElement.dataset.id) {
+            // Match!
+            target.appendChild(draggedElement);
+            draggedElement.style.position = 'static';
+            draggedElement.removeEventListener('mousedown', startDrag);
+            draggedElement.removeEventListener('touchstart', startDrag);
+            draggedElement.style.cursor = 'default';
+            matched = true;
+            shapesPlaced++;
+            score += 10;
+            document.getElementById('score').innerText = score;
+            
+            // Pop animation
+            draggedElement.animate([
+              { transform: 'scale(1)' },
+              { transform: 'scale(1.3)' },
+              { transform: 'scale(1)' }
+            ], { duration: 300 });
+            
+            if (shapesPlaced === targetsData.length) {
+              setTimeout(() => document.getElementById('win-screen').style.display = 'flex', 500);
+            }
+            break;
+          }
+        }
+      }
+      
+      if (!matched) {
+        // Snap back
+        draggedElement.style.left = `${initialLeft}px`;
+        draggedElement.style.top = `${initialTop}px`;
+      }
+      
+      draggedElement.style.zIndex = '';
+      draggedElement = null;
+      
+      document.removeEventListener('mousemove', drag);
+      document.removeEventListener('touchmove', drag);
+      document.removeEventListener('mouseup', stopDrag);
+      document.removeEventListener('touchend', stopDrag);
+    }
+
+    function nextLevel() {
+      document.getElementById('win-screen').style.display = 'none';
+      level++;
+      initLevel();
+    }
+
+    // Add decorative clouds
+    for(let i=0; i<5; i++) {
+      let cloud = document.createElement('div');
+      cloud.className = 'cloud';
+      cloud.style.width = `${Math.random() * 100 + 100}px`;
+      cloud.style.height = `${Math.random() * 30 + 40}px`;
+      cloud.style.top = `${Math.random() * 40}%`;
+      cloud.style.left = `${Math.random() * 100}%`;
+      cloud.style.animation = `float ${Math.random() * 20 + 20}s linear infinite`;
+      document.getElementById('game-container').appendChild(cloud);
+    }
+
+    initLevel();
+  </script>
+</body>
+</html>
